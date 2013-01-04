@@ -9,11 +9,17 @@ Author URI: http://www.werdswords.com
 License: GPLv2
 */
 
-add_action('admin_init', 'no_mo_dashboard');
-function no_mo_dashboard() {
-  if (!current_user_can('manage_options') && !defined('DOING_AJAX') ) {
-    wp_redirect(site_url()); exit;
-  }
+class Remove_Dashboard_Access {
+	__construct() {
+		add_action( 'admin_init', array( $this, 'rda_redirect' ) );
+	}
+	
+	function rda_direct() {
+		if ( ! current_user_can( 'manage_options' ) && ! defined( 'DOING_AJAX' ) ) {
+			wp_redirect( home_url() );
+			exit;
+		}
+	}
 }
 
-?>
+new Remove_Dashboard_Access;
