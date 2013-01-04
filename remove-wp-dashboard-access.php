@@ -10,7 +10,7 @@ License: GPLv2
 */
 
 class Remove_Dashboard_Access {
-	__construct() {
+	function __construct() {
 		add_action( 'admin_init', array( $this, 'rda_redirect' ) );
 	}
 	
