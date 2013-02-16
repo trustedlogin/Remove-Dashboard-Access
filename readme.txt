@@ -2,19 +2,24 @@
 Contributors: DrewAPicture
 Donate link: http://www.werdswords.com
 Tags: dashboard, access, users, administration
-Requires at least: 3.0
-Tested up to: 3.5
-Stable tag: 0.4
+Requires at least: 3.1
+Tested up to: 3.5.1
+Stable tag: 1.0
 
-This plugin completely removes non-admin user access to the Dashboard. Non-admins are automatically redirected the site's homepage.
+This plugin limits user access to the dashboard based on whether users have a chosen capability. Disallowed users are redirected to a chosen URL.
 
 == Description ==
 
-This plugin uses the 'manage_options' capability to check whether users are administrators or not. Users lacking this capability will be automatically redirected to the site's homepage.
+Remove Dashboard Access was completely rewritten for version 1.0!
+
+New features include:
+
+* Limit Dashboard access to Administrators only, or limit by specific capability.
+* Allow/disallow user profile access
+* Choose your own redirect URL
+* (<a href="http://wordpress.org/extend/plugins/remove-dashboard-access-for-non-admins/other_notes/">more info</a>)
 
 A full list of capabilities and their associated roles can be found here: http://codex.wordpress.org/Roles_and_Capabilities
-
-TODO: Provide options to choose your own capability type.
 
 == Installation ==
 
@@ -23,11 +28,61 @@ TODO: Provide options to choose your own capability type.
 
 == Frequently Asked Questions ==
 
-= What happens to non-admin users who try to login to the Dashboard? =
+= What happens to disallowed users who try to login to the Dashboard? =
 
-Non-admin users will be automatically redirected to the site's homepage
+Users lacking the chosen capability or role will be redirected to the URL set in Settings > Dashboard Access.
+
+== Other Notes ==
+
+<strong>Capabilities</strong>
+
+* In v1.0+, you can limit Dashboard access to Admins or by selecting a capability. More information on WordPress' default roles and capabilities can be found here: http://codex.wordpress.org/Roles_and_Capabilities
+
+<strong>User Profile Access</strong>
+
+* In v1.0+, you can allow or disallow the ability for all users to edit their profiles in the Dashboard. Users lacking the chosen capability won't be able to access any other sections of the Dashboard.
+
+<strong>Hiding other plugins/themes' Toolbar menus</strong>
+
+v1.0+ hides some built-in WordPress Toolbar menus by default, but can be extended to hide menus from other plugins or themes via two filters: `rda_toolbar_nodes`, and `rda_frontend_toolbar_nodes`.
+
+How to find the menu (node) id:
+
+* In the HTML page source, look for the `<li>` container for the menu node you're targeting. It should take the form of `<li id="wp-admin-bar-SOMETHING">`
+* In `<li id="wp-admin-bar-SOMETHING">`, you want the "SOMETHING" part.
+	
+How to filter the disallowed Toolbar nodes on the front-end:
+`
+function hide_some_toolbar_menu( $ids ) {
+	$ids[] = 'SOMETHING';
+	return $ids;
+}
+add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
+`
+
+Common plugin Toolbar menus and their ids:
+
+* <a href="http://wordpress.org/extend/plugins/jetpack/">JetPack by WordPress.com</a> (Notifications) - 'notes'
+* <a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a> - 'wpseo-menu'
+* <a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a> - 'w3tc'
+
+== Screenshots ==
+
+1. The new 1.0 accesss options screen.
+
+2. Allow users to access their profile settings (only).
 
 == Changelog ==
+
+= 1.0 =
+
+* Complete rewrite!
+* New: Limit dashboard access for Admins only or by capability
+* New: Allow/disallow edit-profile access
+* New: Choose your own redirect URL
+* New Filter: `rda_default_access_cap` - Change default access capability
+* New Filter: `rda_toolbar_nodes` - Filter which back-end Toolbar nodes are hidden
+* New Filter: `rda_frontend_toolbar_nodes` - Filter which front-end Toolbar nodes are hidden
 
 = 0.4 = 
 
