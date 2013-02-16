@@ -1,0 +1,91 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Remove Dashboard Access\n"
+"POT-Creation-Date: 2013-02-15 21:54-0700\n"
+"PO-Revision-Date: 2013-02-15 21:54-0700\n"
+"Last-Translator: \n"
+"Language-Team: Drew Jaynes (DrewAPicture) <info@drewapicture.com>\n"
+"Language: English\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.5\n"
+"X-Poedit-KeywordsList: __;_e;esc_attr__;esc_attr_e;esc_html__;esc_html_e;_x;"
+"_ex;esc_attr_x;esc_html_x;_n;_nx;_n_noop;_nx_noop\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: remove-wp-dashboard-access.php:91 remove-wp-dashboard-access.php:110
+msgid "Dashboard Access Settings"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:92
+msgid "Dashboard Access"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:135
+msgid "Access Controls"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:136
+msgid "User Access:"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:137
+msgid "User Profile Access:"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:140
+msgid "Redirection Settings"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:141
+msgid "Redirect URL:"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:150
+msgid ""
+"Dashboard access can be restricted to Administrators only (default) or users "
+"with a specific capability."
+msgstr ""
+
+#: remove-wp-dashboard-access.php:171
+msgid "Administrators only"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:175
+msgid "Limit by capability:"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:180
+#, php-format
+msgid "You can find out more about specific %s in the Codex."
+msgstr ""
+
+#: remove-wp-dashboard-access.php:183
+msgid "Roles and Capabilities"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:267
+msgid " Allow users to edit their profiles in the dashboard."
+msgstr ""
+
+#: remove-wp-dashboard-access.php:277
+#, php-format
+msgid ""
+"Users who lack the selected role or capability will be redirected to a URL "
+"you specify. Left blank, default is: <strong>%s</strong>"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:290
+msgid "Redirect users to:"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:312
+#, php-format
+msgid "Please enter a properly-formed URL. For example: %s"
+msgstr ""
+
+#: remove-wp-dashboard-access.php:345
+msgid "Settings"
+msgstr ""
