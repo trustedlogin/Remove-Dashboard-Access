@@ -21,6 +21,10 @@ New features include:
 
 A full list of capabilities and their associated roles can be found here: http://codex.wordpress.org/Roles_and_Capabilities
 
+<strong>Contribute to RDA</strong>
+
+This plugin is in active development <a href="https://github.com/DrewAPicture/remove-dashboard-access" target="_new">on GitHub</a>. If you'd like to contribute, pull requests are welcome!
+
 == Installation ==
 
 1. Upload `remove-wp-dashboard-access.php` to the `/wp-content/plugins/` directory
@@ -117,7 +121,3 @@ Common plugin Toolbar menus and their ids:
 = 0.1 =
 
 * Initial submission
-
-== Screenshots ==
-
-1. No screenshots.
