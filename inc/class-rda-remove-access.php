@@ -29,6 +29,13 @@ class RDA_Remove_Access {
 	var $settings = array();
 
 	/**
+	 * @var $instance
+	 *
+	 * @since 1.1
+	 */
+	static $instance;
+
+	/**
 	 * RDA Remove Access Init
 	 *
 	 * @since 1.0
@@ -37,6 +44,9 @@ class RDA_Remove_Access {
 	 * @param array $settings Settings array passed from RDA_Options instance.
 	 */
 	function __construct( $capability, $settings ) {
+
+		self::$instance = $this;
+
 		if ( ! $capability )
 			return; // Bail
 		else
