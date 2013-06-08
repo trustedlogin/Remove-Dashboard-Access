@@ -1,8 +1,10 @@
 <?php
 /**
- * Remove Dashboard Access Class
+ * Class RDA_Remove_Access
  *
  * @since 1.0
+ *
+ * @package Remove_Dashboard_Access
  */
 
 if ( ! class_exists( 'RDA_Remove_Access' ) ) {
