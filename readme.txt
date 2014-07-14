@@ -3,7 +3,7 @@ Contributors: DrewAPicture
 Donate link: http://www.werdswords.com
 Tags: dashboard, access, users, administration
 Requires at least: 3.1
-Tested up to: 4.0.0
+Tested up to: 4.0
 Stable tag: 1.1
 
 This plugin limits user access to the dashboard based on whether users have a chosen capability or role. Disallowed users are redirected to a chosen URL.
