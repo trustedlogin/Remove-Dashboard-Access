@@ -71,19 +71,31 @@ class RDA_Remove_Access {
 	 */
 	function lock_it_up() {
 		add_action( 'admin_init',     array( $this, 'dashboard_redirect' ) );
-//		add_action( 'admin_head',     array( $this, 'hide_menus' ) );
-		add_action( 'admin_head',     array( $this, 'hide_other_menus' ) );
+		add_action( 'admin_head',     array( $this, 'hide_menus' ) );
 		add_action( 'admin_bar_menu', array( $this, 'hide_toolbar_items' ), 999 );
 	}
 
-	public function hide_other_menus() {
-		$pages = array(
-			'index.php', 'edit.php', 'upload.php', 'edit-comments.php',
-			'edit.php?post_type=page', 'tools.php',
-		);
+	/**
+	 * Hide menus other than profile.php.
+	 *
+	 * @since 1.1
+	 */
+	public function hide_menus() {
+		/** @global array $menu */
+		global $menu;
 
-		foreach ( $pages as $page ) {
-			remove_menu_page( $page );
+		$menu_ids = array();
+
+		// Gather menu IDs (minus profile.php).
+		foreach ( $menu as $index => $values ) {
+			if ( isset( $values[2] ) ) {
+				if ( 'profile.php' == $values[2] ) {
+					continue;
+				}
+
+				// Remove menu pages.
+				remove_menu_page( $values[2] );
+			}
 		}
 	}
 
@@ -101,30 +113,6 @@ class RDA_Remove_Access {
 			wp_redirect( $this->settings['redirect_url'] );
 			exit;
 		}
-	}
-
-	/**
-	 * Hide Admin Menus.
-	 *
-	 * @since 1.0
-	 *
-	 * @todo Determine why 'Tools' menu can't be easily unset from admin menu
-	 * @return null
-	 */
-	function hide_menus() {
-
-		?>
-		<style type="text/css">
-		#adminmenuback, #adminmenuwrap {
-			display: none;
-		}
-		.wrap {
-			margin-top: 1.5%;
-		}
-		#wpcontent {
-			margin-left: 2%;
-		}
-		<?php
 	}
 
 	/**
