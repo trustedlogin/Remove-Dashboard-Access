@@ -475,9 +475,9 @@ class RDA_Options {
 	 * add_filter( 'rda_debug_mode', '__return_true' );
 	 *
 	 * @since 1.3
-	 * @access private
+	 * @access public
 	 */
-	function _debug_mode() {
+	public function _debug_mode() {
 		?>
 		<style type="text/css">
 			table.rda_debug {
