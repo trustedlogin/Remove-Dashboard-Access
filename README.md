@@ -35,15 +35,15 @@ Pull requests are welcome!
 
 Users lacking the chosen capability or role will be redirected to the URL set in Settings > Dashboard Access.
 
-### Why haven't you added an option to disable the WordPress Toolbar?
+#### Why haven't you added an option to disable the WordPress Toolbar?
 
 The Toolbar contains certain important links (even for disallowed users) such as for accessing to the profile editor and/or logging out. Plus, there are many plugins out there for disabling the Toolbar if you really want to.
 
-### Can I disable the redirection/profile-editing controls without disabling the plugin?
+#### Can I disable the redirection/profile-editing controls without disabling the plugin?
 
 No. Disable the plugin if you don't wish to leverage the functionality.
 
-## Other Notes (v1.0+)
+## Other Notes
 
 #### Capabilities
 
@@ -68,26 +68,27 @@ This hides some built-in WordPress Toolbar menus by default, but can be extended
 	
 ##### How to filter the disallowed Toolbar nodes on the front-end:
 
-    /**
-     * Filter hidden Toolbar menus on the front-end.
-     *
-     * @param array $ids Toolbar menu IDs.
-     * @return array (maybe) filtered front-end Toolbar menu IDs.
-     */
-	function hide_some_toolbar_menu( $ids ) {
-		$ids[] = 'SOMETHING';
-		return $ids;
-	}
-	add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
-
+```php
+/**
+ * Filter hidden Toolbar menus on the front-end.
+ *
+ * @param array $ids Toolbar menu IDs.
+ * @return array (maybe) filtered front-end Toolbar menu IDs.
+ */
+function hide_some_toolbar_menu( $ids ) {
+	$ids[] = 'SOMETHING';
+	return $ids;
+}
+add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
+```
 
 ##### Common plugin Toolbar menus and their ids:
 
 | Plugin | Menu ID |
 | ------ | ------- |
-| [http://wordpress.org/extend/plugins/jetpack/ Jetpack by WordPress.com] (notifications) | 'notes |
-| [http://wordpress.org/extend/plugins/wordpress-seo/ WordPress SEO by Yoast] | 'wpseo-menu' |
-| [http://wordpress.org/extend/plugins/w3-total-cache/ W3 Total Cache] | 'w3tc' |
+| [Jetpack by WordPress.com](http://wordpress.org/extend/plugins/jetpack/) (notifications) | 'notes |
+| [WordPress SEO by Yoast](http://wordpress.org/extend/plugins/wordpress-seo/) | 'wpseo-menu' |
+| [W3 Total Cache](http://wordpress.org/extend/plugins/w3-total-cache/) | 'w3tc' |
 
 ## Screenshots
 
