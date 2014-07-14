@@ -4,5 +4,14 @@
  *
  * @since 1.0
  */
+$settings = array(
+	'rda_access_switch',
+	'rda_access_cap',
+	'rda_redirect_url',
+	'rda_enable_profile',
+	'rda_login_message'
+);
 
-delete_option( 'rda-settings' );
+foreach ( $settings as $key => $value ) {
+	delete_option( $key );
+}
