@@ -90,12 +90,6 @@ add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 | [WordPress SEO by Yoast](http://wordpress.org/extend/plugins/wordpress-seo/) | 'wpseo-menu' |
 | [W3 Total Cache](http://wordpress.org/extend/plugins/w3-total-cache/) | 'w3tc' |
 
-## Screenshots
-
-1. The Dashboard Access Controls settings in the Settings > Reading screen.
-2. Allow users to access their profile settings (only).
-3. Optional login message.
-
 ## Changelog
 
 #### 1.1
