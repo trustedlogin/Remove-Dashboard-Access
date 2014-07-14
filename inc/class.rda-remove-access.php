@@ -35,10 +35,11 @@ class RDA_Remove_Access {
 	 * @param array $settings Settings array passed from RDA_Options instance.
 	 */
 	function __construct( $capability, $settings ) {
-		if ( empty( $capability ) )
+		if ( empty( $capability ) ) {
 			return; // Bail
-		else
+		} else {
 			$this->capability = $capability;
+		}
 
 		$this->settings = $settings;
 
@@ -54,17 +55,18 @@ class RDA_Remove_Access {
 	 * @return null Bail if the current user has the requisite capability.
 	 */
 	function is_user_allowed() {
-		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) )
+		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) ) {
 			$this->lock_it_up();
-		else
+		} else {
 			return; // Bail
+		}
 	}
 
 	/**
 	 * "Lock it up" Hooks.
 	 *
 	 * dashboard_redirect - Handles redirecting disallowed users.
-	 * hide_menus         - Hides the admin menus with CSS (not ideal but will suffice).
+	 * hide_menus         - Hides the admin menus.
 	 * hide_toolbar_items - Hides various Toolbar items on front and back-end.
 	 *
 	 * @since 1.0
@@ -109,6 +111,7 @@ class RDA_Remove_Access {
 	function dashboard_redirect() {
 		/** @global string $pagenow */
 		global $pagenow;
+
 		if ( 'profile.php' != $pagenow || ! $this->settings['enable_profile'] ) {
 			wp_redirect( $this->settings['redirect_url'] );
 			exit;
@@ -119,8 +122,6 @@ class RDA_Remove_Access {
 	 * Hide Toolbar Items.
 	 *
 	 * @since 1.0
-	 *
-	 * @uses apply_filters() to make front-end and back-end Toolbar node arrays filterable.
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar For remove_node() method access.
 	 */
