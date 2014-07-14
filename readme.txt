@@ -3,52 +3,59 @@ Contributors: DrewAPicture
 Donate link: http://www.werdswords.com
 Tags: dashboard, access, users, administration
 Requires at least: 3.1
-Tested up to: 3.5.1
-Stable tag: 1.0
+Tested up to: 4.0.0
+Stable tag: 1.1
 
-This plugin limits user access to the dashboard based on whether users have a chosen capability. Disallowed users are redirected to a chosen URL.
+This plugin limits user access to the dashboard based on whether users have a chosen capability or role. Disallowed users are redirected to a chosen URL.
 
 == Description ==
 
-Remove Dashboard Access was completely rewritten for version 1.0!
-
-New features include:
-
-* Limit Dashboard access to Administrators only, or limit by specific capability.
-* Allow/disallow user profile access
+* Limit Dashboard access to Administrators only, Admins + Editors, Admins + Editors + Authors, or limit by specific capability.
 * Choose your own redirect URL
+* Optionally allow user profile access
+* Optionall display a message on the login screen
 * (<a href="http://wordpress.org/extend/plugins/remove-dashboard-access-for-non-admins/other_notes/">more info</a>)
-
-A full list of capabilities and their associated roles can be found here: http://codex.wordpress.org/Roles_and_Capabilities
 
 <strong>Contribute to RDA</strong>
 
-This plugin is in active development <a href="https://github.com/DrewAPicture/remove-dashboard-access" target="_new">on GitHub</a>. If you'd like to contribute, pull requests are welcome!
+This plugin is in active development <a href="https://github.com/DrewAPicture/remove-dashboard-access" target="_new">on GitHub</a>. Pull requests are welcome!
 
 == Installation ==
 
-1. Upload `remove-wp-dashboard-access.php` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1. Search 'Remove Dashboard Access' from the Install Plugins screen.
+2. Install plugin, click Activate.
 
 == Frequently Asked Questions ==
 
-= What happens to disallowed users who try to login to the Dashboard? =
+= What happens to disallowed users who try to access to the Dashboard? =
 
-Users lacking the chosen capability or role will be redirected to the URL set in Settings > Dashboard Access.
+Users lacking the chosen capability or role(s) will be redirected to the URL set in Settings > Dashboard Access.
+
+= Why haven't you added an option to disable the WordPress Toolbar?
+
+The Toolbar contains certain important links (even for disallowed users) such as for accessing to the profile editor and/or logging out. Plus, there are many plugins out there for disabling the Toolbar if you really want to.
+
+= Can I disable the redirection/profile-editing controls without disabling the plugin?
+
+No. Disable the plugin if you don't wish to leverage the functionality.
 
 == Other Notes ==
 
 <strong>Capabilities</strong>
 
-* In v1.0+, you can limit Dashboard access to Admins or by selecting a capability. More information on WordPress' default roles and capabilities can be found here: http://codex.wordpress.org/Roles_and_Capabilities
+* You can limit Dashboard access to Admins only, Editors or above, Authors or above, or by selecting a capability. More information on WordPress' default roles and capabilities can be found here: http://codex.wordpress.org/Roles_and_Capabilities
 
 <strong>User Profile Access</strong>
 
-* In v1.0+, you can allow or disallow the ability for all users to edit their profiles in the Dashboard. Users lacking the chosen capability won't be able to access any other sections of the Dashboard.
+* You can optionally allow all users the ability to edit their profiles in the Dashboard. Users lacking the chosen capability won't be able to access any other sections of the Dashboard.
+
+<strong>Login Message</strong>
+
+* Supply a message to display on the login screen. Leaving this blank disables the message.
 
 <strong>Hiding other plugins/themes' Toolbar menus</strong>
 
-v1.0+ hides some built-in WordPress Toolbar menus by default, but can be extended to hide menus from other plugins or themes via two filters: `rda_toolbar_nodes`, and `rda_frontend_toolbar_nodes`.
+* Remove Dashboard Access removes some built-in WordPress Toolbar menus by default, but can be extended to hide menus from other plugins or themes via two filters: `rda_toolbar_nodes` (viewing from the admin), and `rda_frontend_toolbar_nodes` (viewing from the front-end).
 
 How to find the menu (node) id:
 
@@ -57,6 +64,12 @@ How to find the menu (node) id:
 	
 How to filter the disallowed Toolbar nodes on the front-end:
 `
+/**
+ * Filter hidden Toolbar menus on the front-end.
+ *
+ * @param array $ids Toolbar menu IDs.
+ * @return array (maybe) filtered front-end Toolbar menu IDs.
+ */
 function hide_some_toolbar_menu( $ids ) {
 	$ids[] = 'SOMETHING';
 	return $ids;
@@ -64,19 +77,46 @@ function hide_some_toolbar_menu( $ids ) {
 add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 `
 
-Common plugin Toolbar menus and their ids:
-
-* <a href="http://wordpress.org/extend/plugins/jetpack/">JetPack by WordPress.com</a> (Notifications) - 'notes'
-* <a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a> - 'wpseo-menu'
-* <a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a> - 'w3tc'
+<strong>Common plugin Toolbar menus and their ids:</strong>
+<table style="width:100%;">
+	<tbody>
+		<tr>
+			<th>Plugin</th>
+			<th>Menu ID</th>
+		</tr>
+		<tr>
+			<td><a href="http://wordpress.org/extend/plugins/jetpack/">JetPack by WordPress.com</a> (Notifications)</td>
+			<td>'notes'</td>
+		</tr>
+		<tr>
+			<td><a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a></td>
+			<td>'wpseo-menu'</td>
+		</tr>
+		<tr>
+			<td><a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a></td>
+			<td>'w3tc'</td>
+		</tr>
+	</tbody>
+</table>
 
 == Screenshots ==
 
-1. The new 1.0 accesss options screen.
-
+1. The Dashboard Access Controls settings in the Settings > Reading screen.
 2. Allow users to access their profile settings (only).
+3. Optional login message.
 
 == Changelog ==
+
+= 1.1 =
+
+Enhancements:
+* Instantiate as a static instance for better modularity
+* Move Dashboard Access Controls settings to Settings > Reading
+* Add optional login message option
+* Add better settings sanitization
+
+Bug Fixes:
+* Remove unnecessarily stringent URL mask on the redirect URL option
 
 = 1.0 =
 

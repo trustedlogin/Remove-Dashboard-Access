@@ -5,10 +5,10 @@
 * Donate link: http://www.werdswords.com
 * Tags: dashboard, access, users, administration
 * Requires at least: 3.1
-* Tested up to: 3.5.1
-* Stable tag: 1.0
+* Tested up to: 4.0.0
+* Stable tag: 1.1
 
-This WordPress plugin limits user access to the dashboard based on whether users have a chosen capability. Disallowed users are redirected to a chosen URL.
+This WordPress plugin limits user access to the dashboard based on whether users have a specific role or chosen capability. Disallowed users are redirected to a chosen URL.
 
 #### New features include:
 
@@ -38,11 +38,15 @@ Users lacking the chosen capability or role will be redirected to the URL set in
 
 #### Capabilities
 
-* You can now limit Dashboard access to Admins or by selecting a capability. More information on WordPress' default roles and capabilities can be found here: http://codex.wordpress.org/Roles_and_Capabilities
+* You can limit Dashboard access to Admins only, Editors or above, Authors or above, or by selecting a capability. More information on WordPress' default roles and capabilities can be found here: http://codex.wordpress.org/Roles_and_Capabilities
 
 #### User Profile Access
 
-* You can now allow or disallow the ability for all users to edit their profiles in the Dashboard. Users lacking the chosen capability won't be able to access any other sections of the Dashboard.
+* You can optionally allow all users the ability to edit their profiles in the Dashboard. Users lacking the chosen capability won't be able to access any other sections of the Dashboard.
+
+#### Login Message
+
+* Supply a message to display on the login screen. Leaving this blank disables the message.
 
 #### Hiding other plugins/themes' Toolbar menus
 
@@ -55,6 +59,12 @@ This hides some built-in WordPress Toolbar menus by default, but can be extended
 	
 ##### How to filter the disallowed Toolbar nodes on the front-end:
 
+    /**
+     * Filter hidden Toolbar menus on the front-end.
+     *
+     * @param array $ids Toolbar menu IDs.
+     * @return array (maybe) filtered front-end Toolbar menu IDs.
+     */
 	function hide_some_toolbar_menu( $ids ) {
 		$ids[] = 'SOMETHING';
 		return $ids;
@@ -64,17 +74,30 @@ This hides some built-in WordPress Toolbar menus by default, but can be extended
 
 ##### Common plugin Toolbar menus and their ids:
 
-* <a href="http://wordpress.org/extend/plugins/jetpack/">JetPack by WordPress.com</a> (Notifications) - 'notes'
-* <a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a> - 'wpseo-menu'
-* <a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a> - 'w3tc'
+| Plugin | Menu ID |
+| ------ | ------- |
+| [http://wordpress.org/extend/plugins/jetpack/ Jetpack by WordPress.com] (notifications) | 'notes |
+| [http://wordpress.org/extend/plugins/wordpress-seo/ WordPress SEO by Yoast] | 'wpseo-menu' |
+| [http://wordpress.org/extend/plugins/w3-total-cache/ W3 Total Cache] | 'w3tc' |
 
 ## Screenshots
 
-1. The new 1.0 accesss options screen.
-
+1. The Dashboard Access Controls settings in the Settings > Reading screen.
 2. Allow users to access their profile settings (only).
+3. Optional login message.
 
 ## Changelog
+
+#### 1.1
+
+Enhancements:
+* Instantiate as a static instance for better modularity
+* Move Dashboard Access Controls settings to Settings > Reading
+* Add optional login message option
+* Add better settings sanitization
+
+Bug Fixes:
+* Remove unnecessarily stringent URL mask on the redirect URL option
 
 #### 1.0
 
