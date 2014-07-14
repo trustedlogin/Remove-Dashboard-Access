@@ -46,7 +46,7 @@ class RDA_Options {
 		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
 		// Set up options array on activation.
-//		register_activation_hook( __FILE__, array( $this, 'activate' ) );
+		register_activation_hook( __FILE__, array( $this, 'activate' ) );
 
 		$this->settings = array(
 			'access_switch'  => get_option( 'rda_access_switch', 'manage_options' ),
@@ -113,6 +113,7 @@ class RDA_Options {
 	 * @see $this->setup()
 	 */
 	public function settings() {
+		// Dashboard Access Controls section.
 		add_settings_section( 'rda_options', __( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'reading' );
 
 		// Settings.
@@ -147,7 +148,7 @@ class RDA_Options {
 			register_setting( 'reading', $id, array( $this, $sanitize_callback ) );
 		};
 
-		// Debug info.
+		// Debug info "setting".
 		if ( ! empty( $_GET['rda_debug'] ) ) {
 			add_settings_field( 'rda_debug_mode', __( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'reading', 'rda_options' );
 		}
@@ -206,7 +207,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Enable/Disable radio toggle display callback
+	 * Enable/Disable radio toggle display callback.
 	 *
 	 * @since 1.1
 	 * @access public
@@ -231,16 +232,26 @@ class RDA_Options {
 	 * @since 1.0
 	 * @access public
 	 *
-	 * @see $this->options_setup()
-	 *
-	 * @uses checked() Activates the checked attribute on the selected option.
-	 * @uses $this->caps_dropdown() Displays the capabilities dropdown paired with the second access switch radio option.
+	 * @see $this->caps_dropdown()
 	 */
 	public function access_switch_cb() {
 		echo '<a name="dashboard-access"></a>';
 
 		$switch = $this->settings['access_switch'];
 
+		/**
+		 * Filter the capability defaults for admins, editors, and authors.
+		 *
+		 * @since 1.1
+		 *
+		 * @param array $capabilities {
+		 *     Default capabilities for various roles.
+		 *
+		 *     @type string $admin  Capability to use for administrators only. Default 'manage_options'.
+		 *     @type string $editor Capability to use for admins + editors. Default 'edit_others_posts'.
+		 *     @type string $author Capability to use for admins + editors + authors. Default 'publish_posts'.
+		 * }
+		 */
 		$defaults = apply_filters( 'rda_default_caps_for_role', array(
 			'admin'  => 'manage_options',
 			'editor' => 'edit_others_posts',
@@ -271,8 +282,6 @@ class RDA_Options {
 	 * @access private
 	 *
 	 * @see $this->access_switch_cb()
-	 *
-	 * @uses global $wp_roles to derive an array of capabilities.
 	 */
 	private function _output_caps_dropdown() {
 		/** @global WP_Roles $wp_roles */
@@ -443,7 +452,14 @@ class RDA_Options {
 	 * @return string $this->settings['access_cap'] if set, otherwise, 'manage_options' (filterable).
 	 */
 	public function capability() {
-		return $this->settings['access_cap'];
+		/**
+		 * Filter the access capability.
+		 *
+		 * @since 1.1
+		 *
+		 * @param string $capability Capability needed to access the Dashboard.
+		 */
+		return apply_filters( 'rda_access_capability', $this->settings['access_cap'] );
 	}
 
 	/**
@@ -467,14 +483,12 @@ class RDA_Options {
 	}
 
 	/**
-	 * RDA Debug Mode output
+	 * Debug mode output.
 	 *
-	 * Displays a var_dump of the RDA options array on the options page.
+	 * When rda_debug=1 is passed via the query string, displays a table with all the raw
+	 * option values for debugging purposes.
 	 *
-	 * Use the 'rda_debug_mode' filter to enable it:
-	 * add_filter( 'rda_debug_mode', '__return_true' );
-	 *
-	 * @since 1.3
+	 * @since 1.1
 	 * @access public
 	 */
 	public function _debug_mode() {
