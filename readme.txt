@@ -114,6 +114,7 @@ Enhancements:
 * Move Dashboard Access Controls settings to Settings > Reading
 * Add optional login message option
 * Add better settings sanitization
+* New Filter: `rda_default_caps_for_role` - Filter default roles for Admins, Editors, and Authors
 
 Bug Fixes:
 * Remove unnecessarily stringent URL mask on the redirect URL option
