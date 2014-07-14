@@ -13,7 +13,7 @@ This plugin limits user access to the dashboard based on whether users have a ch
 * Limit Dashboard access to Administrators only, Admins + Editors, Admins + Editors + Authors, or limit by specific capability.
 * Choose your own redirect URL
 * Optionally allow user profile access
-* Optionall display a message on the login screen
+* Optionally display a message on the login screen
 * (<a href="http://wordpress.org/extend/plugins/remove-dashboard-access-for-non-admins/other_notes/">more info</a>)
 
 <strong>Contribute to RDA</strong>

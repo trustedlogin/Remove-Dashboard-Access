@@ -8,31 +8,40 @@
 * Tested up to: 4.0.0
 * Stable tag: 1.1
 
-This WordPress plugin limits user access to the dashboard based on whether users have a specific role or chosen capability. Disallowed users are redirected to a chosen URL.
+This WordPress plugin limits user access to the dashboard based on whether users have a chosen capability or role. Disallowed users are redirected to a chosen URL.
 
-#### New features include:
+#### Features:
 
-* Limit Dashboard access to Administrators only, or limit by specific capability.
-* Allow/disallow user profile access
+* Limit Dashboard access to Administrators only, Admins + Editors, Admins + Editors + Authors, or limit by specific capability.
 * Choose your own redirect URL
+* Optionally allow user profile access
+* Optionally display a message on the login screen
 * See **Other Notes** for more info
 
 A full list of capabilities and their associated roles can be found here: http://codex.wordpress.org/Roles_and_Capabilities
 
 #### Contribute to RDA
 
-This plugin is in active development <a href="https://github.com/DrewAPicture/remove-dashboard-access" target="_new">on GitHub</a>. If you'd like to contribute, pull requests are welcome!
+Pull requests are welcome!
 
 ## Installation
 
-1. Upload `remove-wp-dashboard-access.php` to the `/wp-content/plugins/` directory
-2. Activate the plugin through the 'Plugins' menu in WordPress
+1. Search 'Remove Dashboard Access' from the Install Plugins screen.
+2. Install plugin, click Activate.
 
 ## Frequently Asked Questions
 
 #### What happens to disallowed users who try to login to the Dashboard?
 
 Users lacking the chosen capability or role will be redirected to the URL set in Settings > Dashboard Access.
+
+### Why haven't you added an option to disable the WordPress Toolbar?
+
+The Toolbar contains certain important links (even for disallowed users) such as for accessing to the profile editor and/or logging out. Plus, there are many plugins out there for disabling the Toolbar if you really want to.
+
+### Can I disable the redirection/profile-editing controls without disabling the plugin?
+
+No. Disable the plugin if you don't wish to leverage the functionality.
 
 ## Other Notes (v1.0+)
 
