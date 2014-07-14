@@ -396,10 +396,7 @@ class RDA_Options {
 	 *                'rda_access_switch'.
 	 */
 	public function sanitize_access_cap( $option ) {
-		if ( empty( $option ) ) {
-			$option = get_option( 'rda_access_switch' );
-		}
-		return $option;
+		return empty( $option ) ? get_option( 'rda_access_switch' ) : $option;
 	}
 
 	/**
@@ -412,9 +409,7 @@ class RDA_Options {
 	 * @return string If empty, defaults to home_url(). Otherwise sanitized URL.
 	 */
 	public function sanitize_redirect_url( $option ) {
-		$option = empty( $option ) ? home_url() : esc_url_raw( $option );
-
-		return $option;
+		return empty( $option ) ? home_url() : esc_url_raw( $option );
 	}
 
 	/**
@@ -427,9 +422,7 @@ class RDA_Options {
 	 * @return bool Whether all users will be able to edit their profiles.
 	 */
 	public function sanitize_enable_profile( $option ) {
-		$option = empty( $option ) ? false : true;
-
-		return (bool) $option;
+		return (bool) empty( $option ) ? false : true;
 	}
 
 	/**
