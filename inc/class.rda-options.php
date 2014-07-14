@@ -176,11 +176,9 @@ class RDA_Options {
 		$switch = $this->settings['access_switch'];
 		?>
 		<p><label>
-				<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-				<?php _e( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ); ?>
-			</label>
-			<?php $this->_output_caps_dropdown(); ?>
-		</p>
+			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
+			<?php _e( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ); ?>
+		</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p>
 			<?php printf( __( 'You can find out more about specific %s in the Codex.', 'remove_dashboard_access' ),
 				sprintf( '<a href="%1$s" target="_new">%2$s</a>',
@@ -366,9 +364,7 @@ class RDA_Options {
 	 */
 	public function login_message_cb() {
 		?>
-		<p>
-			<input name="rda_login_message" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
-		</p>
+		<p><input name="rda_login_message" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" /></p>
 		<?php
 	}
 
