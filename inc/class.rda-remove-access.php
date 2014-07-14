@@ -104,10 +104,10 @@ class RDA_Remove_Access {
 	 *
 	 * @since 0.1
 	 *
-	 * @uses global $pagenow Used to determine the current page.
-	 * @uses wp_redirect() Used to redirect disallowed users to chosen URL.
+	 * @see wp_redirect() Used to redirect disallowed users to chosen URL.
 	 */
 	function dashboard_redirect() {
+		/** @global string $pagenow */
 		global $pagenow;
 		if ( 'profile.php' != $pagenow || ! $this->settings['enable_profile'] ) {
 			wp_redirect( $this->settings['redirect_url'] );
