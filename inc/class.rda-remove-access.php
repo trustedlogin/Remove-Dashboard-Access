@@ -1,17 +1,15 @@
 <?php
 /**
- * Class RDA_Remove_Access
+ * Remove Dashboard Access Class
  *
  * @since 1.0
- *
- * @package Remove_Dashboard_Access
  */
 
 if ( ! class_exists( 'RDA_Remove_Access' ) ) {
 class RDA_Remove_Access {
 
 	/**
-	 * @var $capability
+	 * @var string $capability
 	 *
 	 * String with capability passed from RDA_Options{}
 	 *
@@ -20,20 +18,13 @@ class RDA_Remove_Access {
 	var $capability;
 
 	/**
-	 * @var $settings 
+	 * @var array $settings
 	 *
 	 * Array of settings passed from RDA_Options{}
 	 *
 	 * @since 1.0
 	 */
 	var $settings = array();
-
-	/**
-	 * @var $instance
-	 *
-	 * @since 1.1
-	 */
-	static $instance;
 
 	/**
 	 * RDA Remove Access Init
@@ -44,10 +35,7 @@ class RDA_Remove_Access {
 	 * @param array $settings Settings array passed from RDA_Options instance.
 	 */
 	function __construct( $capability, $settings ) {
-
-		self::$instance = $this;
-
-		if ( ! $capability )
+		if ( empty( $capability ) )
 			return; // Bail
 		else
 			$this->capability = $capability;
@@ -58,7 +46,7 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Determine if user is allowed to access the Dashboard
+	 * Determine if user is allowed to access the Dashboard.
 	 *
 	 * @since 1.0
 	 *
@@ -67,28 +55,40 @@ class RDA_Remove_Access {
 	 */
 	function is_user_allowed() {
 		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) )
-			$this->bdth_hooks();
+			$this->lock_it_up();
 		else
 			return; // Bail
 	}
 
 	/**
-	 * "Batten down the hatches" Hooks
+	 * "Lock it up" Hooks.
 	 *
 	 * dashboard_redirect - Handles redirecting disallowed users.
-	 * hide_menus - Hides the admin menus with CSS (not ideal but will suffice).
+	 * hide_menus         - Hides the admin menus with CSS (not ideal but will suffice).
 	 * hide_toolbar_items - Hides various Toolbar items on front and back-end.
 	 *
 	 * @since 1.0
 	 */
-	function bdth_hooks() {
-		add_action( 'admin_init', array( $this, 'dashboard_redirect' ) );
-		add_action( 'admin_head', array( $this, 'hide_menus' ) );
-		add_action( 'admin_bar_menu', array( $this, 'hide_toolbar_items' ), 999 );			
+	function lock_it_up() {
+		add_action( 'admin_init',     array( $this, 'dashboard_redirect' ) );
+//		add_action( 'admin_head',     array( $this, 'hide_menus' ) );
+		add_action( 'admin_head',     array( $this, 'hide_other_menus' ) );
+		add_action( 'admin_bar_menu', array( $this, 'hide_toolbar_items' ), 999 );
+	}
+
+	public function hide_other_menus() {
+		$pages = array(
+			'index.php', 'edit.php', 'upload.php', 'edit-comments.php',
+			'edit.php?post_type=page', 'tools.php',
+		);
+
+		foreach ( $pages as $page ) {
+			remove_menu_page( $page );
+		}
 	}
 
 	/**
-	 * Dashboard Redirect
+	 * Dashboard Redirect.
 	 *
 	 * @since 0.1
 	 *
@@ -97,14 +97,14 @@ class RDA_Remove_Access {
 	 */
 	function dashboard_redirect() {
 		global $pagenow;
-		if ( 'profile.php' != $pagenow || $this->settings['enable_profile'] != 1 ) {
+		if ( 'profile.php' != $pagenow || ! $this->settings['enable_profile'] ) {
 			wp_redirect( $this->settings['redirect_url'] );
 			exit;
 		}
 	}
 
 	/**
-	 * Hide Admin Menus
+	 * Hide Admin Menus.
 	 *
 	 * @since 1.0
 	 *
@@ -112,6 +112,7 @@ class RDA_Remove_Access {
 	 * @return null
 	 */
 	function hide_menus() {
+
 		?>
 		<style type="text/css">
 		#adminmenuback, #adminmenuwrap {
@@ -127,15 +128,16 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Hide Toolbar Items
+	 * Hide Toolbar Items.
 	 *
 	 * @since 1.0
 	 *
 	 * @uses apply_filters() to make front-end and back-end Toolbar node arrays filterable.
-	 * @param global $wp_admin_bar For remove_node() method access.
+	 *
+	 * @param WP_Admin_Bar $wp_admin_bar For remove_node() method access.
 	 */
 	function hide_toolbar_items( $wp_admin_bar ) {
-		$edit_profile = $this->settings['enable_profile'] == 0 ? 'edit-profile' : '';
+		$edit_profile = ! $this->settings['enable_profile'] ? 'edit-profile' : '';
 		if ( is_admin() ) {
 			$ids = array( 'about', 'comments', 'new-content', $edit_profile );
 			$nodes = apply_filters( 'rda_toolbar_nodes', $ids );
