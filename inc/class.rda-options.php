@@ -45,6 +45,8 @@ class RDA_Options {
 	public function setup() {
 		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
+		$this->maybe_map_old_settings();
+
 		$this->settings = array(
 			'access_switch'  => get_option( 'rda_access_switch', 'manage_options' ),
 			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
@@ -65,16 +67,41 @@ class RDA_Options {
 	}
 
 	/**
-	 * Login Message option callback.
+	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
 	 *
 	 * @since 1.1
 	 * @access public
 	 */
-	public function output_login_message( $message ) {
-		if ( ! empty( $this->settings['login_message'] ) ) {
-			$message .= '<p class="message">' . esc_html( $this->settings['login_message'] ) . '</p>';
+	public function maybe_map_old_settings() {
+		// If the settings aren't there, bail.
+		if ( false == $old_settings = get_option( 'rda-settings' ) ) {
+			return;
 		}
-		return $message;
+
+		$new_settings = array();
+
+		if ( ! empty( $old_settings ) && is_array( $old_settings ) ) {
+			// Access Switch.
+			$new_settings['rda_access_switch'] = empty( $old_settings['access_switch'] ) ? 'manage_options' : $old_settings['access_switch'];
+
+			// Access Cap.
+			$new_settings['rda_access_cap'] = ( 'capability' == $new_settings['access_switch'] ) ? 'manage_options' : $new_settings['access_switch'];
+
+			// Redirect URL.
+			$new_settings['rda_redirect_url'] = empty( $old_settings['redirect_url'] ) ? home_url() : $old_settings['redirect_url'];
+
+			// Enable Profile.
+			$new_settings['rda_enable_profile'] = empty( $old_settings['enable_profile'] ) ? true : $old_settings['enable_profile'];
+
+			// Login Message.
+			$new_settings['rda_login_message'] = '';
+		}
+
+		foreach ( $new_settings as $key => $value ) {
+			update_option( $key, $value );
+		}
+
+		delete_option( 'rda-settings' );
 	}
 
 	/**
