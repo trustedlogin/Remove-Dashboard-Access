@@ -402,6 +402,19 @@ class RDA_Options {
 	}
 
 	/**
+	 * Login Message option callback.
+	 *
+	 * @since 1.1
+	 * @access public
+	 */
+	public function output_login_message( $message ) {
+		if ( ! empty( $this->settings['login_message'] ) ) {
+			$message .= '<p class="message">' . esc_html( $this->settings['login_message'] ) . '</p>';
+		}
+		return $message;
+	}
+
+	/**
 	 * Access Switch sanitize callback.
 	 *
 	 * @since 1.1

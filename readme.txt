@@ -99,6 +99,10 @@ add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 	</tbody>
 </table>
 
+<strong>Debug Mode</strong>
+
+To view debugging information on the Settings > Reading screen, visit yoursite.com/wp-admin/options-reading.php?rda_debug=1
+
 == Screenshots ==
 
 1. The Dashboard Access Controls settings in the Settings > Reading screen.
@@ -115,6 +119,7 @@ Enhancements:
 * Add optional login message option
 * Add better settings sanitization
 * New Filter: `rda_default_caps_for_role` - Filter default roles for Admins, Editors, and Authors
+* New Debug Mode
 
 Bug Fixes:
 * Remove unnecessarily stringent URL mask on the redirect URL option
