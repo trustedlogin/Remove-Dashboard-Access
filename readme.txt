@@ -78,26 +78,11 @@ add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 `
 
 <strong>Common plugin Toolbar menus and their ids:</strong>
-<table style="width:100%;">
-	<tbody>
-		<tr>
-			<th>Plugin</th>
-			<th>Menu ID</th>
-		</tr>
-		<tr>
-			<td><a href="http://wordpress.org/extend/plugins/jetpack/">JetPack by WordPress.com</a> (Notifications)</td>
-			<td>'notes'</td>
-		</tr>
-		<tr>
-			<td><a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a></td>
-			<td>'wpseo-menu'</td>
-		</tr>
-		<tr>
-			<td><a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a></td>
-			<td>'w3tc'</td>
-		</tr>
-	</tbody>
-</table>
+| Plugin | Menu ID |
+| ------ | ------- |
+| <a href="http://wordpress.org/extend/plugins/jetpack/">Jetpack by WordPress.com</a> (notifications) | 'notes |
+| <a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a> | 'wpseo-menu' |
+| <a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a> | 'w3tc' |
 
 <strong>Debug Mode</strong>
 
