@@ -470,7 +470,11 @@ class RDA_Options {
 	 * @return array $links Filtered links array.
 	 */
 	public function settings_link( $links, $file ) {
-		if ( 'remove-dashboard-access-for-non-admins/remove-dashboard-access.php' == $file ) {
+		// WordPress.org slug.
+		if ( 'remove-dashboard-access-for-non-admins/remove-dashboard-access.php' == $file
+			// GitHub slug
+			|| 'remove-dashboard-access/remove-dashboard-access' == $file
+		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
 				admin_url( 'options-reading.php#dashboard-access' ),
 				esc_html__( 'Settings', 'remove_dashboard_access' )
