@@ -33,7 +33,7 @@ class RDA_Options {
 	public function __construct() {
 		self::$instance = $this;
 
-		$this->setup();
+		self::$instance->setup();
 	}
 
 	/**
