@@ -19,6 +19,10 @@ require_once( dirname( __FILE__ ) . '/inc/class.rda-remove-access.php' );
 if ( class_exists( 'RDA_Options' ) ) {
 	$load = new RDA_Options;
 
+
+	// Set up options array on activation.
+	register_activation_hook( __FILE__, array( $load, 'activate' ) );
+
 	// Run it
 	if ( class_exists( 'RDA_Remove_Access' ) ) {
 		$access = new RDA_Remove_Access( $load->capability(), $load->settings );

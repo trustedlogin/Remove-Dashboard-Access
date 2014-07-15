@@ -45,9 +45,6 @@ class RDA_Options {
 	public function setup() {
 		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 
-		// Set up options array on activation.
-		register_activation_hook( __FILE__, array( $this, 'activate' ) );
-
 		$this->settings = array(
 			'access_switch'  => get_option( 'rda_access_switch', 'manage_options' ),
 			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
