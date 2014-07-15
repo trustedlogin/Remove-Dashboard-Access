@@ -6,7 +6,7 @@ Requires at least: 3.1
 Tested up to: 4.0
 Stable tag: 1.1
 
-This plugin limits user access to the dashboard based on whether users have a chosen capability or role. Disallowed users are redirected to a chosen URL.
+Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL.
 
 == Description ==
 
