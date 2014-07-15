@@ -58,7 +58,7 @@ class RDA_Options {
 		add_action( 'admin_head-options-reading.php', array( $this, 'access_switch_js' ) );
 
 		// Settings link in plugins list.
-		add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), array( $this, 'settings_link' ) );
+		add_filter( 'plugin_action_links', array( $this, 'settings_link' ), 10, 2 );
 
 		// Login message.
 		add_filter( 'login_message', array( $this, 'output_login_message' ) );
@@ -469,14 +469,14 @@ class RDA_Options {
 	 * @param array $links Row links array to filter.
 	 * @return array $links Filtered links array.
 	 */
-	public function settings_link( $links ) {
-		return array_merge(
-			array( 'settings' => sprintf(
-				'<a href="%1$s">%2$s</a>',
-				esc_url( admin_url( 'options-reading.php#dashboard-access' ) ),
-				esc_attr( __( 'Settings', 'remove_dashboard_access' ) )
-			) ), $links
-		);
+	public function settings_link( $links, $file ) {
+		if ( 'remove-dashboard-access-for-non-admins/remove-dashboard-access.php' == $file ) {
+			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
+				admin_url( 'options-reading.php#dashboard-access' ),
+				esc_html__( 'Settings', 'remove_dashboard_access' )
+			) );
+		}
+		return $links;
 	}
 
 	/**
