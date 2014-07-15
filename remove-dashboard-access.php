@@ -9,6 +9,11 @@
  * License: GPLv2
 */
 
+// Bail if called directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 // RDA_Options Class
 require_once( dirname( __FILE__ ) . '/inc/class.rda-options.php' );
 
@@ -18,7 +23,6 @@ require_once( dirname( __FILE__ ) . '/inc/class.rda-remove-access.php' );
 // Load options instance
 if ( class_exists( 'RDA_Options' ) ) {
 	$load = new RDA_Options;
-
 
 	// Set up options array on activation.
 	register_activation_hook( __FILE__, array( $load, 'activate' ) );
