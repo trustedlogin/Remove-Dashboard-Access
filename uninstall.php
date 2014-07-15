@@ -12,6 +12,6 @@ $settings = array(
 	'rda_login_message'
 );
 
-foreach ( $settings as $key => $value ) {
-	delete_option( $key );
+foreach ( $settings as $setting ) {
+	delete_option( $setting );
 }
