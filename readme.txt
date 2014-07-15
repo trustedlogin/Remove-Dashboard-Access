@@ -4,7 +4,7 @@ Donate link: http://www.werdswords.com
 Tags: dashboard, access, users, administration
 Requires at least: 3.1
 Tested up to: 4.0
-Stable tag: 1.1
+Stable tag: 1.2
 
 Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL.
 
@@ -95,6 +95,15 @@ To view debugging information on the Settings > Reading screen, visit yoursite.c
 3. Optional login message.
 
 == Changelog ==
+
+= 1.2 =
+
+Enhancements:
+* Full multisite support, including the ability to choose Multisite-specific capabilities.
+* More complete filter documentation
+* New filter: `rda_capabilities_list` for filtering the capabilities drop-down list
+* New filter: `rda_login_message` for filtering the login message
+* New filter:
 
 = 1.1 =
 
