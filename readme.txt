@@ -97,11 +97,13 @@ To view debugging information on the Settings > Reading screen, visit yoursite.c
 = 1.1.1 =
 
 Bug Fix:
+
 * Move options back to Settings > Dashboard Access screen to resolve conflict with page_on_front UI.
 
 = 1.1 =
 
 Enhancements:
+
 * Instantiate as a static instance for better modularity
 * Move Dashboard Access Controls settings to Settings > Dashboard Access
 * Add optional login message option
@@ -110,6 +112,7 @@ Enhancements:
 * New Debug Mode
 
 Bug Fixes:
+
 * Remove unnecessarily stringent URL mask on the redirect URL option
 
 = 1.0 =
