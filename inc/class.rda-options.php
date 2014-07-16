@@ -56,8 +56,9 @@ class RDA_Options {
 		);
 
 		// Settings.
-		add_action( 'admin_init',                     array( $this, 'settings'         ) );
-		add_action( 'admin_head-options-reading.php', array( $this, 'access_switch_js' ) );
+		add_action( 'admin_menu',                                array( $this, 'options_page' ) );
+		add_action( 'admin_init',                                array( $this, 'settings'         ) );
+		add_action( 'admin_head-settings_page_dashboard-access', array( $this, 'access_switch_js' ) );
 
 		// Settings link in plugins list.
 		add_filter( 'plugin_action_links', array( $this, 'settings_link' ), 10, 2 );
@@ -138,7 +139,7 @@ class RDA_Options {
 	 */
 	public function settings() {
 		// Dashboard Access Controls section.
-		add_settings_section( 'rda_options', __( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'reading' );
+		add_settings_section( 'rda_options', __( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'dashboard-access' );
 
 		// Settings.
 		$sets = array(
@@ -165,16 +166,16 @@ class RDA_Options {
 		);
 
 		foreach ( $sets as $id => $settings ) {
-			add_settings_field( $id, $settings['label'], array( $this, $settings['callback'] ), 'reading', 'rda_options' );
+			add_settings_field( $id, $settings['label'], array( $this, $settings['callback'] ), 'dashboard-access', 'rda_options' );
 
 			// Pretty lame that we need separate sanitize callbacks for everything.
 			$sanitize_callback = str_replace( 'rda', 'sanitize', $id );
-			register_setting( 'reading', $id, array( $this, $sanitize_callback ) );
+			register_setting( 'dashboard-access', $id, array( $this, $sanitize_callback ) );
 		};
 
 		// Debug info "setting".
 		if ( ! empty( $_GET['rda_debug'] ) ) {
-			add_settings_field( 'rda_debug_mode', __( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'reading', 'rda_options' );
+			add_settings_field( 'rda_debug_mode', __( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
 		}
 
 	}
@@ -530,10 +531,10 @@ class RDA_Options {
 		// WordPress.org slug.
 		if ( 'remove-dashboard-access-for-non-admins/remove-dashboard-access.php' == $file
 			// GitHub slug
-			|| 'remove-dashboard-access/remove-dashboard-access' == $file
+			|| 'remove-dashboard-access/remove-dashboard-access.php' == $file
 		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
-				admin_url( 'options-reading.php#dashboard-access' ),
+				admin_url( 'options-general.php?page=dashboard-access' ),
 				esc_html__( 'Settings', 'remove_dashboard_access' )
 			) );
 		}
