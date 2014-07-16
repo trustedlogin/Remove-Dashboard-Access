@@ -78,38 +78,32 @@ add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 `
 
 <strong>Common plugin Toolbar menus and their ids:</strong>
-| Plugin | Menu ID |
-| ------ | ------- |
-| <a href="http://wordpress.org/extend/plugins/jetpack/">Jetpack by WordPress.com</a> (notifications) | 'notes |
-| <a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a> | 'wpseo-menu' |
-| <a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a> | 'w3tc' |
+| <a href="http://wordpress.org/extend/plugins/jetpack/">Jetpack by WordPress.com</a> (notifications): 'notes
+| <a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a>: 'wpseo-menu'
+| <a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a>: 'w3tc'
 
 <strong>Debug Mode</strong>
 
-To view debugging information on the Settings > Reading screen, visit yoursite.com/wp-admin/options-reading.php?rda_debug=1
+To view debugging information on the Settings > Reading screen, visit yoursite.com/options-general.php?page=dashboard-access&rda_debug=1
 
 == Screenshots ==
 
-1. The Dashboard Access Controls settings in the Settings > Reading screen.
+1. The Dashboard Access Controls settings in the Settings > Dashboard Access screen.
 2. Allow users to access their profile settings (only).
 3. Optional login message.
 
 == Changelog ==
 
-= 1.2 =
+= 1.1.1 =
 
-Enhancements:
-* Full multisite support, including the ability to choose Multisite-specific capabilities.
-* More complete filter documentation
-* New filter: `rda_capabilities_list` for filtering the capabilities drop-down list
-* New filter: `rda_login_message` for filtering the login message
-* New filter:
+Bug Fix:
+* Move options back to Settings > Dashboard Access screen to resolve conflict with page_on_front UI.
 
 = 1.1 =
 
 Enhancements:
 * Instantiate as a static instance for better modularity
-* Move Dashboard Access Controls settings to Settings > Reading
+* Move Dashboard Access Controls settings to Settings > Dashboard Access
 * Add optional login message option
 * Add better settings sanitization
 * New Filter: `rda_default_caps_for_role` - Filter default roles for Admins, Editors, and Authors

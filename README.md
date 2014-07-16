@@ -89,13 +89,22 @@ add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 | [WordPress SEO by Yoast](http://wordpress.org/extend/plugins/wordpress-seo/) | 'wpseo-menu' |
 | [W3 Total Cache](http://wordpress.org/extend/plugins/w3-total-cache/) | 'w3tc' |
 
+#### Debug Mode
+
+* To view debugging information on the Settings > Reading screen, visit yoursite.com/options-general.php?page=dashboard-access&rda_debug=1
+
 ## Changelog
+
+#### 1.1.1
+
+Bug Fix:
+* Move options back to Settings > Dashboard Access screen to resolve conflict with page_on_front UI.
 
 #### 1.1
 
 Enhancements:
 * Instantiate as a static instance for better modularity
-* Move Dashboard Access Controls settings to Settings > Reading
+* Move Dashboard Access Controls settings to Settings > Dashboard Access
 * Add optional login message option
 * Add better settings sanitization
 * New Filter: `rda_default_caps_for_role` - Filter default roles for Admins, Editors, and Authors
