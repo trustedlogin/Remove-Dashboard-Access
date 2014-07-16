@@ -130,6 +130,46 @@ class RDA_Options {
 	}
 
 	/**
+	 * Options page: Remove Access
+	 *
+	 * @since 1.1.1
+	 *
+	 * @uses add_options_page() to add a sub-menu under 'Settings'
+	 */
+	function options_page() {
+		add_options_page(
+			__( 'Dashboard Access Settings', 'remove_dashboard_access' ),
+			__( 'Dashboard Access', 'remove_dashboard_access' ),
+			'manage_options',
+			'dashboard-access',
+			array( $this, 'options_page_cb' )
+		);
+	}
+
+	/**
+	 * Options page: callback
+	 *
+	 * Outputs the form for the 'Remove Access' submenu
+	 *
+	 * @since 1.1.1
+	 */
+	function options_page_cb() {
+		?>
+		<div class="wrap">
+			<?php screen_icon(); ?>
+			<h2><?php _e( 'Dashboard Access Settings', 'remove_dashboard_access' ); ?></h2>
+			<form action="options.php" method="POST" id="rda-options-form">
+				<?php
+					settings_fields( 'dashboard-access' );
+					do_settings_sections( 'dashboard-access' );
+					submit_button();
+				?>
+			</form>
+		</div><!-- .wrap -->
+		<?php
+	}
+
+	/**
 	 * Register settings and settings sections.
 	 *
 	 * @since 1.0
