@@ -4,7 +4,7 @@
 jQuery( document ).ready( function( $ ) {
 	var section = $( '.form-table' ),
 		capType = section.find( 'input:radio[value="capability"]' ),
-		selects = section.find( 'select' ),
+		selects = section.find( 'select[name="rda_access_cap"]' ),
 		check_disabled = function() {
 			selects.prop( 'disabled', ! capType.prop( 'checked' ) );
 		};
