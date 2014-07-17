@@ -145,9 +145,25 @@ class RDA_Remove_Access {
 		$edit_profile = ! $this->settings['enable_profile'] ? 'edit-profile' : '';
 		if ( is_admin() ) {
 			$ids = array( 'about', 'comments', 'new-content', $edit_profile );
+
+			/**
+			 * Filter the list of Toolbar menus to remove in the admin.
+			 *
+			 * @since 1.0
+			 *
+			 * @param array $nodes List of Toolbar "nodes", or menus, to remove in the admin.
+			 */
 			$nodes = apply_filters( 'rda_toolbar_nodes', $ids );
 		} else {
 			$ids = array( 'about', 'dashboard', 'comments', 'new-content', 'edit', $edit_profile );
+
+			/**
+			 * Filter the list of Toolbar menus to remove in the front-end.
+			 *
+			 * @since 1.0
+			 *
+			 * @param array $nodes List of Toolbar "nodes", or menus, to remove in the front-end.
+			 */
 			$nodes = apply_filters( 'rda_frontend_toolbar_nodes', $ids );
 		}
 		foreach ( $nodes as $id ) {
