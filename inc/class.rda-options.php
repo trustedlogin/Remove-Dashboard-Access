@@ -378,6 +378,15 @@ class RDA_Options {
 		// Alphabetize for nicer display.
 		ksort( $capabilities );
 
+		/**
+		 * Filter the capabilities list prior to outputting the drop-down.
+		 *
+		 * @since 1.2
+		 *
+		 * @param array $capabilities List of capabilities.
+		 */
+		$capabilities = apply_filters( 'rda_capabilities_list', $capabilities );
+
 		if ( ! empty( $capabilities ) ) {
 			// Start <select> element.
 			print( '<select name="rda_access_cap">' );
