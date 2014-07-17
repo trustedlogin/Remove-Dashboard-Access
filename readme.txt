@@ -94,15 +94,25 @@ To view debugging information on the Settings > Reading screen, visit yoursite.c
 
 == Changelog ==
 
+= 1.2 =
+
+<strong>Enhancements:</strong>
+
+* Full multisite support, including the ability to choose Multisite-specific capabilities.
+* More complete filter documentation
+* New filter: `rda_capabilities_list` for filtering the capabilities drop-down list
+* New filter: `rda_login_message` for filtering the login message
+* New filter: `rda_menu_pages_to_remove` for filter the list of menu pages to remove
+
 = 1.1.1 =
 
-Bug Fix:
+<strong>Bug Fix:</strong>
 
 * Move options back to Settings > Dashboard Access screen to resolve conflict with page_on_front UI.
 
 = 1.1 =
 
-Enhancements:
+<strong>Enhancements:</strong>
 
 * Instantiate as a static instance for better modularity
 * Move Dashboard Access Controls settings to Settings > Dashboard Access
@@ -111,7 +121,7 @@ Enhancements:
 * New Filter: `rda_default_caps_for_role` - Filter default roles for Admins, Editors, and Authors
 * New Debug Mode
 
-Bug Fixes:
+<strong>Bug Fixes:</strong>
 
 * Remove unnecessarily stringent URL mask on the redirect URL option
 

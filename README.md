@@ -95,6 +95,15 @@ add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 
 ## Changelog
 
+#### 1.2
+
+Enhancements:
+* Full multisite support, including the ability to choose Multisite-specific capabilities.
+* More complete filter documentation
+* New filter: `rda_capabilities_list` for filtering the capabilities drop-down list
+* New filter: `rda_login_message` for filtering the login message
+* New filter: `rda_menu_pages_to_remove` for filter the list of menu pages to remove
+
 #### 1.1.1
 
 Bug Fix:
