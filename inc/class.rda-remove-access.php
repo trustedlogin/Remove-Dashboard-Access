@@ -86,7 +86,7 @@ class RDA_Remove_Access {
 		/** @global array $menu */
 		global $menu;
 
-		$menu_ids = array();
+		$menu_pages = array();
 
 		// Gather menu IDs (minus profile.php).
 		foreach ( $menu as $index => $values ) {
@@ -95,10 +95,26 @@ class RDA_Remove_Access {
 					continue;
 				}
 
-				// Remove menu pages.
-				remove_menu_page( $values[2] );
+				$menu_pages[] = $values[2];
 			}
 		}
+
+		/**
+		 * Filter the list of menu pages to remove.
+		 *
+		 * Does not include profile.php
+		 *
+		 * @since 1.2
+		 *
+		 * @param array $menu_pages List of menu pages to remove.
+		 */
+		$menu_pages = apply_filters( 'rda_menu_pages_to_remove', $menu_pages );
+
+		// Remove menu pages.
+		foreach ( $menu_pages as $menu_page ) {
+			remove_menu_page( $menu_page );
+		}
+
 	}
 
 	/**
