@@ -43,7 +43,7 @@ class RDA_Remove_Access {
 
 		$this->settings = $settings;
 
-		add_action( 'plugins_loaded', array( $this, 'is_user_allowed' ) );
+		add_action( 'after_setup_theme', array( $this, 'is_user_allowed' ) );
 	}
 
 	/**
