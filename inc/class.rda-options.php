@@ -378,15 +378,6 @@ class RDA_Options {
 		// Alphabetize for nicer display.
 		ksort( $capabilities );
 
-		/**
-		 * Filter the capabilities list prior to outputting the drop-down.
-		 *
-		 * @since 1.2
-		 *
-		 * @param array $capabilities List of capabilities.
-		 */
-		$capabilities = apply_filters( 'rda_capabilities_list', $capabilities );
-
 		if ( ! empty( $capabilities ) ) {
 			// Start <select> element.
 			print( '<select name="rda_access_cap">' );
@@ -458,15 +449,6 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function output_login_message( $message ) {
-		/**
-		 * Filter the login message prior to output.
-		 *
-		 * @since 1.2
-		 *
-		 * @param string $login_message Login message. Will be passed through {@see esc_html()} on output.
-		 */
-		$this->settings['login_message'] = apply_filters( 'rda_login_message', $this->settings['login_message'] );
-
 		if ( ! empty( $this->settings['login_message'] ) ) {
 			$message .= '<p class="message">' . esc_html( $this->settings['login_message'] ) . '</p>';
 		}

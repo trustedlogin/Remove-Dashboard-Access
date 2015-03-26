@@ -3,15 +3,15 @@
 
 * Contributors: DrewAPicture
 * Tags: dashboard, access, users, administration
-* Requires at least: 3.1
-* Tested up to: 4.0
-* Stable tag: 1.1.1
+* Requires at least: 3.1.0
+* Tested up to: 4.1.1
+* Stable tag: 1.1.3
 
 This WordPress plugin limits user access to the dashboard based on whether users have a chosen capability or role. Disallowed users are redirected to a chosen URL.
 
 #### Features:
 
-* Limit Dashboard access to Administrators only, Admins + Editors, Admins + Editors + Authors, or limit by specific capability.
+* Limit Dashboard access to admins only, admins + editors, admins + editors + authors, or limit by specific capability.
 * Choose your own redirect URL
 * Optionally allow user profile access
 * Optionally display a message on the login screen
@@ -95,14 +95,14 @@ add_filter( 'rda_frontend_toolbar_nodes', 'hide_some_toolbar_menu' );
 
 ## Changelog
 
-#### 1.2
+#### 1.1.3
 
-Enhancements:
-* Full multisite support, including the ability to choose Multisite-specific capabilities.
-* More complete filter documentation
-* New filter: `rda_capabilities_list` for filtering the capabilities drop-down list
-* New filter: `rda_login_message` for filtering the login message
-* New filter: `rda_menu_pages_to_remove` for filter the list of menu pages to remove
+* Fixed a compatibility issue with bbPress and the media grid view.
+
+#### 1.1.2
+
+* Bump tested-up-to to 4.1.0
+* Miscellaneous readme changes.
 
 #### 1.1.1
 

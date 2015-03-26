@@ -30,6 +30,7 @@ class RDA_Remove_Access {
 	 * RDA Remove Access Init
 	 *
 	 * @since 1.0
+	 * @since 1.1.3 Moved `is_user_allowed()` to the {@see 'init'} hook.
 	 *
 	 * @param string $capability Capability passed from RDA_Options instance.
 	 * @param array $settings Settings array passed from RDA_Options instance.
@@ -43,7 +44,7 @@ class RDA_Remove_Access {
 
 		$this->settings = $settings;
 
-		add_action( 'plugins_loaded', array( $this, 'is_user_allowed' ) );
+		add_action( 'init', array( $this, 'is_user_allowed' ) );
 	}
 
 	/**
@@ -86,7 +87,7 @@ class RDA_Remove_Access {
 		/** @global array $menu */
 		global $menu;
 
-		$menu_pages = array();
+		$menu_ids = array();
 
 		// Gather menu IDs (minus profile.php).
 		foreach ( $menu as $index => $values ) {
@@ -95,26 +96,10 @@ class RDA_Remove_Access {
 					continue;
 				}
 
-				$menu_pages[] = $values[2];
+				// Remove menu pages.
+				remove_menu_page( $values[2] );
 			}
 		}
-
-		/**
-		 * Filter the list of menu pages to remove.
-		 *
-		 * Does not include profile.php
-		 *
-		 * @since 1.2
-		 *
-		 * @param array $menu_pages List of menu pages to remove.
-		 */
-		$menu_pages = apply_filters( 'rda_menu_pages_to_remove', $menu_pages );
-
-		// Remove menu pages.
-		foreach ( $menu_pages as $menu_page ) {
-			remove_menu_page( $menu_page );
-		}
-
 	}
 
 	/**
@@ -145,25 +130,9 @@ class RDA_Remove_Access {
 		$edit_profile = ! $this->settings['enable_profile'] ? 'edit-profile' : '';
 		if ( is_admin() ) {
 			$ids = array( 'about', 'comments', 'new-content', $edit_profile );
-
-			/**
-			 * Filter the list of Toolbar menus to remove in the admin.
-			 *
-			 * @since 1.0
-			 *
-			 * @param array $nodes List of Toolbar "nodes", or menus, to remove in the admin.
-			 */
 			$nodes = apply_filters( 'rda_toolbar_nodes', $ids );
 		} else {
 			$ids = array( 'about', 'dashboard', 'comments', 'new-content', 'edit', $edit_profile );
-
-			/**
-			 * Filter the list of Toolbar menus to remove in the front-end.
-			 *
-			 * @since 1.0
-			 *
-			 * @param array $nodes List of Toolbar "nodes", or menus, to remove in the front-end.
-			 */
 			$nodes = apply_filters( 'rda_frontend_toolbar_nodes', $ids );
 		}
 		foreach ( $nodes as $id ) {

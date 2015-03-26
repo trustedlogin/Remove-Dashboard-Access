@@ -3,7 +3,7 @@
  * Plugin Name: Remove Dashboard Access
  * Plugin URI: http://www.werdswords.com
  * Description: Removes Dashboard access for certain users based on capability.
- * Version: 1.1.1
+ * Version: 1.1.3
  * Author: Drew Jaynes (DrewAPicture)
  * Author URI: http://www.drewapicture.com
  * License: GPLv2
