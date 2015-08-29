@@ -27,7 +27,7 @@ if ( class_exists( 'RDA_Options' ) ) {
 	// Set up options array on activation.
 	register_activation_hook( __FILE__, array( $load, 'activate' ) );
 
-	// Run it
+	// Run it.
 	if ( class_exists( 'RDA_Remove_Access' ) ) {
 		$access = new RDA_Remove_Access( $load->capability(), $load->settings );
 	}
