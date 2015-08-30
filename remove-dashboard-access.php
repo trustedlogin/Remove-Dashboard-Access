@@ -5,7 +5,7 @@
  * Description: Removes Dashboard access for certain users based on capability.
  * Version: 1.1.3
  * Author: Drew Jaynes (DrewAPicture)
- * Author URI: http://www.drewapicture.com
+ * Author URI: http://werdswords.com
  * License: GPLv2
 */
 
