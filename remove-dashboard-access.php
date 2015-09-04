@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// RDA_Options Class.
+/** RDA_Options Class */
 require_once( dirname( __FILE__ ) . '/inc/class.rda-options.php' );
 
 // RDA_Remove_Access Class.
