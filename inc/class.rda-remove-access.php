@@ -6,6 +6,11 @@
  */
 
 if ( ! class_exists( 'RDA_Remove_Access' ) ) {
+/**
+ * Class used to remove access to the admin back-end.
+ *
+ * @since 1.0
+ */
 class RDA_Remove_Access {
 
 	/**
