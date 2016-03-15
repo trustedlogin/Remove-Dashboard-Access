@@ -1,0 +1,16 @@
+{
+    "name": "drewapicture/remove-dashboard-access",
+    "description": "Removes WordPress dashboard access based on capabilities",
+    "keywords": ["wordpress", "dashboard"],
+    "homepage": "http://werdswords.com/my-plugins/",
+    "authors": [
+        {
+            "name": "Drew Jaynes",
+            "homepage": "http://werdswords.com/"
+        }
+    ],
+    "type": "wordpress-plugin",
+    "require": {
+        "composer/installers": "~1.0"
+    }
+}
