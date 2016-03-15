@@ -1,0 +1,22 @@
+# Grunt aliases
+---
+# Checktextdomain and makepot task(s)
+'bumpit':
+- 'replace'
+# Checktextdomain and makepot task(s)
+'build:i18n':
+- 'checktextdomain'
+- 'makepot'
+- 'newer:potomo'
+# Build everything
+build:
+- 'clean'
+- 'copy'
+- 'compress'
+# CSS minification
+style:
+- 'cssmin'
+# Default task
+default:
+- 'makepot'
+
