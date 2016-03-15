@@ -1,0 +1,12 @@
+# Items to ignore when downloading a zip
+
+.gitattributes export-ignore
+.travis.yml export-ignore
+/bin/ export-ignore
+composer.json export-ignore
+/grunt/ export-ignore
+Gruntfile.js export-ignore
+package.json export-ignore
+phpunit.xml export-ignore
+README.md export-ignore
+/tests/ export-ignore
