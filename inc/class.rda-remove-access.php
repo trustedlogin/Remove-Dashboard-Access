@@ -53,19 +53,19 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Determine if user is allowed to access the Dashboard.
+	 * Determine if the current user is allowed to access the admin back end.
 	 *
 	 * @since 1.0
 	 *
 	 * @uses current_user_can() Checks whether the current user has the specified capability.
-	 * @return null Bail if the current user has the requisite capability.
+	 * @return bool False if the current user lacks the requisite capbility. True otherwise.
 	 */
 	function is_user_allowed() {
 		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) ) {
 			$this->lock_it_up();
-		} else {
-			return; // Bail
+			return false;
 		}
+		return true; // Bail.
 	}
 
 	/**
