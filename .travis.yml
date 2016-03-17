@@ -73,15 +73,7 @@ before_script:
 
 script:
   - cd $TRAVIS_BUILD_DIR
-  - |
-    if [[ "$TRAVIS_PHP_VERSION" == "5.6" && "$WP_VERSION" == "master" && "$WP_MULTISITE" == "0" ]] ; then
-        phpunit --coverage-clover=coverage.xml
-    else
-        phpunit
-    fi
-
-after_success:
-  - bash <(curl -s https://codecov.io/bash) || echo "Codecov did not collect coverage reports"
+  - | phpunit
 
 git:
   depth: 1
