@@ -73,7 +73,7 @@ before_script:
 
 script:
   - cd $TRAVIS_BUILD_DIR
-  - | phpunit
+  - phpunit
 
 git:
   depth: 1
