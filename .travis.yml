@@ -15,6 +15,9 @@ env:
     - WP_VERSION=4.2 WP_MULTISITE=0
 
 matrix:
+  exclude:
+    - php: 7.0
+      env: WP_VERSION=4.2
   allow_failures:
     - php: hhvm
 
