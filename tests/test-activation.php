@@ -1,5 +1,8 @@
 <?php
 /**
+ * Tests settings set upon activation of the plugin
+ *
+ * @since 1.2.0
  * @covers RDA_Options::activate()
  * @group activation
  */

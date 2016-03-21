@@ -1,5 +1,8 @@
 <?php
 /**
+ * Tests methods leveraging cabilities
+ *
+ * @since 1.2.0
  * @covers RDA_Remove_Access::is_user_allowed()
  * @group capabilities
  */
