@@ -9,15 +9,6 @@
 class RDA_Test_Toolbar extends WP_UnitTestCase {
 
 	/**
-	 * Admin bar instance.
-	 *
-	 * @since 1.2.0
-	 * @access protected
-	 * @var WP_Admin_Bar $wp_admin_bar
-	 */
-	protected $wp_admin_bar;
-
-	/**
 	 * @since 1.2.0
 	 */
 	public function setUp() {
