@@ -62,7 +62,9 @@ class RDA_Remove_Access {
 	 */
 	function is_user_allowed() {
 		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) ) {
+			// Remove access.
 			$this->lock_it_up();
+
 			return false;
 		}
 		return true; // Bail.
@@ -71,9 +73,9 @@ class RDA_Remove_Access {
 	/**
 	 * "Lock it up" Hooks.
 	 *
-	 * dashboard_redirect - Handles redirecting disallowed users.
-	 * hide_menus         - Hides the admin menus.
-	 * hide_toolbar_items - Hides various Toolbar items on front and back-end.
+	 * @see dashboard_redirect() Handles redirecting disallowed users.
+	 * @see hide_menus()         Hides the admin menus.
+	 * @see hide_toolbar_items() Hides various Toolbar items on front and back-end.
 	 *
 	 * @since 1.0
 	 */
