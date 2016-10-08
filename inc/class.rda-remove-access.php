@@ -76,6 +76,7 @@ class RDA_Remove_Access {
 	 * @see dashboard_redirect() Handles redirecting disallowed users.
 	 * @see hide_menus()         Hides the admin menus.
 	 * @see hide_toolbar_items() Hides various Toolbar items on front and back-end.
+	 * @see show_admin_bar()     Hides the top bar from the frontend
 	 *
 	 * @since 1.0
 	 */
@@ -83,6 +84,7 @@ class RDA_Remove_Access {
 		add_action( 'admin_init',     array( $this, 'dashboard_redirect' ) );
 		add_action( 'admin_head',     array( $this, 'hide_menus' ) );
 		add_action( 'admin_bar_menu', array( $this, 'hide_toolbar_items' ), 999 );
+		add_filter('show_admin_bar', '__return_false');
 	}
 
 	/**
