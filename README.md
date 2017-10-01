@@ -1,3 +1,8 @@
+[![WordPress Plugin Version](https://img.shields.io/wordpress/plugin/v/remove-dashboard-access-for-non-admins.svg?style=flat-square)](https://wordpress.org/plugins/remove-dashboard-access-for-non-admins/)
+[![License](https://img.shields.io/badge/license-GPL_v2%2B-blue.svg?style=flat-square)](http://opensource.org/licenses/GPL-2.0)
+[![WordPress Tested](https://img.shields.io/wordpress/v/remove-dashboard-access-for-non-admins.svg?style=flat-square)](https://wordpress.org/plugins/remove-dashboard-access-for-non-admins/)
+[![Build Status](https://img.shields.io/travis/DrewAPicture/Remove-Dashboard-Access/develop.svg?style=flat-square)](https://travis-ci.org/DrewAPicture/Remove-Dashboard-Access)
+
 # Remove Dashboard Access
 ##### (Remove Dashboard Access for Non-Admins)
 
