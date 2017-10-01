@@ -22,6 +22,11 @@ matrix:
       env: WP_VERSION=trunk
     - php: 5.3
       dist: precise
+  exclude:
+    - php: 7.1
+    - env: WP_VERSION=4.5 WP_MULTISITE=0
+    - php: 7.1
+    - env: WP_VERSION=4.6 WP_MULTISITE=0
 
 before_script:
   - |
