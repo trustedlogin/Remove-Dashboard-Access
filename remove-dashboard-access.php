@@ -7,7 +7,7 @@
  * Author: Drew Jaynes (DrewAPicture)
  * Author URI: http://werdswords.com
  * License: GPLv2
- * Text Domain: remove_dashboard_access
+ * Text Domain: remove-dashboard-access
 */
 
 // Bail if called directly.
