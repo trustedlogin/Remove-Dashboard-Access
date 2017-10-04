@@ -88,8 +88,6 @@ class RDA_Remove_Access {
 		/** @global array $menu */
 		global $menu;
 
-		$menu_ids = array();
-
 		if ( ! empty( $menu ) && is_array( $menu ) ) {
 			// Gather menu IDs (minus profile.php).
 			foreach ( $menu as $index => $values ) {
@@ -113,7 +111,7 @@ class RDA_Remove_Access {
 		/** @global string $pagenow */
 		global $pagenow;
 
-		if ( 'profile.php' != $pagenow || ! $this->settings['enable_profile'] ) {
+		if ( 'profile.php' !== $pagenow || ! $this->settings['enable_profile'] ) {
 			wp_redirect( $this->settings['redirect_url'] );
 			exit;
 		}
