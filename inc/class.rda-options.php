@@ -435,7 +435,8 @@ class RDA_Options {
 	 */
 	public function login_message_cb() {
 		?>
-		<p><input name="rda_login_message" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove-dashboard-access' ); ?>" /></p>
+		<p><input name="rda_login_message" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" /></p>
+		<p class="description"><?php esc_html_e( 'Message to display on the login screen. Disabled if left blank (default).', 'remove-dashboard-access' ); ?></p>
 		<?php
 	}
 
