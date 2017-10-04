@@ -93,14 +93,13 @@ class RDA_Remove_Access {
 		if ( ! empty( $menu ) && is_array( $menu ) ) {
 			// Gather menu IDs (minus profile.php).
 			foreach ( $menu as $index => $values ) {
-				if ( isset( $values[2] ) ) {
-					if ( 'profile.php' == $values[2] ) {
-						continue;
-					}
 
-					// Remove menu pages.
-					remove_menu_page( $values[2] );
+				if ( isset( $values[2] ) && 'profile.php' === $values[2] ) {
+					continue;
 				}
+
+				// Remove menu pages.
+				remove_menu_page( $values[2] );
 			}
 		}
 	}
