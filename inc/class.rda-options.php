@@ -181,7 +181,7 @@ class RDA_Options {
 		// Settings.
 		$sets = array(
 			'rda_access_switch'  => array(
-				'label'    => __( 'Dashboard User Access:', 'remove-dashboard-access' ),
+				'label'    => __( 'User Access:', 'remove-dashboard-access' ),
 				'callback' => 'access_switch_cb',
 			),
 			'rda_access_cap'     => array(
