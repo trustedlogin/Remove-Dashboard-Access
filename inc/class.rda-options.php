@@ -176,7 +176,7 @@ class RDA_Options {
 	 */
 	public function settings() {
 		// Dashboard Access Controls section.
-		add_settings_section( 'rda_options', __( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'dashboard-access' );
+		add_settings_section( 'rda_options', '', array( $this, 'settings_section' ), 'dashboard-access' );
 
 		// Settings.
 		$sets = array(
@@ -242,7 +242,7 @@ class RDA_Options {
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
 			<?php _e( '<strong>Advanced</strong>: Limit by capability:', 'remove-dashboard-access' ); ?>
 		</label><?php $this->_output_caps_dropdown(); ?></p>
-		<p>
+		<p class="description">
 			<?php printf( __( 'You can find out more about specific %s in the Codex.', 'remove-dashboard-access' ),
 				sprintf( '<a href="%1$s" target="_new">%2$s</a>',
 					esc_url( 'http://codex.wordpress.org/Roles_and_Capabilities' ),
