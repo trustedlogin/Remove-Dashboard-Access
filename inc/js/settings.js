@@ -1,7 +1,7 @@
 /**
  * Mimic WordPress Core's front-page dropdown toggle control.
  */
-jQuery( document ).ready( function( $ ) {
+( function( $ ) {
 	var section = $( '.form-table' ),
 		capType = section.find( 'input:radio[value="capability"]' ),
 		selects = section.find( 'select' ),
@@ -10,4 +10,4 @@ jQuery( document ).ready( function( $ ) {
 		};
 	check_disabled();
 	section.find( 'input:radio' ).change( check_disabled );
-} );
+} )( jQuery );
