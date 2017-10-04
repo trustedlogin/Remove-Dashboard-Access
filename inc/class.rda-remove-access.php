@@ -132,9 +132,25 @@ class RDA_Remove_Access {
 
 		if ( is_admin() ) {
 			$ids = array( 'about', 'comments', 'new-content', $edit_profile );
+
+			/**
+			 * Filters Toolbar menus to remove within the admin.
+			 *
+			 * @since 1.0
+			 *
+			 * @param array $ids Toolbar menu IDs to remove.
+			 */
 			$nodes = apply_filters( 'rda_toolbar_nodes', $ids );
 		} else {
 			$ids = array( 'about', 'dashboard', 'comments', 'new-content', 'edit', $edit_profile );
+
+			/**
+			 * Filters Toolbar menus to remove on the front end.
+			 *
+			 * @since 1.0
+			 *
+			 * @param array $ids Toolbar menu IDs to remove.
+			 */
 			$nodes = apply_filters( 'rda_frontend_toolbar_nodes', $ids );
 		}
 
