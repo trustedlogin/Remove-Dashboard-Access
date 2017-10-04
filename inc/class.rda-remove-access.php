@@ -14,46 +14,44 @@ if ( ! class_exists( 'RDA_Remove_Access' ) ) {
 class RDA_Remove_Access {
 
 	/**
-	 * @var string $capability
-	 *
-	 * String with capability passed from RDA_Options{}
+	 * Capability needed to access the dashboard.
 	 *
 	 * @since 1.0
+	 * @var   string $capability
 	 */
 	var $capability;
 
 	/**
-	 * @var array $settings
-	 *
-	 * Array of settings passed from RDA_Options{}
+	 * RDA Settings.
 	 *
 	 * @since 1.0
+	 * @var   array $settings
 	 */
 	var $settings = array();
 
 	/**
-	 * RDA Remove Access Init
+	 * Sets up the mechanism by which dashboard access is determined.
 	 *
 	 * @since 1.0
 	 * @since 1.1.3 Moved `is_user_allowed()` to the {@see 'init'} hook.
 	 *
-	 * @param string $capability Capability passed from RDA_Options instance.
-	 * @param array $settings Settings array passed from RDA_Options instance.
+	 * @param string $capability Capability needed to gain dashboard access.
+	 * @param array  $settings   RDA settings array.
 	 */
 	function __construct( $capability, $settings ) {
+		// Bail if the capability is empty.
 		if ( empty( $capability ) ) {
-			return; // Bail
-		} else {
-			$this->capability = $capability;
+			return;
 		}
 
-		$this->settings = $settings;
+		$this->capability = $capability;
+		$this->settings   = $settings;
 
 		add_action( 'init', array( $this, 'is_user_allowed' ) );
 	}
 
 	/**
-	 * Determine if the current user is allowed to access the admin back end.
+	 * Determines if the current user is allowed to access the admin back end.
 	 *
 	 * @since 1.0
 	 *
@@ -67,15 +65,11 @@ class RDA_Remove_Access {
 
 			return false;
 		}
-		return true; // Bail.
+		return true;
 	}
 
 	/**
-	 * "Lock it up" Hooks.
-	 *
-	 * @see dashboard_redirect() Handles redirecting disallowed users.
-	 * @see hide_menus()         Hides the admin menus.
-	 * @see hide_toolbar_items() Hides various Toolbar items on front and back-end.
+	 * Registers callbacks for "locking up" the dashboard.
 	 *
 	 * @since 1.0
 	 */
@@ -86,7 +80,7 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Hide menus other than profile.php.
+	 * Hides menus other than profile.php.
 	 *
 	 * @since 1.1
 	 */
@@ -96,25 +90,25 @@ class RDA_Remove_Access {
 
 		$menu_ids = array();
 
-		// Gather menu IDs (minus profile.php).
-		foreach ( $menu as $index => $values ) {
-			if ( isset( $values[2] ) ) {
-				if ( 'profile.php' == $values[2] ) {
-					continue;
-				}
+		if ( ! empty( $menu ) && is_array( $menu ) ) {
+			// Gather menu IDs (minus profile.php).
+			foreach ( $menu as $index => $values ) {
+				if ( isset( $values[2] ) ) {
+					if ( 'profile.php' == $values[2] ) {
+						continue;
+					}
 
-				// Remove menu pages.
-				remove_menu_page( $values[2] );
+					// Remove menu pages.
+					remove_menu_page( $values[2] );
+				}
 			}
 		}
 	}
 
 	/**
-	 * Dashboard Redirect.
+	 * Handles the redirect for disallowed users.
 	 *
 	 * @since 0.1
-	 *
-	 * @see wp_redirect() Used to redirect disallowed users to chosen URL.
 	 */
 	function dashboard_redirect() {
 		/** @global string $pagenow */
@@ -127,14 +121,15 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Hide Toolbar Items.
+	 * Hides Toolbar items for disallowed users.
 	 *
 	 * @since 1.0
 	 *
-	 * @param WP_Admin_Bar $wp_admin_bar For remove_node() method access.
+	 * @param WP_Admin_Bar $wp_admin_bar Toolbar instance.
 	 */
 	function hide_toolbar_items( $wp_admin_bar ) {
 		$edit_profile = ! $this->settings['enable_profile'] ? 'edit-profile' : '';
+
 		if ( is_admin() ) {
 			$ids = array( 'about', 'comments', 'new-content', $edit_profile );
 			$nodes = apply_filters( 'rda_toolbar_nodes', $ids );
@@ -142,6 +137,7 @@ class RDA_Remove_Access {
 			$ids = array( 'about', 'dashboard', 'comments', 'new-content', 'edit', $edit_profile );
 			$nodes = apply_filters( 'rda_frontend_toolbar_nodes', $ids );
 		}
+
 		foreach ( $nodes as $id ) {
 			$wp_admin_bar->remove_menu( $id );
 		}
