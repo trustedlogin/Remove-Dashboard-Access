@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Remove Dashboard Access
- * Plugin URI: http://werdswords.com
+ * Plugin URI: https://werdswords.com
  * Description: Removes admin dashboard access for certain users based on capability.
  * Version: 1.1.3
  * Author: Drew Jaynes (DrewAPicture)
- * Author URI: http://werdswords.com
+ * Author URI: https://werdswords.com
  * License: GPLv2
  * Text Domain: remove-dashboard-access
 */
