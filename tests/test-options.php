@@ -36,75 +36,39 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * Admin:Admin
+	 * Admin
 	 *
 	 * @covers RDA_Options::get_warning_message()
 	 */
-	public function test_get_warning_message_with_admin_cap_switch_value_admin_cap_should_retrieve_admin_warning_string() {
+	public function test_get_warning_message_with_admin_cap_switch_value_should_retrieve_admin_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks an Administrator capability, <code>manage_options</code>, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account lacks the Admin capability, %s, which could lock you out of the dashboard.";
 
-		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['admin'], self::$default_caps['admin'] ) );
+		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['admin'] ) );
 	}
 
 	/**
-	 * Editor:Admin
+	 * Editor/Admin
 	 *
 	 * @covers RDA_Options::get_warning_message()
 	 */
-	public function test_get_warning_message_with_editor_switch_value_admin_cap_should_retrieve_admin_warning() {
+	public function test_get_warning_message_with_editor_cap_switch_value_should_retrieve_editor_admin_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks an Administrator capability, <code>manage_options</code>, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account lacks the Editor or Admin capability, %s, which could lock you out of the dashboard.";
 
-		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['editor'], self::$default_caps['admin'] ) );
+		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['editor'] ) );
 	}
 
 	/**
-	 * Editor:Editor
+	 * Author/Editor/Admin
 	 *
 	 * @covers RDA_Options::get_warning_message()
 	 */
-	public function test_get_warning_message_with_editor_cap_switch_value_editor_cap_should_retrieve_editor_warning_string() {
+	public function test_get_warning_message_with_author_switch_value_should_retrieve_author_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks an Editor capability, <code>edit_others_posts</code>, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account lacks the Author, Editor, or Admin capability, %s, which could lock you out of the dashboard.";
 
-		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['editor'], self::$default_caps['editor'] ) );
-	}
-
-	/**
-	 * Author:Admin
-	 *
-	 * @covers RDA_Options::get_warning_message()
-	 */
-	public function test_get_warning_message_with_author_switch_value_admin_cap_should_retrieve_admin_warning() {
-		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks an Administrator capability, <code>manage_options</code>, which could lock you out of the dashboard.";
-
-		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['author'], self::$default_caps['admin'] ) );
-	}
-
-	/**
-	 * Author:Editor
-	 *
-	 * @covers RDA_Options::get_warning_message()
-	 */
-	public function test_get_warning_message_with_author_switch_value_editor_cap_should_retrieve_editor_warning() {
-		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks an Editor capability, <code>edit_others_posts</code>, which could lock you out of the dashboard.";
-
-		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['author'], self::$default_caps['editor'] ) );
-	}
-
-	/**
-	 * Author:Author
-	 *
-	 * @covers RDA_Options::get_warning_message()
-	 */
-	public function test_get_warning_message_with_author_switch_value_author_cap_should_retrieve_author_warning_string() {
-		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks an Author capability, <code>publish_posts</code>, which could lock you out of the dashboard.";
-
-		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['author'], self::$default_caps['author'] ) );
+		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['author'] ) );
 	}
 
 	/**
@@ -112,11 +76,11 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 *
 	 * @covers RDA_Options::get_warning_message()
 	 */
-	public function test_get_warning_message_with_capability_switch_and_any_cap_should_retrieve_generic_warning_string() {
+	public function test_get_warning_message_with_capability_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks the <code>activate_plugins</code> capability, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account lacks the %s capability, which could lock you out of the dashboard.";
 
-		$this->assertSame( $expected, $options->get_warning_message( 'capability', 'activate_plugins' ) );
+		$this->assertSame( $expected, $options->get_warning_message( 'capability' ) );
 	}
 
 	/**
@@ -124,11 +88,11 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 *
 	 * @covers RDA_Options::get_warning_message()
 	 */
-	public function test_get_warning_message_with_invalid_switch_and_any_cap_should_retrieve_generic_warning_string() {
+	public function test_get_warning_message_with_invalid_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks the <code>install_plugins</code> capability, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account lacks the %s capability, which could lock you out of the dashboard.";
 
-		$this->assertSame( $expected, $options->get_warning_message( 'foo', 'install_plugins' ) );
+		$this->assertSame( $expected, $options->get_warning_message( 'foo' ) );
 	}
 
 	/**

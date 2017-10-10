@@ -306,8 +306,10 @@ class RDA_Options {
 		if ( current_user_can( $capbility ) ) {
 			wp_send_json_success();
 		} else {
+			$message = $this->get_warning_message( $switch_value );
+
 			wp_send_json_error( array(
-				'message' => $this->get_warning_message( $switch_value, $capbility )
+				'message' => sprintf( $message, '<code>' . $capbility . '</code>' )
 			) );
 		}
 
@@ -319,42 +321,28 @@ class RDA_Options {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $role_alias The capability switch setting.
-	 * @param string $capability Capability.
+	 * @param string $capability_switch The capability switch setting.
 	 * @return string Warning message that takes the switch value into account to provide context.
 	 */
-	public function get_warning_message( $role_alias, $capability ) {
+	public function get_warning_message( $capability_switch ) {
 
 		$defaults = $this->get_default_caps();
 
-		switch( $role_alias ) {
+		switch( $capability_switch ) {
 
 			case $defaults['admin']:
 				/* translators: %s is the formatted capability slug */
-				$message = __( '<strong>Warning:</strong> Your account lacks an Administrator capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				$message = __( '<strong>Warning:</strong> Your account lacks the Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
 				break;
 
 			case $defaults['editor']:
-				if ( $defaults['editor'] === $capability ) {
-					/* translators: %s is the formatted capability slug */
-					$message = __( '<strong>Warning:</strong> Your account lacks an Editor capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
-				} else {
-					/* translators: %s is the formatted capability slug */
-					$message = __( '<strong>Warning:</strong> Your account lacks an Administrator capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
-				}
+				/* translators: %s is the formatted capability slug */
+				$message = __( '<strong>Warning:</strong> Your account lacks the Editor or Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
 				break;
 
 			case $defaults['author']:
-				if ( $defaults['author'] === $capability ) {
-					/* translators: %s is the formatted capability slug */
-					$message = __( '<strong>Warning:</strong> Your account lacks an Author capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
-				} elseif ( $defaults['editor'] === $capability ) {
-					/* translators: %s is the formatted capability slug */
-					$message = __( '<strong>Warning:</strong> Your account lacks an Editor capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
-				} else {
-					/* translators: %s is the formatted capability slug */
-					$message = __( '<strong>Warning:</strong> Your account lacks an Administrator capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
-				}
+				/* translators: %s is the formatted capability slug */
+				$message = __( '<strong>Warning:</strong> Your account lacks the Author, Editor, or Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
 				break;
 
 			default:
@@ -364,7 +352,7 @@ class RDA_Options {
 				break;
 		}
 
-		return sprintf( $message, '<code>' . $capability . '</code>' );
+		return $message;
 	}
 
 	/**
