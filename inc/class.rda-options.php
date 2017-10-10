@@ -357,21 +357,6 @@ class RDA_Options {
 	}
 
 	/**
-	 * Enable/Disable radio toggle display callback.
-	 *
-	 * @since 1.1
-	 * @access public
-	 *
-	 * @see $this->options_setup()
-	 */
-	public function plugin_toggle_cb() {
-		printf( '<input name="rda_toggle_plugin_off" type="checkbox" value="1" class="code" %1$s/>%2$s',
-			checked( esc_attr( $this->settings['toggle_plugin_off'] ), true, false ),
-			__( ' Disable access controls and redirection', 'remove-dashboard-access' )
-		);
-	}
-
-	/**
 	 * Capability-type radio switch display callback.
 	 *
 	 * Displays the radio button switch for choosing which
