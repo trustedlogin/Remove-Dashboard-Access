@@ -21,7 +21,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	public static function wpSetUpBeforeClass() {
 		$options = new RDA_Options();
 
-		self::$default_caps = $options->get_default_caps();
+		self::$default_caps = RDA_Options::get_default_caps();
 	}
 
 	/**
@@ -42,7 +42,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 */
 	public function test_get_warning_message_with_admin_cap_switch_value_should_retrieve_admin_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks the Admin capability, %s, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account doesn&#8217;t have the Admin capability, %s, which could lock you out of the dashboard.";
 
 		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['admin'] ) );
 	}
@@ -54,7 +54,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 */
 	public function test_get_warning_message_with_editor_cap_switch_value_should_retrieve_editor_admin_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks the Editor or Admin capability, %s, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account doesn&#8217;t have the Editor or Admin capability, %s, which could lock you out of the dashboard.";
 
 		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['editor'] ) );
 	}
@@ -66,7 +66,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 */
 	public function test_get_warning_message_with_author_switch_value_should_retrieve_author_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks the Author, Editor, or Admin capability, %s, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account doesn&#8217;t have the Author, Editor, or Admin capability, %s, which could lock you out of the dashboard.";
 
 		$this->assertSame( $expected, $options->get_warning_message( self::$default_caps['author'] ) );
 	}
@@ -78,7 +78,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 */
 	public function test_get_warning_message_with_capability_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks the %s capability, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account doesn&#8217;t have the %s capability, which could lock you out of the dashboard.";
 
 		$this->assertSame( $expected, $options->get_warning_message( 'capability' ) );
 	}
@@ -90,7 +90,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 */
 	public function test_get_warning_message_with_invalid_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
-		$expected = "<strong>Warning:</strong> Your account lacks the %s capability, which could lock you out of the dashboard.";
+		$expected = "<strong>Warning:</strong> Your account doesn&#8217;t have the %s capability, which could lock you out of the dashboard.";
 
 		$this->assertSame( $expected, $options->get_warning_message( 'foo' ) );
 	}
@@ -99,15 +99,13 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	 * @covers RDA_Options::get_default_caps()
 	 */
 	public function test_get_default_caps_should_retrieve_default_caps() {
-		$options = $this->set_up_RDA();
-
 		$expected = array(
 			'admin'  => 'manage_options',
 			'editor' => 'edit_others_posts',
 			'author' => 'publish_posts'
 		);
 
-		$this->assertEqualSets( $expected, $options->get_default_caps() );
+		$this->assertEqualSets( $expected, RDA_Options::get_default_caps() );
 	}
 
 	/**
@@ -116,10 +114,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	public function test_get_default_caps_should_always_contain_an_admin_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
 
-		$options  = $this->set_up_RDA();
-		$defaults = $options->get_default_caps();
-
-		$this->assertArrayHasKey( 'admin', $defaults );
+		$this->assertArrayHasKey( 'admin', RDA_Options::get_default_caps() );
 
 		remove_filter( 'rda_default_caps_for_role', '__return_empty_array' );
 	}
@@ -130,10 +125,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	public function test_get_default_caps_should_always_contain_an_editor_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
 
-		$options  = $this->set_up_RDA();
-		$defaults = $options->get_default_caps();
-
-		$this->assertArrayHasKey( 'editor', $defaults );
+		$this->assertArrayHasKey( 'editor', RDA_Options::get_default_caps() );
 
 		remove_filter( 'rda_default_caps_for_role', '__return_empty_array' );
 	}
@@ -144,10 +136,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	public function test_get_default_caps_should_always_contain_an_author_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
 
-		$options  = $this->set_up_RDA();
-		$defaults = $options->get_default_caps();
-
-		$this->assertArrayHasKey( 'author', $defaults );
+		$this->assertArrayHasKey( 'author', RDA_Options::get_default_caps() );
 
 		remove_filter( 'rda_default_caps_for_role', '__return_empty_array' );
 	}

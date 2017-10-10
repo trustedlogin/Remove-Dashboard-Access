@@ -327,29 +327,29 @@ class RDA_Options {
 	 */
 	public function get_warning_message( $capability_switch ) {
 
-		$defaults = $this->get_default_caps();
+		$defaults = self::get_default_caps();
 
 		switch( $capability_switch ) {
 
 			case $defaults['admin']:
 				/* translators: %s is the formatted capability slug */
-				$message = __( '<strong>Warning:</strong> Your account lacks the Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				$message = __( '<strong>Warning:</strong> Your account doesn&#8217;t have the Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
 				break;
 
 			case $defaults['editor']:
 				/* translators: %s is the formatted capability slug */
-				$message = __( '<strong>Warning:</strong> Your account lacks the Editor or Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				$message = __( '<strong>Warning:</strong> Your account doesn&#8217;t have the Editor or Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
 				break;
 
 			case $defaults['author']:
 				/* translators: %s is the formatted capability slug */
-				$message = __( '<strong>Warning:</strong> Your account lacks the Author, Editor, or Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				$message = __( '<strong>Warning:</strong> Your account doesn&#8217;t have the Author, Editor, or Admin capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
 				break;
 
 			default:
 			case 'capability':
 				/* translators: %s is the formatted capability slug */
-				$message = __( '<strong>Warning:</strong> Your account lacks the %s capability, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				$message = __( '<strong>Warning:</strong> Your account doesn&#8217;t have the %s capability, which could lock you out of the dashboard.', 'remove-dashboard-access' );
 				break;
 		}
 
@@ -388,7 +388,7 @@ class RDA_Options {
 		echo '<a name="dashboard-access"></a>';
 
 		$switch   = $this->settings['access_switch'];
-		$defaults = $this->get_default_caps();
+		$defaults = self::get_default_caps();
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
@@ -415,7 +415,7 @@ class RDA_Options {
 	 *
 	 * @return array Pairs of role-based setting abbreviations and their default capabilities.
 	 */
-	public function get_default_caps() {
+	public static function get_default_caps() {
 
 		$defaults = array(
 			'admin'  => 'manage_options',
