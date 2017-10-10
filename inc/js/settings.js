@@ -21,7 +21,6 @@
 		lockoutMessage.addClass( 'screen-reader-text' ).html( '' );
 		formSubmit.removeAttr( 'disabled' );
 
-		console.log( formSubmit );
 		var switchCap = $( "input[name='rda_access_switch']:checked" ).val();
 
 		if ( 'capability' === switchCap ) {
