@@ -236,8 +236,15 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function access_cap_dropdown() {
+		$capability = $this->capability();
 		$switch = $this->settings['access_switch'];
 		?>
+		<style type="text/css">
+			.lockout-message {
+				margin: 0.5em 0;
+				padding: 15px 10px 15px 15px;
+			}
+		</style>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
 			<?php _e( '<strong>Advanced</strong> (limit by capability):', 'remove-dashboard-access' ); ?>
@@ -250,6 +257,9 @@ class RDA_Options {
 				)
 			); ?>
 		</p>
+		<?php wp_nonce_field( 'rda-lockout-nonce', 'rda-lockout-nonce' ); ?>
+		<input type="hidden" id="selected-capability" name="selected-capability" value="<?php echo esc_attr( $this->settings['access_cap'] ); ?>" />
+		<span class="lockout-message notice notice-error screen-reader-text" id="lockout-message"></span>
 	<?php
 	}
 
@@ -266,6 +276,95 @@ class RDA_Options {
 	 */
 	public function access_switch_js() {
 		wp_enqueue_script( 'rda-settings', plugin_dir_url( __FILE__ ) . 'js/settings.js', array( 'jquery' ), '1.0' );
+
+		wp_localize_script( 'rda-settings', 'rda_vars', array(
+			'ajaxurl' => admin_url( 'admin-ajax.php' )
+		) );
+	}
+
+	/**
+	 * Ajax handler for checking whether the current user has the chosen capability.
+	 *
+	 * Helps prevent admins from locking themselves out by setting a cap they don't have.
+	 *
+	 * @since 1.2
+	 */
+	public function cap_lockout_check() {
+		check_ajax_referer( 'rda-lockout-nonce', 'nonce' );
+
+		$capbility    = isset( $_REQUEST['cap'] ) ? sanitize_key( $_REQUEST['cap'] ) : '';
+		$switch_value = isset( $_REQUEST['switch'] ) ? sanitize_key( $_REQUEST['switch'] ) : '';
+
+		if ( empty( $capbility ) ) {
+			wp_send_json_error( new \WP_Error( 'missing_cap', 'A capability must be sent with the request.', $_REQUEST ) );
+		}
+
+		if ( empty( $switch_value ) ) {
+			wp_send_json_error( new \WP_Error( 'missing_switch', 'A capability switch value must be sent with the request.', $_REQUEST ) );
+		}
+
+		if ( current_user_can( $capbility ) ) {
+			wp_send_json_success();
+		} else {
+			wp_send_json_error( array(
+				'message' => $this->get_warning_message( $capbility, $switch_value )
+			) );
+		}
+
+		wp_die( 1 );
+	}
+
+	/**
+	 * Retrieves the warning message for the given capability and role alias.
+	 *
+	 * @since 1.2
+	 *
+	 * @param string $capability Capability.
+	 * @param string $role_alias The capability switch setting.
+	 * @return string Warning message that takes the switch value into account to provide context.
+	 */
+	private function get_warning_message( $capability, $role_alias ) {
+
+		$defaults = $this->get_default_caps();
+
+		switch( $role_alias ) {
+
+			case $defaults['admin']:
+				/* translators: %s is the formatted capability slug */
+				$message = __( '<strong>Warning:</strong> Your account lacks an Administrator capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				break;
+
+			case $defaults['editor']:
+				if ( $defaults['editor'] === $capability ) {
+					/* translators: %s is the formatted capability slug */
+					$message = __( '<strong>Warning:</strong> Your account lacks an Editor capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				} else {
+					/* translators: %s is the formatted capability slug */
+					$message = __( '<strong>Warning:</strong> Your account lacks an Administrator capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				}
+				break;
+
+			case $defaults['author']:
+				if ( $defaults['author'] === $capability ) {
+					/* translators: %s is the formatted capability slug */
+					$message = __( '<strong>Warning:</strong> Your account lacks an Author capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				} elseif ( $defaults['editor'] === $capability ) {
+					/* translators: %s is the formatted capability slug */
+					$message = __( '<strong>Warning:</strong> Your account lacks an Editor capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				} else {
+					/* translators: %s is the formatted capability slug */
+					$message = __( '<strong>Warning:</strong> Your account lacks an Administrator capability, %s, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				}
+				break;
+
+			default:
+			case 'capability':
+				/* translators: %s is the formatted capability slug */
+				$message = __( '<strong>Warning:</strong> Your account lacks the %s capability, which could lock you out of the dashboard.', 'remove-dashboard-access' );
+				break;
+		}
+
+		return sprintf( $message, '<code>' . $capability . '</code>' );
 	}
 
 	/**
@@ -299,7 +398,38 @@ class RDA_Options {
 	public function access_switch_cb() {
 		echo '<a name="dashboard-access"></a>';
 
-		$switch = $this->settings['access_switch'];
+		$switch   = $this->settings['access_switch'];
+		$defaults = $this->get_default_caps();
+		?>
+		<p><label>
+			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
+			<?php _e( 'Administrators only', 'remove-dashboard-access' ); ?>
+		</label></p>
+		<p><label>
+			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
+			<?php _e( 'Editors and Administrators', 'remove-dashboard-access' ); ?>
+		</label></p>
+		<p><label>
+			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
+			<?php _e( 'Authors, Editors, and Administrators', 'remove-dashboard-access' ); ?>
+		</label></p>
+		<?php
+	}
+
+	/**
+	 * Retrieves the default capabilities for the role-based settings.
+	 *
+	 * @since 1.2
+	 *
+	 * @return array Pairs of role-based setting abbreviations and their default capabilities.
+	 */
+	public function get_default_caps() {
+
+		$defaults = array(
+			'admin'  => 'manage_options',
+			'editor' => 'edit_others_posts',
+			'author' => 'publish_posts'
+		);
 
 		/**
 		 * Filter the capability defaults for admins, editors, and authors.
@@ -314,28 +444,10 @@ class RDA_Options {
 		 *     @type string $author Capability to use for admins + editors + authors. Default 'publish_posts'.
 		 * }
 		 */
-		$defaults = apply_filters( 'rda_default_caps_for_role', array(
-			'admin'  => 'manage_options',
-			'editor' => 'edit_others_posts',
-			'author' => 'publish_posts'
-		) );
-		?>
-		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Administrators only', 'remove-dashboard-access' ); ?>
-		</label></p>
-		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Editors and Administrators', 'remove-dashboard-access' ); ?>
-		</label></p>
-		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Authors, Editors, and Administrators', 'remove-dashboard-access' ); ?>
-		</label></p>
+		 $caps = apply_filters( 'rda_default_caps_for_role', $defaults );
 
-	<?php
+		return array_intersect_key( $defaults, $caps );
 	}
-
 
 	/**
 	 * Capability-type switch drop-down.

@@ -36,7 +36,7 @@ class RDA_Remove_Access {
 	 * @since 1.1.3 Moved `is_user_allowed()` to the {@see 'init'} hook.
 	 *
 	 * @param string $capability Capability needed to gain dashboard access.
-	 * @param array  $settings   RDA settings array.
+	 * @param array  $settings RDA settings array.
 	 */
 	function __construct( $capability, $settings ) {
 		// Bail if the capability is empty.
@@ -65,6 +65,7 @@ class RDA_Remove_Access {
 
 			return false;
 		}
+
 		return true;
 	}
 
@@ -154,7 +155,7 @@ class RDA_Remove_Access {
 		foreach ( $nodes as $id ) {
 			$wp_admin_bar->remove_menu( $id );
 		}
-	}	
+	}
 
 } // RDA_Remove_Access
 
