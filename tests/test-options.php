@@ -134,6 +134,21 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * @covers RDA_Options::get_default_caps()
 	 */
+	public function test_get_default_caps_should_retrieve_default_caps() {
+		$options = $this->set_up_RDA();
+
+		$expected = array(
+			'admin'  => 'manage_options',
+			'editor' => 'edit_others_posts',
+			'author' => 'publish_posts'
+		);
+
+		$this->assertEqualSets( $expected, $options->get_default_caps() );
+	}
+
+	/**
+	 * @covers RDA_Options::get_default_caps()
+	 */
 	public function test_get_default_caps_should_always_contain_an_admin_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
 
