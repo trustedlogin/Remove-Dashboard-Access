@@ -57,7 +57,6 @@ class RDA_Options {
 		add_action( 'admin_menu',                                array( $this, 'options_page' ) );
 		add_action( 'admin_init',                                array( $this, 'settings'         ) );
 		add_action( 'admin_head-settings_page_dashboard-access', array( $this, 'access_switch_js' ) );
-		add_action( 'wp_ajax_cap_lockout_check',                 array( $this, 'cap_lockout_check' ) );
 
 		// Settings link in plugins list.
 		add_filter( 'plugin_action_links', array( $this, 'settings_link' ), 10, 2 );
