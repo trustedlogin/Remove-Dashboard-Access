@@ -240,7 +240,7 @@ class RDA_Options {
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-			<?php _e( '<strong>Advanced</strong>: Limit by capability:', 'remove-dashboard-access' ); ?>
+			<?php _e( '<strong>Advanced</strong> (limit by capability):', 'remove-dashboard-access' ); ?>
 		</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p class="description">
 			<?php printf( __( 'You can find out more about specific %s in the Codex.', 'remove-dashboard-access' ),
