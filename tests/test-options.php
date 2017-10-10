@@ -132,6 +132,49 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
+	 * @covers RDA_Options::get_default_caps()
+	 */
+	public function test_get_default_caps_should_always_contain_an_admin_value_even_if_filtered() {
+		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
+
+		$options  = $this->set_up_RDA();
+		$defaults = $options->get_default_caps();
+
+		$this->assertArrayHasKey( 'admin', $defaults );
+
+		remove_filter( 'rda_default_caps_for_role', '__return_empty_array' );
+	}
+
+	/**
+	 * @covers RDA_Options::get_default_caps()
+	 */
+	public function test_get_default_caps_should_always_contain_an_editor_value_even_if_filtered() {
+		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
+
+		$options  = $this->set_up_RDA();
+		$defaults = $options->get_default_caps();
+
+		$this->assertArrayHasKey( 'editor', $defaults );
+
+		remove_filter( 'rda_default_caps_for_role', '__return_empty_array' );
+	}
+
+	/**
+	 * @covers RDA_Options::get_default_caps()
+	 */
+	public function test_get_default_caps_should_always_contain_an_author_value_even_if_filtered() {
+		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
+
+		$options  = $this->set_up_RDA();
+		$defaults = $options->get_default_caps();
+
+		$this->assertArrayHasKey( 'author', $defaults );
+
+		remove_filter( 'rda_default_caps_for_role', '__return_empty_array' );
+	}
+
+
+	/**
 	 * Sets up RDA_Remove_Access for testing.
 	 *
 	 * @since 1.2.0
