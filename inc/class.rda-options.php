@@ -444,9 +444,9 @@ class RDA_Options {
 		 *     @type string $author Capability to use for admins + editors + authors. Default 'publish_posts'.
 		 * }
 		 */
-		 $caps = apply_filters( 'rda_default_caps_for_role', $defaults );
+		$caps = apply_filters( 'rda_default_caps_for_role', $defaults );
 
-		return array_intersect_key( $defaults, $caps );
+		return array_merge( $caps, $defaults );
 	}
 
 	/**
