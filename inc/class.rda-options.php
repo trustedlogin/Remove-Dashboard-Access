@@ -307,7 +307,7 @@ class RDA_Options {
 			wp_send_json_success();
 		} else {
 			wp_send_json_error( array(
-				'message' => $this->get_warning_message( $capbility, $switch_value )
+				'message' => $this->get_warning_message( $switch_value, $capbility )
 			) );
 		}
 
@@ -319,11 +319,11 @@ class RDA_Options {
 	 *
 	 * @since 1.2
 	 *
-	 * @param string $capability Capability.
 	 * @param string $role_alias The capability switch setting.
+	 * @param string $capability Capability.
 	 * @return string Warning message that takes the switch value into account to provide context.
 	 */
-	private function get_warning_message( $capability, $role_alias ) {
+	public function get_warning_message( $role_alias, $capability ) {
 
 		$defaults = $this->get_default_caps();
 
