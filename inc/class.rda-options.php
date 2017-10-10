@@ -261,9 +261,6 @@ class RDA_Options {
 				)
 			); ?>
 		</p>
-		<?php wp_nonce_field( 'rda-lockout-nonce', 'rda-lockout-nonce' ); ?>
-		<input type="hidden" id="selected-capability" name="selected-capability" value="<?php echo esc_attr( $this->settings['access_cap'] ); ?>" />
-		<span class="lockout-message notice notice-error screen-reader-text" id="lockout-message"></span>
 	<?php
 	}
 
@@ -405,6 +402,9 @@ class RDA_Options {
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
 			<?php _e( 'Authors, Editors, and Administrators', 'remove-dashboard-access' ); ?>
 		</label></p>
+		<?php wp_nonce_field( 'rda-lockout-nonce', 'rda-lockout-nonce' ); ?>
+		<input type="hidden" id="selected-capability" name="selected-capability" value="<?php echo esc_attr( $this->settings['access_cap'] ); ?>" />
+		<span class="lockout-message notice notice-error screen-reader-text" id="lockout-message"></span>
 		<?php
 	}
 
