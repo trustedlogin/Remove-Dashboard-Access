@@ -75,8 +75,8 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 */
 	function lock_it_up() {
-		add_action( 'admin_init',     array( $this, 'dashboard_redirect' ) );
-		add_action( 'admin_head',     array( $this, 'hide_menus' ) );
+		add_action( 'admin_init', array( $this, 'dashboard_redirect' ) );
+		add_action( 'admin_head', array( $this, 'hide_menus' ) );
 		add_action( 'admin_bar_menu', array( $this, 'hide_toolbar_items' ), 999 );
 	}
 
