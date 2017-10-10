@@ -237,7 +237,6 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function access_cap_dropdown() {
-		$capability = $this->capability();
 		$switch = $this->settings['access_switch'];
 		?>
 		<style type="text/css">
