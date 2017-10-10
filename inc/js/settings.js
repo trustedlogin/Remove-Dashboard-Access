@@ -18,7 +18,7 @@
 		formSubmit     = $( '#rda-options-form :submit' );
 
 	$( '#rda-options-form').on( 'change', function( event ) {
-		lockoutMessage.addClass( 'screen-reader-text' ).html( '' );
+		lockoutMessage.slideUp( 'fast' ).addClass( 'screen-reader-text' ).html( '' );
 		formSubmit.removeAttr( 'disabled' );
 
 		var switchCap = $( "input[name='rda_access_switch']:checked" ).val();
@@ -46,7 +46,7 @@
 				// If response.success is true, nothing to do here. If false, print the message.
 				if ( ! response.success && response.data.message ) {
 					formSubmit.attr( 'disabled', 'disabled' );
-					lockoutMessage.removeClass( 'screen-reader-text' ).html( response.data.message );
+					lockoutMessage.removeClass( 'screen-reader-text' ).html( response.data.message ).slideDown( 'fast' );
 				}
 			}
 
