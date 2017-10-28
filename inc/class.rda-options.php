@@ -248,6 +248,9 @@ class RDA_Options {
 			.lockout-message.notice {
 				margin: 0.5em 0 0;
 			}
+			#rda-no-submit-message {
+				margin-left: 10px;
+			}
 		</style>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
@@ -279,7 +282,9 @@ class RDA_Options {
 		wp_enqueue_script( 'rda-settings', plugin_dir_url( __FILE__ ) . 'js/settings.js', array( 'wp-a11y' ), '1.0' );
 
 		wp_localize_script( 'rda-settings', 'rda_vars', array(
-			'ajaxurl' => admin_url( 'admin-ajax.php' )
+			'ajaxurl'    => admin_url( 'admin-ajax.php' ),
+			'no_submit'  => __( 'Please choose a compatible User Access setting to proceed with saving changes.', 'remove-dashboard-access' ),
+			'yes_submit' => __( 'You may now proceed with saving changes.', 'remove-dashboard-access' ),
 		) );
 	}
 

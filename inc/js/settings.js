@@ -17,16 +17,26 @@ window.wp = window.wp || {};
 
 	var	selectedCapInput = $( '#selected-capability' ),
 		lockoutMessage = $( '#lockout-message' ),
-		formSubmit     = $( '#rda-options-form :submit' );
+		formSubmit     = $( '#rda-options-form :submit' ),
+		inputAccessSwitch = $( 'input[name="rda_access_switch"]' ),
+		inputAccessCap = $( 'select[name="rda_access_cap"]' );
 
-	$( '#rda-options-form').on( 'change', function( event ) {
+	var noSubmit = $( '<span></span>' )
+		.attr( 'id', 'rda-no-submit-message' )
+		.attr( 'class', 'description' )
+		.text( rda_vars.no_submit );
+
+	noSubmit.insertAfter( formSubmit ).hide();
+
+	var ajaxCheckCap = function( event ) {
 		lockoutMessage.slideUp( 'fast' ).addClass( 'screen-reader-text' ).html( '' );
 		formSubmit.removeAttr( 'disabled' );
+		noSubmit.hide();
 
-		var switchCap = $( "input[name='rda_access_switch']:checked" ).val();
+		var switchCap = inputAccessSwitch.filter( ':checked' ).val();
 
 		if ( 'capability' === switchCap ) {
-			selectedCap = $( "select[name='rda_access_cap'] option:selected" ).val();
+			selectedCap = inputAccessCap.find( 'option' ).filter( ':selected' ).val();
 
 			selectedCapInput.val( selectedCap );
 		} else {
@@ -45,15 +55,33 @@ window.wp = window.wp || {};
 			dataType: 'json',
 			success: function( response ) {
 
-				// If response.success is true, nothing to do here. If false, print the message.
-				if ( ! response.success && response.data.message ) {
-					formSubmit.attr( 'disabled', 'disabled' );
-					lockoutMessage.removeClass( 'screen-reader-text' ).html( response.data.message ).slideDown( 'fast' );
+				/*
+				 * If response.success is true and the notice is showing, hide it and give the all clear.
+				 *
+				 * If false, print the message.
+				 */
+				if ( response.success ) {
+					if ( ! lockoutMessage.hasClass( 'screen-reader-text' ) ) {
+						wp.a11y.speak( rda_vars.yes_submit );
+					}
+				} else {
+					// If response.success is true, nothing to do here. If false, print the message.
+					if ( response.data.message ) {
+						formSubmit.attr( 'disabled', 'disabled' );
+						noSubmit.show();
+
+						lockoutMessage.removeClass( 'screen-reader-text' ).html( response.data.message ).slideDown( 'fast' );
+						wp.a11y.speak( response.data.message );
+						wp.a11y.speak( rda_vars.no_submit );
+					}
+
 				}
 			}
 
 		} );
+	}
 
-	} );
+	inputAccessCap.on( 'change', ajaxCheckCap );
+	inputAccessSwitch.on( 'change', ajaxCheckCap );
 
 } )( jQuery, window.wp );
