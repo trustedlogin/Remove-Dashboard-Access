@@ -276,7 +276,7 @@ class RDA_Options {
 	 * @see $this->setup()
 	 */
 	public function access_switch_js() {
-		wp_enqueue_script( 'rda-settings', plugin_dir_url( __FILE__ ) . 'js/settings.js', array( 'jquery' ), '1.0' );
+		wp_enqueue_script( 'rda-settings', plugin_dir_url( __FILE__ ) . 'js/settings.js', array( 'wp-a11y' ), '1.0' );
 
 		wp_localize_script( 'rda-settings', 'rda_vars', array(
 			'ajaxurl' => admin_url( 'admin-ajax.php' )
