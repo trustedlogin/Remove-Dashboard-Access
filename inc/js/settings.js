@@ -1,9 +1,11 @@
 /* global rda_vars */
 
+window.wp = window.wp || {};
+
 /**
  * Mimic WordPress Core's front-page drop-down toggle control.
  */
-( function( $ ) {
+( function( $, wp ) {
 	var section = $( '.form-table' ),
 		capType = section.find( 'input:radio[value="capability"]' ),
 		selects = section.find( 'select' ),
@@ -54,4 +56,4 @@
 
 	} );
 
-} )( jQuery );
+} )( jQuery, window.wp );
