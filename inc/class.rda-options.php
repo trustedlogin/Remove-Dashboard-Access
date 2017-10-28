@@ -242,7 +242,7 @@ class RDA_Options {
 		<style type="text/css">
 			.lockout-message {
 				margin: 0.5em 0;
-				padding: 15px 10px 15px 15px;
+				padding: 10px;
 				display: block;
 			}
 			.lockout-message.notice {
