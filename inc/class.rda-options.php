@@ -59,6 +59,9 @@ class RDA_Options {
 		add_action( 'admin_head-settings_page_dashboard-access', array( $this, 'access_switch_js' ) );
 		add_action( 'wp_ajax_cap_lockout_check',                 array( $this, 'cap_lockout_check' ) );
 
+		// Network Settings.
+		add_action( 'network_admin_menu', array( $this, 'network_options_page' ) );
+
 		// Settings link in plugins list.
 		add_filter( 'plugin_action_links', array( $this, 'settings_link' ), 10, 2 );
 
@@ -140,6 +143,22 @@ class RDA_Options {
 			__( 'Dashboard Access Settings', 'remove-dashboard-access' ),
 			__( 'Dashboard Access', 'remove-dashboard-access' ),
 			'manage_options',
+			'dashboard-access',
+			array( $this, 'options_page_cb' )
+		);
+	}
+
+	/**
+	 * Registers the Dashboard Access settings page for the network admin.
+	 *
+	 * @since 1.2.0
+	 */
+	public function network_options_page() {
+		add_submenu_page(
+			'settings.php',
+			__( 'Dashboard Access Settings', 'remove-dashboard-access' ),
+			__( 'Dashboard Access', 'remove-dashboard-access' ),
+			'manage_network_options',
 			'dashboard-access',
 			array( $this, 'options_page_cb' )
 		);
