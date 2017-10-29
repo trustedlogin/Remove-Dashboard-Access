@@ -10,4 +10,4 @@
 
 _deprecated_file( __FILE__, '1.2.0', 'class-rda-options.php' );
 
-require_once __DIR__ 'class-rda-options.php';
+require_once __DIR__ . '/class-rda-options.php';
