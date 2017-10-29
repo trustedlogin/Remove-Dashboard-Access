@@ -217,7 +217,7 @@ class RDA_Options {
 				'callback' => 'profile_enable_cb',
 			),
 			'rda_login_message'  => array(
-				'label'    => __( 'Login Message', 'remove-dashboard-access' ),
+				'label'    => __( 'Login Screen Message', 'remove-dashboard-access' ),
 				'callback' => 'login_message_cb',
 			),
 		);
