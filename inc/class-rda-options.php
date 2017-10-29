@@ -23,14 +23,15 @@ class RDA_Options {
 	public static $instance;
 
 	/**
-	 * @var $settings rda-settings options array
+	 * Representation of RDA's settings for the current site.
 	 *
 	 * @since 1.0
+	 * @var   array
 	 */
 	public $settings = array();
 
 	/**
-	 * Init
+	 * Sets up RDA_Options.
 	 *
 	 * @since 1.0
 	 */
@@ -39,7 +40,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Set up various actions, filters, and other items.
+	 * Sets up various actions, filters, and other items for options management.
 	 *
 	 * @since 1.1
 	 */
@@ -70,7 +71,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
+	 * (maybe) Maps old settings (1.0-) to the new ones (1.1+).
 	 *
 	 * @since 1.1
 	 */
@@ -107,13 +108,11 @@ class RDA_Options {
 	}
 
 	/**
-	 * Activation Hook.
+	 * Specifies logic to run during plugin activation.
 	 *
-	 * Setup default options on activation.
+	 * Sets default options on activation.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->setup()
 	 */
 	public function activate() {
 		$settings = array(
@@ -130,11 +129,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Options page: Remove Access
+	 * Registers the Dashboard Access submenu page.
 	 *
 	 * @since 1.1.1
-	 *
-	 * @uses add_options_page() to add a sub-menu under 'Settings'
 	 */
 	public function options_page() {
 		add_options_page(
@@ -147,9 +144,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Options page: callback
-	 *
-	 * Outputs the form for the 'Remove Access' submenu
+	 * Renders the Dashboard Access submenu page.
 	 *
 	 * @since 1.1.1
 	 */
@@ -169,11 +164,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Register settings and settings sections.
+	 * Registers settings and settings sections.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->setup()
 	 */
 	public function settings() {
 		// Dashboard Access Controls section.
@@ -219,7 +212,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Dashboard Access Controls display callback.
+	 * Renders the contents of the 'Dashboard Access Settings' section.
 	 *
 	 * @since 1.1
 	 */
@@ -228,9 +221,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Access Controls 2 of 2.
-	 *
-	 * Output the capability drop-down.
+	 * Renders the 'Advanced' section of the 'User Access' settings UI.
 	 *
 	 * @since 1.1
 	 */
@@ -266,14 +257,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Capability-type radio switch jQuery script.
-	 *
-	 * When the 'Limit by capability' radio option is selected the script.
-	 * enables the capabilities drop-down. Default state is disabled.
+	 * Enqueues and localizes the JavaScript used by the access switcher.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->setup()
 	 */
 	public function access_switch_js() {
 		wp_enqueue_script( 'rda-settings', plugin_dir_url( __FILE__ ) . 'js/settings.js', array( 'wp-a11y' ), '1.0' );
@@ -359,16 +345,13 @@ class RDA_Options {
 	}
 
 	/**
-	 * Capability-type radio switch display callback.
+	 * Renders the bulk of the 'User Access' control setting UI.
 	 *
-	 * Displays the radio button switch for choosing which
-	 * capability users need to access the Dashboard. Mimics
-	 * 'Page on front' UI in options-reading.php for a more
-	 * integrated feel.
+	 * Displays the radio button switch for choosing which capability users need
+	 * to access the Dashboard. Mimics 'Page on front' UI in options-reading.php
+	 * for a more integrated feel.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->caps_dropdown()
 	 */
 	public function access_switch_cb() {
 		echo '<a name="dashboard-access"></a>';
@@ -429,11 +412,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Capability-type switch drop-down.
+	 * Renders the actual drop-down element used by the access_cap_dropdown() method.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->access_switch_cb()
 	 */
 	private function _output_caps_dropdown() {
 		/** @global WP_Roles $wp_roles */
@@ -490,13 +471,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Enable profile access checkbox display callback.
+	 * Renders the 'User Profile Access' setting UI.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->options_setup()
-	 *
-	 * @uses checked() Outputs the checked attribute when the option is enabled.
 	 */
 	public function profile_enable_cb() {
 		printf( '<input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s',
@@ -507,13 +484,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Redirect URL display callback.
-	 *
-	 * Default value is home_url(). $this->sanitize_option() handles validation and escaping.
+	 * Renders the 'Redirect URL' setting UI.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->options_setup()
 	 */
 	public function url_redirect_cb() {
 		?>
@@ -525,7 +498,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Login Message display callback.
+	 * Renders the 'Login Screen Message' setting UI.
 	 *
 	 * @since 1.1
 	 */
@@ -537,7 +510,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Login Message option callback.
+	 * Renders the actual login screen message on the login screen.
 	 *
 	 * @since 1.1
 	 */
@@ -549,7 +522,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Access Switch sanitize callback.
+	 * Sanitizes the value of the access switch setting on save.
 	 *
 	 * @since 1.1
 	 *
@@ -561,7 +534,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Access capability sanitize callback.
+	 * Sanitizes the value of the access capability setting on save.
 	 *
 	 * @since 1.1
 	 *
@@ -574,7 +547,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Redirect URL sanitize callback.
+	 * Sanitizes the value of the redirect URL setting on save.
 	 *
 	 * @since 1.1
 	 *
@@ -586,7 +559,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Enable Profile sanitize callback.
+	 * Sanitizes the value of the enable profile setting on save.
 	 *
 	 * @since 1.1
 	 *
@@ -598,7 +571,7 @@ class RDA_Options {
 	}
 
 	/**
-	 * Login Message sanitize callback.
+	 * Sanitizes the value of the login screen message setting on save.
 	 *
 	 * @since 1.1
 	 *
@@ -610,15 +583,15 @@ class RDA_Options {
 	}
 
 	/**
-	 * Required capability for Dashboard access.
+	 * Determines the capability required for access to the admin.
 	 *
 	 * @since 1.0
 	 *
-	 * @return string $this->settings['access_cap'] if set, otherwise, 'manage_options' (filterable).
+	 * @return string The value of `$this->settings['access_cap']` if set, otherwise, 'manage_options'.
 	 */
 	public function capability() {
 		/**
-		 * Filter the access capability.
+		 * Filters the access capability.
 		 *
 		 * @since 1.1
 		 *
@@ -628,11 +601,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Plugins list 'Settings' row link.
+	 * Renders the 'Settings' link in the plugin list table row.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->setup()
 	 *
 	 * @param array $links Row links array to filter.
 	 * @return array $links Filtered links array.
@@ -652,10 +623,10 @@ class RDA_Options {
 	}
 
 	/**
-	 * Debug mode output.
+	 * Outputs debugging information if triggered.
 	 *
-	 * When rda_debug=1 is passed via the query string, displays a table with all the raw
-	 * option values for debugging purposes.
+	 * When rda_debug=1 is passed via the query string on the settings page, a table with
+	 * all the raw option values is displayed for debugging purposes.
 	 *
 	 * @since 1.1
 	 */
