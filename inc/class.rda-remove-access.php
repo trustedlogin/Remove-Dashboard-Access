@@ -81,7 +81,7 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Hides menus other than profile.php.
+	 * Hides menus other than allowed admin pages.
 	 *
 	 * @since 1.1
 	 */
@@ -90,10 +90,10 @@ class RDA_Remove_Access {
 		global $menu;
 
 		if ( ! empty( $menu ) && is_array( $menu ) ) {
-			// Gather menu IDs (minus profile.php).
+			// Gather menu IDs (minus allowed pages).
 			foreach ( $menu as $index => $values ) {
 
-				if ( isset( $values[2] ) && 'profile.php' === $values[2] ) {
+				if ( isset( $values[2] ) && in_array( $values[2], $this->get_allowed_pages(), true ) ) {
 					continue;
 				}
 
@@ -112,10 +112,28 @@ class RDA_Remove_Access {
 		/** @global string $pagenow */
 		global $pagenow;
 
-		if ( 'profile.php' !== $pagenow || ! $this->settings['enable_profile'] ) {
+		if ( ! in_array( $pagenow, $this->get_allowed_pages(), true ) || ! $this->settings['enable_profile'] ) {
 			wp_redirect( $this->settings['redirect_url'] );
 			exit;
 		}
+	}
+
+	/**
+	 * Retrieves the list of pages disallowed users can access in the admin.
+	 *
+	 * @since 1.2
+	 *
+	 * @return array List of allowed pages.
+	 */
+	public function get_allowed_pages() {
+		/**
+		 * Filters the list of pages disallowed users can access in the admin.
+		 *
+		 * @since 1.2
+		 *
+		 * @param array $pages List of allowed pages.
+		 */
+		return (array) apply_filters( 'rda_allowed_pages', array( 'profile.php' ) );
 	}
 
 	/**
