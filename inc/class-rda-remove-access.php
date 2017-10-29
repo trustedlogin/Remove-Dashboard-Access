@@ -56,7 +56,6 @@ class RDA_Remove_Access {
 	 *
 	 * @since 1.0
 	 *
-	 * @uses current_user_can() Checks whether the current user has the specified capability.
 	 * @return bool False if the current user lacks the requisite capbility. True otherwise.
 	 */
 	public function is_user_allowed() {
