@@ -12,7 +12,6 @@
  *
  * @since 1.0
  */
-if ( ! class_exists( 'RDA_Options' ) ) {
 class RDA_Options {
 
 	/**
@@ -709,6 +708,4 @@ class RDA_Options {
 		<?php
 	}
 
-} // RDA_Options
-
-} // class exists
+}
