@@ -20,7 +20,7 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 * @var   string $capability
 	 */
-	var $capability;
+	public var $capability;
 
 	/**
 	 * RDA Settings.
@@ -28,7 +28,7 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 * @var   array $settings
 	 */
-	var $settings = array();
+	public var $settings = array();
 
 	/**
 	 * Sets up the mechanism by which dashboard access is determined.
@@ -39,7 +39,7 @@ class RDA_Remove_Access {
 	 * @param string $capability Capability needed to gain dashboard access.
 	 * @param array  $settings RDA settings array.
 	 */
-	function __construct( $capability, $settings ) {
+	public function __construct( $capability, $settings ) {
 		// Bail if the capability is empty.
 		if ( empty( $capability ) ) {
 			return;
@@ -59,7 +59,7 @@ class RDA_Remove_Access {
 	 * @uses current_user_can() Checks whether the current user has the specified capability.
 	 * @return bool False if the current user lacks the requisite capbility. True otherwise.
 	 */
-	function is_user_allowed() {
+	public function is_user_allowed() {
 		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) ) {
 			// Remove access.
 			$this->lock_it_up();
@@ -75,7 +75,7 @@ class RDA_Remove_Access {
 	 *
 	 * @since 1.0
 	 */
-	function lock_it_up() {
+	public function lock_it_up() {
 		add_action( 'admin_init', array( $this, 'dashboard_redirect' ) );
 		add_action( 'admin_head', array( $this, 'hide_menus' ) );
 		add_action( 'admin_bar_menu', array( $this, 'hide_toolbar_items' ), 999 );
@@ -109,7 +109,7 @@ class RDA_Remove_Access {
 	 *
 	 * @since 0.1
 	 */
-	function dashboard_redirect() {
+	public function dashboard_redirect() {
 		/** @global string $pagenow */
 		global $pagenow;
 
@@ -126,7 +126,7 @@ class RDA_Remove_Access {
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar Toolbar instance.
 	 */
-	function hide_toolbar_items( $wp_admin_bar ) {
+	public function hide_toolbar_items( $wp_admin_bar ) {
 		$edit_profile = ! $this->settings['enable_profile'] ? 'edit-profile' : '';
 
 		if ( is_admin() ) {
