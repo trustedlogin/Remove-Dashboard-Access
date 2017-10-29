@@ -21,13 +21,19 @@ window.wp = window.wp || {};
 		inputAccessSwitch = $( 'input[name="rda_access_switch"]' ),
 		inputAccessCap = $( 'select[name="rda_access_cap"]' );
 
-	var noSubmit = $( '<span></span>' )
+	// Add the no-submit message to the DOM and hide it for later.
+	var	noSubmit = $( '<span></span>' )
 		.attr( 'id', 'rda-no-submit-message' )
 		.attr( 'class', 'description' )
-		.text( rda_vars.no_submit );
+		.text( rda_vars.no_submit )
+		.insertAfter( formSubmit )
+		.hide();
 
-	noSubmit.insertAfter( formSubmit ).hide();
-
+	/**
+	 * Ajax callback for checking the current capability when User Access settings are changed.
+	 *
+	 * @param event
+	 */
 	var ajaxCheckCap = function( event ) {
 		lockoutMessage.slideUp( 'fast' ).addClass( 'screen-reader-text' ).html( '' );
 		formSubmit.removeAttr( 'disabled' );
@@ -55,27 +61,16 @@ window.wp = window.wp || {};
 			dataType: 'json',
 			success: function( response ) {
 
-				/*
-				 * If response.success is true and the notice is showing, hide it and give the all clear.
-				 *
-				 * If false, print the message.
-				 */
-				if ( response.success ) {
-					if ( ! lockoutMessage.hasClass( 'screen-reader-text' ) ) {
-						wp.a11y.speak( rda_vars.yes_submit );
-					}
-				} else {
-					// If response.success is true, nothing to do here. If false, print the message.
-					if ( response.data.message ) {
-						formSubmit.attr( 'disabled', 'disabled' );
-						noSubmit.show();
+				// If response.success is true, nothing to do here. If false, print the message.
+				if ( ! response.success && response.data.message ) {
+					formSubmit.attr( 'disabled', 'disabled' );
+					noSubmit.show();
 
-						lockoutMessage.removeClass( 'screen-reader-text' ).html( response.data.message ).slideDown( 'fast' );
-						wp.a11y.speak( response.data.message );
-						wp.a11y.speak( rda_vars.no_submit );
-					}
-
+					lockoutMessage.removeClass( 'screen-reader-text' ).html( response.data.message ).slideDown( 'fast' );
+					wp.a11y.speak( response.data.message );
+					wp.a11y.speak( rda_vars.no_submit );
 				}
+
 			}
 
 		} );
