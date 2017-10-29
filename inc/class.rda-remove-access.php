@@ -119,21 +119,24 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Retrieves the list of pages disallowed users can access in the admin.
+	 * Retrieves the list of pages restricted users can access in the admin.
 	 *
 	 * @since 1.2
 	 *
 	 * @return array List of allowed pages.
 	 */
 	public function get_allowed_pages() {
+
 		/**
-		 * Filters the list of pages disallowed users can access in the admin.
+		 * Filters the list of pages restricted users can access in the admin.
 		 *
 		 * @since 1.2
 		 *
 		 * @param array $pages List of allowed pages.
 		 */
-		return (array) apply_filters( 'rda_allowed_pages', array( 'profile.php' ) );
+		$allowed_pages = apply_filters( 'rda_allowed_pages', array( 'profile.php' ) );
+
+		return array_merge( $allowed_pages, array( 'profile.php' ) );
 	}
 
 	/**
