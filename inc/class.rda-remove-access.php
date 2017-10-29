@@ -81,7 +81,9 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Hides menus other than profile.php.
+	 * Hides menus other than allowed admin pages.
+	 *
+	 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
 	 *
 	 * @since 1.1
 	 */
@@ -89,16 +91,35 @@ class RDA_Remove_Access {
 		/** @global array $menu */
 		global $menu;
 
+		/** @global array $submenu */
+		global $submenu;
+
+		// Drop menu pages.
 		if ( ! empty( $menu ) && is_array( $menu ) ) {
-			// Gather menu IDs (minus profile.php).
+			// Gather menu IDs (minus allowed pages).
 			foreach ( $menu as $index => $values ) {
 
-				if ( isset( $values[2] ) && 'profile.php' === $values[2] ) {
+				if ( isset( $values[2] ) && in_array( $values[2], $this->get_allowed_pages(), true ) ) {
 					continue;
 				}
 
 				// Remove menu pages.
 				remove_menu_page( $values[2] );
+			}
+		}
+
+		// Drop submenu pages.
+		if ( ! empty( $submenu ) && is_array( $submenu ) ) {
+			// Gather submenu IDs (minus allowed pages).
+			foreach ( $submenu as $parent => $positions ) {
+				foreach ( $positions as $position => $entry ) {
+					if ( isset( $entry[2] ) && in_array( $entry[2], $this->get_allowed_pages(), true ) ) {
+						continue;
+					}
+
+					remove_submenu_page( $parent, $entry[2] );
+				}
+
 			}
 		}
 	}
@@ -112,10 +133,53 @@ class RDA_Remove_Access {
 		/** @global string $pagenow */
 		global $pagenow;
 
-		if ( 'profile.php' !== $pagenow || ! $this->settings['enable_profile'] ) {
-			wp_redirect( $this->settings['redirect_url'] );
+		/**
+		 * Filters the URL to redirect disallowed users to.
+		 *
+		 * If the redirect URL passed to this hook is empty, the redirect will be skipped.
+		 *
+		 * Example to disable the redirect:
+		 *
+		 *     add_filter( 'rda_redirect_url', '__return_empty_string' );
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param string             $url   URL to redirect disallowed users to.
+		 * @param \RDA_Remove_Access $this  RDA_Remove_Access instance.
+		 */
+		$redirect_url = apply_filters( 'rda_redirect_url', $this->settings['redirect_url'], $this );
+
+		if ( ( ! in_array( (string) $pagenow, $this->get_allowed_pages(), true ) || ! $this->settings['enable_profile'] )
+			&& ! empty( $redirect_url )
+		) {
+			wp_redirect( $redirect_url );
 			exit;
 		}
+	}
+
+	/**
+	 * Retrieves the list of pages restricted users can access in the admin.
+	 *
+	 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
+	 *
+	 * @since 1.2
+	 *
+	 * @return array List of allowed pages.
+	 */
+	public function get_allowed_pages() {
+
+		/**
+		 * Filters the list of pages restricted users can access in the admin.
+		 *
+		 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
+		 *
+		 * @since 1.2
+		 *
+		 * @param array $pages List of allowed pages.
+		 */
+		$allowed_pages = apply_filters( 'rda_allowed_pages', array( 'profile.php' ) );
+
+		return array_merge( $allowed_pages, array( 'profile.php' ) );
 	}
 
 	/**
