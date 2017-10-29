@@ -20,7 +20,7 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 * @var   string $capability
 	 */
-	public var $capability;
+	public $capability;
 
 	/**
 	 * RDA Settings.
@@ -28,7 +28,7 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 * @var   array $settings
 	 */
-	public var $settings = array();
+	public $settings = array();
 
 	/**
 	 * Sets up the mechanism by which dashboard access is determined.
