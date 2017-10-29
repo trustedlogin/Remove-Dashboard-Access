@@ -89,6 +89,10 @@ class RDA_Remove_Access {
 		/** @global array $menu */
 		global $menu;
 
+		/** @global array $submenu */
+		global $submenu;
+
+		// Drop menu pages.
 		if ( ! empty( $menu ) && is_array( $menu ) ) {
 			// Gather menu IDs (minus allowed pages).
 			foreach ( $menu as $index => $values ) {
@@ -99,6 +103,21 @@ class RDA_Remove_Access {
 
 				// Remove menu pages.
 				remove_menu_page( $values[2] );
+			}
+		}
+
+		// Drop submenu pages.
+		if ( ! empty( $submenu ) && is_array( $submenu ) ) {
+			// Gather submenu IDs (minus allowed pages).
+			foreach ( $submenu as $parent => $positions ) {
+				foreach ( $positions as $position => $entry ) {
+					if ( isset( $entry[2] ) && in_array( $entry[2], $this->get_allowed_pages(), true ) ) {
+						continue;
+					}
+
+					remove_submenu_page( $parent, $entry[2] );
+				}
+
 			}
 		}
 	}
