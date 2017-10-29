@@ -440,6 +440,15 @@ class RDA_Options {
 		global $wp_roles;
 
 		$capabilities = array();
+
+		if ( ! isset( $wp_roles ) ) {
+			if ( function_exists( 'wp_roles' ) ) {
+				$wp_roles = wp_roles();
+			} else {
+				$wp_roles = new WP_Roles();
+			}
+		}
+
 		foreach ( $wp_roles->role_objects as $key => $role ) {
 			if ( is_array( $role->capabilities ) ) {
 				foreach ( $role->capabilities as $cap => $grant )
