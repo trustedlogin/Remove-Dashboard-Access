@@ -18,7 +18,6 @@ class RDA_Options {
 	 * Static instance to make removing actions and filters modular.
 	 *
 	 * @since 1.1
-	 * @access public
 	 * @static
 	 */
 	public static $instance;
@@ -27,7 +26,6 @@ class RDA_Options {
 	 * @var $settings rda-settings options array
 	 *
 	 * @since 1.0
-	 * @access public
 	 */
 	public $settings = array();
 
@@ -77,7 +75,6 @@ class RDA_Options {
 	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function maybe_map_old_settings() {
 		// If the settings aren't there, bail.
@@ -117,7 +114,6 @@ class RDA_Options {
 	 * Setup default options on activation.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
 	 * @see $this->setup()
 	 */
@@ -142,7 +138,7 @@ class RDA_Options {
 	 *
 	 * @uses add_options_page() to add a sub-menu under 'Settings'
 	 */
-	function options_page() {
+	public function options_page() {
 		add_options_page(
 			__( 'Dashboard Access Settings', 'remove-dashboard-access' ),
 			__( 'Dashboard Access', 'remove-dashboard-access' ),
@@ -159,7 +155,7 @@ class RDA_Options {
 	 *
 	 * @since 1.1.1
 	 */
-	function options_page_cb() {
+	public function options_page_cb() {
 		?>
 		<div class="wrap">
 			<h1><?php _e( 'Dashboard Access Settings', 'remove-dashboard-access' ); ?></h1>
@@ -178,7 +174,6 @@ class RDA_Options {
 	 * Register settings and settings sections.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
 	 * @see $this->setup()
 	 */
@@ -229,7 +224,6 @@ class RDA_Options {
 	 * Dashboard Access Controls display callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function settings_section() {
 		_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove-dashboard-access' );
@@ -241,7 +235,6 @@ class RDA_Options {
 	 * Output the capability drop-down.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function access_cap_dropdown() {
 		$switch = $this->settings['access_switch'];
@@ -281,7 +274,6 @@ class RDA_Options {
 	 * enables the capabilities drop-down. Default state is disabled.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
 	 * @see $this->setup()
 	 */
@@ -377,7 +369,6 @@ class RDA_Options {
 	 * integrated feel.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
 	 * @see $this->caps_dropdown()
 	 */
@@ -409,6 +400,7 @@ class RDA_Options {
 	 * Retrieves the default capabilities for the role-based settings.
 	 *
 	 * @since 1.2
+	 * @static
 	 *
 	 * @return array Pairs of role-based setting abbreviations and their default capabilities.
 	 */
@@ -442,7 +434,6 @@ class RDA_Options {
 	 * Capability-type switch drop-down.
 	 *
 	 * @since 1.0
-	 * @access private
 	 *
 	 * @see $this->access_switch_cb()
 	 */
@@ -495,7 +486,6 @@ class RDA_Options {
 	 * Enable profile access checkbox display callback.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
 	 * @see $this->options_setup()
 	 *
@@ -515,7 +505,6 @@ class RDA_Options {
 	 * Default value is home_url(). $this->sanitize_option() handles validation and escaping.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
 	 * @see $this->options_setup()
 	 */
@@ -532,7 +521,6 @@ class RDA_Options {
 	 * Login Message display callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function login_message_cb() {
 		?>
@@ -545,7 +533,6 @@ class RDA_Options {
 	 * Login Message option callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function output_login_message( $message ) {
 		if ( ! empty( $this->settings['login_message'] ) ) {
@@ -558,7 +545,6 @@ class RDA_Options {
 	 * Access Switch sanitize callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Access switch capability.
  	 * @return string Sanitized capability.
@@ -571,7 +557,6 @@ class RDA_Options {
 	 * Access capability sanitize callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Access capability.
 	 * @return string Sanitized capability. If the option is empty, default to the value of
@@ -585,7 +570,6 @@ class RDA_Options {
 	 * Redirect URL sanitize callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Redirect URL.
 	 * @return string If empty, defaults to home_url(). Otherwise sanitized URL.
@@ -598,7 +582,6 @@ class RDA_Options {
 	 * Enable Profile sanitize callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param bool $option Whether to enable all users to edit their profiles.
 	 * @return bool Whether all users will be able to edit their profiles.
@@ -611,7 +594,6 @@ class RDA_Options {
 	 * Login Message sanitize callback.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Login message.
 	 * @return string Sanitized login message.
@@ -624,7 +606,6 @@ class RDA_Options {
 	 * Required capability for Dashboard access.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
 	 * @return string $this->settings['access_cap'] if set, otherwise, 'manage_options' (filterable).
 	 */
