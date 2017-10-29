@@ -83,6 +83,8 @@ class RDA_Remove_Access {
 	/**
 	 * Hides menus other than allowed admin pages.
 	 *
+	 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
+	 *
 	 * @since 1.1
 	 */
 	public function hide_menus() {
@@ -140,6 +142,8 @@ class RDA_Remove_Access {
 	/**
 	 * Retrieves the list of pages restricted users can access in the admin.
 	 *
+	 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
+	 *
 	 * @since 1.2
 	 *
 	 * @return array List of allowed pages.
@@ -148,6 +152,8 @@ class RDA_Remove_Access {
 
 		/**
 		 * Filters the list of pages restricted users can access in the admin.
+		 *
+		 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
 		 *
 		 * @since 1.2
 		 *
