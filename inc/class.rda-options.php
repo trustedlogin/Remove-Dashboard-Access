@@ -401,7 +401,7 @@ class RDA_Options {
 	/**
 	 * Retrieves the default capabilities for the role-based settings.
 	 *
-	 * @since 1.2
+	 * @since 1.2.0
 	 *
 	 * @return array Pairs of role-based setting abbreviations and their default capabilities.
 	 */
@@ -416,7 +416,7 @@ class RDA_Options {
 		/**
 		 * Filter the capability defaults for admins, editors, and authors.
 		 *
-		 * @since 1.1
+		 * @since 1.2.0
 		 *
 		 * @param array $capabilities {
 		 *     Default capabilities for various roles.

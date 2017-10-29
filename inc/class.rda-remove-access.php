@@ -133,8 +133,26 @@ class RDA_Remove_Access {
 		/** @global string $pagenow */
 		global $pagenow;
 
-		if ( ! in_array( $pagenow, $this->get_allowed_pages(), true ) || ! $this->settings['enable_profile'] ) {
-			wp_redirect( $this->settings['redirect_url'] );
+		/**
+		 * Filters the URL to redirect disallowed users to.
+		 *
+		 * If the redirect URL passed to this hook is empty, the redirect will be skipped.
+		 *
+		 * Example to disable the redirect:
+		 *
+		 *     add_filter( 'rda_redirect_url', '__return_empty_string' );
+		 *
+		 * @since 1.2.0
+		 *
+		 * @param string             $url   URL to redirect disallowed users to.
+		 * @param \RDA_Remove_Access $this  RDA_Remove_Access instance.
+		 */
+		$redirect_url = apply_filters( 'rda_redirect_url', $this->settings['redirect_url'], $this );
+
+		if ( ( ! in_array( (string) $pagenow, $this->get_allowed_pages(), true ) || ! $this->settings['enable_profile'] )
+			&& ! empty( $redirect_url )
+		) {
+			wp_redirect( $redirect_url );
 			exit;
 		}
 	}
