@@ -33,7 +33,6 @@ class RDA_Options {
 	 * Init
 	 *
 	 * @since 1.0
-	 * @access public
 	 */
 	public function __construct() {
 		$this->setup();
@@ -43,7 +42,6 @@ class RDA_Options {
 	 * Set up various actions, filters, and other items.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function setup() {
 		load_plugin_textdomain( 'remove-dashboard-access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -651,7 +649,6 @@ class RDA_Options {
 	 * option values for debugging purposes.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function _debug_mode() {
 		?>
