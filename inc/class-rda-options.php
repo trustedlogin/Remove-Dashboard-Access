@@ -10,7 +10,7 @@
 /**
  * Core RDA class to handle settings management.
  *
- * @since 1.0
+ * @since 1.0.0
  */
 class RDA_Options {
 
@@ -25,7 +25,7 @@ class RDA_Options {
 	/**
 	 * Representation of RDA's settings for the current site.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 * @var   array
 	 */
 	public $settings = array();
@@ -33,7 +33,7 @@ class RDA_Options {
 	/**
 	 * Sets up RDA_Options.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		$this->setup();
@@ -112,7 +112,7 @@ class RDA_Options {
 	 *
 	 * Sets default options on activation.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function activate() {
 		$settings = array(
@@ -166,7 +166,7 @@ class RDA_Options {
 	/**
 	 * Registers settings and settings sections.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function settings() {
 		// Dashboard Access Controls section.
@@ -259,7 +259,7 @@ class RDA_Options {
 	/**
 	 * Enqueues and localizes the JavaScript used by the access switcher.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function access_switch_js() {
 		wp_enqueue_script( 'rda-settings', plugin_dir_url( __FILE__ ) . 'js/settings.js', array( 'wp-a11y' ), '1.0' );
@@ -351,7 +351,7 @@ class RDA_Options {
 	 * to access the Dashboard. Mimics 'Page on front' UI in options-reading.php
 	 * for a more integrated feel.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function access_switch_cb() {
 		echo '<a name="dashboard-access"></a>';
@@ -414,7 +414,7 @@ class RDA_Options {
 	/**
 	 * Renders the actual drop-down element used by the access_cap_dropdown() method.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	private function _output_caps_dropdown() {
 		/** @global WP_Roles $wp_roles */
@@ -473,7 +473,7 @@ class RDA_Options {
 	/**
 	 * Renders the 'User Profile Access' setting UI.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function profile_enable_cb() {
 		printf( '<input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s',
@@ -486,7 +486,7 @@ class RDA_Options {
 	/**
 	 * Renders the 'Redirect URL' setting UI.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function url_redirect_cb() {
 		?>
@@ -585,7 +585,7 @@ class RDA_Options {
 	/**
 	 * Determines the capability required for access to the admin.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @return string The value of `$this->settings['access_cap']` if set, otherwise, 'manage_options'.
 	 */
@@ -603,7 +603,7 @@ class RDA_Options {
 	/**
 	 * Renders the 'Settings' link in the plugin list table row.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @param array $links Row links array to filter.
 	 * @return array $links Filtered links array.
