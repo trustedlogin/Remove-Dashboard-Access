@@ -1,44 +1,48 @@
 <?php
 /**
- * Remove Dashboard Access Options Class
+ * RDA_Options class file
+ *
+ * @since 1.2.0
+ *
+ * @package Remove_Dashboard_Access\Core
+ */
+
+/**
+ * Core RDA class to handle settings management.
  *
  * @since 1.0
  */
-if ( ! class_exists( 'RDA_Options' ) ) {
 class RDA_Options {
 
 	/**
 	 * Static instance to make removing actions and filters modular.
 	 *
 	 * @since 1.1
-	 * @access public
 	 * @static
 	 */
 	public static $instance;
 
 	/**
-	 * @var $settings rda-settings options array
+	 * Representation of RDA's settings for the current site.
 	 *
 	 * @since 1.0
-	 * @access public
+	 * @var   array
 	 */
 	public $settings = array();
 
 	/**
-	 * Init
+	 * Sets up RDA_Options.
 	 *
 	 * @since 1.0
-	 * @access public
 	 */
 	public function __construct() {
 		$this->setup();
 	}
 
 	/**
-	 * Set up various actions, filters, and other items.
+	 * Sets up various actions, filters, and other items for options management.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function setup() {
 		load_plugin_textdomain( 'remove-dashboard-access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
@@ -67,10 +71,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
+	 * (maybe) Maps old settings (1.0-) to the new ones (1.1+).
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function maybe_map_old_settings() {
 		// If the settings aren't there, bail.
@@ -105,14 +108,11 @@ class RDA_Options {
 	}
 
 	/**
-	 * Activation Hook.
+	 * Specifies logic to run during plugin activation.
 	 *
-	 * Setup default options on activation.
+	 * Sets default options on activation.
 	 *
 	 * @since 1.0
-	 * @access public
-	 *
-	 * @see $this->setup()
 	 */
 	public function activate() {
 		$settings = array(
@@ -129,13 +129,11 @@ class RDA_Options {
 	}
 
 	/**
-	 * Options page: Remove Access
+	 * Registers the Dashboard Access submenu page.
 	 *
 	 * @since 1.1.1
-	 *
-	 * @uses add_options_page() to add a sub-menu under 'Settings'
 	 */
-	function options_page() {
+	public function options_page() {
 		add_options_page(
 			__( 'Dashboard Access Settings', 'remove-dashboard-access' ),
 			__( 'Dashboard Access', 'remove-dashboard-access' ),
@@ -146,21 +144,19 @@ class RDA_Options {
 	}
 
 	/**
-	 * Options page: callback
-	 *
-	 * Outputs the form for the 'Remove Access' submenu
+	 * Renders the Dashboard Access submenu page.
 	 *
 	 * @since 1.1.1
 	 */
-	function options_page_cb() {
+	public function options_page_cb() {
 		?>
 		<div class="wrap">
 			<h1><?php _e( 'Dashboard Access Settings', 'remove-dashboard-access' ); ?></h1>
 			<form action="options.php" method="POST" id="rda-options-form">
 				<?php
-					settings_fields( 'dashboard-access' );
-					do_settings_sections( 'dashboard-access' );
-					submit_button();
+				settings_fields( 'dashboard-access' );
+				do_settings_sections( 'dashboard-access' );
+				submit_button();
 				?>
 			</form>
 		</div><!-- .wrap -->
@@ -168,12 +164,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Register settings and settings sections.
+	 * Registers settings and settings sections.
 	 *
 	 * @since 1.0
-	 * @access public
-	 *
-	 * @see $this->setup()
 	 */
 	public function settings() {
 		// Dashboard Access Controls section.
@@ -219,22 +212,18 @@ class RDA_Options {
 	}
 
 	/**
-	 * Dashboard Access Controls display callback.
+	 * Renders the contents of the 'Dashboard Access Settings' section.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function settings_section() {
 		_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove-dashboard-access' );
 	}
 
 	/**
-	 * Access Controls 2 of 2.
-	 *
-	 * Output the capability drop-down.
+	 * Renders the 'Advanced' section of the 'User Access' settings UI.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function access_cap_dropdown() {
 		$switch = $this->settings['access_switch'];
@@ -253,9 +242,9 @@ class RDA_Options {
 			}
 		</style>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-			<?php _e( '<strong>Advanced</strong> (limit by capability):', 'remove-dashboard-access' ); ?>
-		</label><?php $this->_output_caps_dropdown(); ?></p>
+				<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
+				<?php _e( '<strong>Advanced</strong> (limit by capability):', 'remove-dashboard-access' ); ?>
+			</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p class="description">
 			<?php printf( __( 'You can find out more about specific %s in the Codex.', 'remove-dashboard-access' ),
 				sprintf( '<a href="%1$s" target="_new">%2$s</a>',
@@ -264,19 +253,13 @@ class RDA_Options {
 				)
 			); ?>
 		</p>
-	<?php
+		<?php
 	}
 
 	/**
-	 * Capability-type radio switch jQuery script.
-	 *
-	 * When the 'Limit by capability' radio option is selected the script.
-	 * enables the capabilities drop-down. Default state is disabled.
+	 * Enqueues and localizes the JavaScript used by the access switcher.
 	 *
 	 * @since 1.0
-	 * @access public
-	 *
-	 * @see $this->setup()
 	 */
 	public function access_switch_js() {
 		wp_enqueue_script( 'rda-settings', plugin_dir_url( __FILE__ ) . 'js/settings.js', array( 'wp-a11y' ), '1.0' );
@@ -362,17 +345,13 @@ class RDA_Options {
 	}
 
 	/**
-	 * Capability-type radio switch display callback.
+	 * Renders the bulk of the 'User Access' control setting UI.
 	 *
-	 * Displays the radio button switch for choosing which
-	 * capability users need to access the Dashboard. Mimics
-	 * 'Page on front' UI in options-reading.php for a more
-	 * integrated feel.
+	 * Displays the radio button switch for choosing which capability users need
+	 * to access the Dashboard. Mimics 'Page on front' UI in options-reading.php
+	 * for a more integrated feel.
 	 *
 	 * @since 1.0
-	 * @access public
-	 *
-	 * @see $this->caps_dropdown()
 	 */
 	public function access_switch_cb() {
 		echo '<a name="dashboard-access"></a>';
@@ -381,17 +360,17 @@ class RDA_Options {
 		$defaults = self::get_default_caps();
 		?>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Administrators only', 'remove-dashboard-access' ); ?>
-		</label></p>
+				<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
+				<?php _e( 'Administrators only', 'remove-dashboard-access' ); ?>
+			</label></p>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Editors and Administrators', 'remove-dashboard-access' ); ?>
-		</label></p>
+				<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
+				<?php _e( 'Editors and Administrators', 'remove-dashboard-access' ); ?>
+			</label></p>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Authors, Editors, and Administrators', 'remove-dashboard-access' ); ?>
-		</label></p>
+				<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
+				<?php _e( 'Authors, Editors, and Administrators', 'remove-dashboard-access' ); ?>
+			</label></p>
 		<?php wp_nonce_field( 'rda-lockout-nonce', 'rda-lockout-nonce' ); ?>
 		<input type="hidden" id="selected-capability" name="selected-capability" value="<?php echo esc_attr( $this->settings['access_cap'] ); ?>" />
 		<span class="lockout-message notice notice-error screen-reader-text" id="lockout-message"></span>
@@ -401,7 +380,8 @@ class RDA_Options {
 	/**
 	 * Retrieves the default capabilities for the role-based settings.
 	 *
-	 * @since 1.2.0
+	 * @since 1.2
+	 * @static
 	 *
 	 * @return array Pairs of role-based setting abbreviations and their default capabilities.
 	 */
@@ -416,7 +396,7 @@ class RDA_Options {
 		/**
 		 * Filter the capability defaults for admins, editors, and authors.
 		 *
-		 * @since 1.2.0
+		 * @since 1.1
 		 *
 		 * @param array $capabilities {
 		 *     Default capabilities for various roles.
@@ -432,18 +412,24 @@ class RDA_Options {
 	}
 
 	/**
-	 * Capability-type switch drop-down.
+	 * Renders the actual drop-down element used by the access_cap_dropdown() method.
 	 *
 	 * @since 1.0
-	 * @access private
-	 *
-	 * @see $this->access_switch_cb()
 	 */
 	private function _output_caps_dropdown() {
 		/** @global WP_Roles $wp_roles */
 		global $wp_roles;
 
 		$capabilities = array();
+
+		if ( ! isset( $wp_roles ) ) {
+			if ( function_exists( 'wp_roles' ) ) {
+				$wp_roles = wp_roles();
+			} else {
+				$wp_roles = new WP_Roles();
+			}
+		}
+
 		foreach ( $wp_roles->role_objects as $key => $role ) {
 			if ( is_array( $role->capabilities ) ) {
 				foreach ( $role->capabilities as $cap => $grant )
@@ -485,14 +471,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Enable profile access checkbox display callback.
+	 * Renders the 'User Profile Access' setting UI.
 	 *
 	 * @since 1.0
-	 * @access public
-	 *
-	 * @see $this->options_setup()
-	 *
-	 * @uses checked() Outputs the checked attribute when the option is enabled.
 	 */
 	public function profile_enable_cb() {
 		printf( '<input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s',
@@ -503,29 +484,23 @@ class RDA_Options {
 	}
 
 	/**
-	 * Redirect URL display callback.
-	 *
-	 * Default value is home_url(). $this->sanitize_option() handles validation and escaping.
+	 * Renders the 'Redirect URL' setting UI.
 	 *
 	 * @since 1.0
-	 * @access public
-	 *
-	 * @see $this->options_setup()
 	 */
 	public function url_redirect_cb() {
 		?>
 		<p><label>
-			<?php _e( 'Redirect disallowed users to:', 'remove-dashboard-access' ); ?>
-			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['redirect_url'] ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove-dashboard-access' ), home_url() ); ?>" />
-		</label></p>
+				<?php _e( 'Redirect disallowed users to:', 'remove-dashboard-access' ); ?>
+				<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['redirect_url'] ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove-dashboard-access' ), home_url() ); ?>" />
+			</label></p>
 		<?php
 	}
 
 	/**
-	 * Login Message display callback.
+	 * Renders the 'Login Screen Message' setting UI.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function login_message_cb() {
 		?>
@@ -535,10 +510,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Login Message option callback.
+	 * Renders the actual login screen message on the login screen.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function output_login_message( $message ) {
 		if ( ! empty( $this->settings['login_message'] ) ) {
@@ -548,23 +522,21 @@ class RDA_Options {
 	}
 
 	/**
-	 * Access Switch sanitize callback.
+	 * Sanitizes the value of the access switch setting on save.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Access switch capability.
- 	 * @return string Sanitized capability.
+	 * @return string Sanitized capability.
 	 */
 	public function sanitize_access_switch( $option ) {
 		return $option;
 	}
 
 	/**
-	 * Access capability sanitize callback.
+	 * Sanitizes the value of the access capability setting on save.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Access capability.
 	 * @return string Sanitized capability. If the option is empty, default to the value of
@@ -575,10 +547,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Redirect URL sanitize callback.
+	 * Sanitizes the value of the redirect URL setting on save.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Redirect URL.
 	 * @return string If empty, defaults to home_url(). Otherwise sanitized URL.
@@ -588,10 +559,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Enable Profile sanitize callback.
+	 * Sanitizes the value of the enable profile setting on save.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param bool $option Whether to enable all users to edit their profiles.
 	 * @return bool Whether all users will be able to edit their profiles.
@@ -601,10 +571,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Login Message sanitize callback.
+	 * Sanitizes the value of the login screen message setting on save.
 	 *
 	 * @since 1.1
-	 * @access public
 	 *
 	 * @param string $option Login message.
 	 * @return string Sanitized login message.
@@ -614,16 +583,15 @@ class RDA_Options {
 	}
 
 	/**
-	 * Required capability for Dashboard access.
+	 * Determines the capability required for access to the admin.
 	 *
 	 * @since 1.0
-	 * @access public
 	 *
-	 * @return string $this->settings['access_cap'] if set, otherwise, 'manage_options' (filterable).
+	 * @return string The value of `$this->settings['access_cap']` if set, otherwise, 'manage_options'.
 	 */
 	public function capability() {
 		/**
-		 * Filter the access capability.
+		 * Filters the access capability.
 		 *
 		 * @since 1.1
 		 *
@@ -633,11 +601,9 @@ class RDA_Options {
 	}
 
 	/**
-	 * Plugins list 'Settings' row link.
+	 * Renders the 'Settings' link in the plugin list table row.
 	 *
 	 * @since 1.0
-	 *
-	 * @see $this->setup()
 	 *
 	 * @param array $links Row links array to filter.
 	 * @return array $links Filtered links array.
@@ -645,8 +611,8 @@ class RDA_Options {
 	public function settings_link( $links, $file ) {
 		// WordPress.org slug.
 		if ( 'remove-dashboard-access-for-non-admins/remove-dashboard-access.php' == $file
-			// GitHub slug
-			|| 'remove-dashboard-access/remove-dashboard-access.php' == $file
+		     // GitHub slug
+		     || 'remove-dashboard-access/remove-dashboard-access.php' == $file
 		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
 				admin_url( 'options-general.php?page=dashboard-access' ),
@@ -657,13 +623,12 @@ class RDA_Options {
 	}
 
 	/**
-	 * Debug mode output.
+	 * Outputs debugging information if triggered.
 	 *
-	 * When rda_debug=1 is passed via the query string, displays a table with all the raw
-	 * option values for debugging purposes.
+	 * When rda_debug=1 is passed via the query string on the settings page, a table with
+	 * all the raw option values is displayed for debugging purposes.
 	 *
 	 * @since 1.1
-	 * @access public
 	 */
 	public function _debug_mode() {
 		?>
@@ -684,23 +649,21 @@ class RDA_Options {
 		</style>
 		<table class="rda_debug">
 			<tbody>
+			<tr>
+				<th><?php _e( 'Setting', 'remove-dashboard-access' ); ?></th>
+				<th><?php _e( 'Value', 'remove-dashboard-access' ); ?></th>
+			</tr>
+			<?php foreach ( $this->settings as $key => $value ) :
+				$value = empty( $value ) ? __( 'empty', 'remove-dashboard-access' ) : $value;
+				?>
 				<tr>
-					<th><?php _e( 'Setting', 'remove-dashboard-access' ); ?></th>
-					<th><?php _e( 'Value', 'remove-dashboard-access' ); ?></th>
+					<td><?php echo esc_html( $key ); ?></td>
+					<td><?php echo esc_html( $value ); ?></td>
 				</tr>
-				<?php foreach ( $this->settings as $key => $value ) :
-					$value = empty( $value ) ? __( 'empty', 'remove-dashboard-access' ) : $value;
-					?>
-					<tr>
-						<td><?php echo esc_html( $key ); ?></td>
-						<td><?php echo esc_html( $value ); ?></td>
-					</tr>
-				<?php endforeach; ?>
+			<?php endforeach; ?>
 			</tbody>
 		</table>
 		<?php
 	}
 
-} // RDA_Options
-
-} // class exists
+}
