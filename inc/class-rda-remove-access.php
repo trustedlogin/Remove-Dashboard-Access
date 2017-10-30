@@ -162,7 +162,7 @@ class RDA_Remove_Access {
 	 *
 	 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
 	 *
-	 * @since 1.2
+	 * @since 1.2.0
 	 *
 	 * @return array List of allowed pages.
 	 */
@@ -173,7 +173,7 @@ class RDA_Remove_Access {
 		 *
 		 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
 		 *
-		 * @since 1.2
+		 * @since 1.2.0
 		 *
 		 * @param array $pages List of allowed pages.
 		 */

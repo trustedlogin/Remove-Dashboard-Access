@@ -276,7 +276,7 @@ class RDA_Options {
 	 *
 	 * Helps prevent admins from locking themselves out by setting a cap they don't have.
 	 *
-	 * @since 1.2
+	 * @since 1.2.0
 	 */
 	public function cap_lockout_check() {
 		check_ajax_referer( 'rda-lockout-nonce', 'nonce' );
@@ -308,7 +308,7 @@ class RDA_Options {
 	/**
 	 * Retrieves the warning message for the given capability and role alias.
 	 *
-	 * @since 1.2
+	 * @since 1.2.0
 	 *
 	 * @param string $capability_switch The capability switch setting.
 	 * @return string Warning message that takes the switch value into account to provide context.
@@ -380,7 +380,7 @@ class RDA_Options {
 	/**
 	 * Retrieves the default capabilities for the role-based settings.
 	 *
-	 * @since 1.2
+	 * @since 1.2.0
 	 * @static
 	 *
 	 * @return array Pairs of role-based setting abbreviations and their default capabilities.
