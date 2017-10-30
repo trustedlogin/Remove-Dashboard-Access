@@ -1,0 +1,124 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Remove Dashboard Access\n"
+"POT-Creation-Date: 2014-07-16 02:30-0700\n"
+"PO-Revision-Date: 2014-07-16 02:31-0700\n"
+"Last-Translator: \n"
+"Language-Team: Drew Jaynes (DrewAPicture) <info@drewapicture.com>\n"
+"Language: en\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.6.6\n"
+"X-Poedit-KeywordsList: __;_e;esc_attr__;esc_attr_e;esc_html__;esc_html_e;_x;"
+"_ex;esc_attr_x;esc_html_x;_n;_nx;_n_noop;_nx_noop\n"
+"X-Poedit-Basepath: ../\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: inc/class.rda-options.php:55
+msgid "This site is in maintenance mode."
+msgstr ""
+
+#: inc/class.rda-options.php:141 inc/class.rda-options.php:160
+msgid "Dashboard Access Settings"
+msgstr ""
+
+#: inc/class.rda-options.php:142
+msgid "Dashboard Access"
+msgstr ""
+
+#: inc/class.rda-options.php:182
+msgid "Dashboard Access Controls"
+msgstr ""
+
+#: inc/class.rda-options.php:187
+msgid "Dashboard User Access:"
+msgstr ""
+
+#: inc/class.rda-options.php:195
+msgid "Redirect URL:"
+msgstr ""
+
+#: inc/class.rda-options.php:199
+msgid "User Profile Access:"
+msgstr ""
+
+#: inc/class.rda-options.php:203
+msgid "Login Message"
+msgstr ""
+
+#: inc/class.rda-options.php:218
+msgid "Debug Info"
+msgstr ""
+
+#: inc/class.rda-options.php:230
+msgid ""
+"Dashboard access can be restricted to users of certain roles only or users "
+"with a specific capability."
+msgstr ""
+
+#: inc/class.rda-options.php:246
+msgid "<strong>Advanced</strong>: Limit by capability:"
+msgstr ""
+
+#: inc/class.rda-options.php:249
+#, php-format
+msgid "You can find out more about specific %s in the Codex."
+msgstr ""
+
+#: inc/class.rda-options.php:252
+msgid "Roles &amp; Capabilities"
+msgstr ""
+
+#: inc/class.rda-options.php:285
+msgid " Disable access controls and redirection"
+msgstr ""
+
+#: inc/class.rda-options.php:328
+msgid "Administrators only"
+msgstr ""
+
+#: inc/class.rda-options.php:332
+msgid "Editors and Administrators"
+msgstr ""
+
+#: inc/class.rda-options.php:336
+msgid "Authors, Editors, and Administrators"
+msgstr ""
+
+#: inc/class.rda-options.php:386
+msgid "--- Select a Capability ---"
+msgstr ""
+
+#: inc/class.rda-options.php:410
+msgid " Allow all users to edit their profiles in the dashboard."
+msgstr ""
+
+#: inc/class.rda-options.php:427
+msgid "Redirect disallowed users to:"
+msgstr ""
+
+#: inc/class.rda-options.php:428
+#, php-format
+msgid "Default: %s"
+msgstr ""
+
+#: inc/class.rda-options.php:441
+msgid "(Disabled when empty)"
+msgstr ""
+
+#: inc/class.rda-options.php:561
+msgid "Settings"
+msgstr ""
+
+#: inc/class.rda-options.php:596
+msgid "Setting"
+msgstr ""
+
+#: inc/class.rda-options.php:597
+msgid "Value"
+msgstr ""
+
+#: inc/class.rda-options.php:600
+msgid "empty"
+msgstr ""
