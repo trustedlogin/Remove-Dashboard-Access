@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** RDA_Options Class */
-require_once( dirname( __FILE__ ) . '/inc/class-rda-options.php' );
+require_once( dirname( __FILE__ ) . '/inc/class.rda-options.php' );
 
 /** RDA_Remove_Access Class */
-require_once( dirname( __FILE__ ) . '/inc/class-rda-remove-access.php' );
+require_once( dirname( __FILE__ ) . '/inc/class.rda-remove-access.php' );
 
 // Load options instance.
 if ( class_exists( 'RDA_Options' ) ) {
