@@ -154,9 +154,9 @@ class RDA_Options {
 			<h1><?php _e( 'Dashboard Access Settings', 'remove-dashboard-access' ); ?></h1>
 			<form action="options.php" method="POST" id="rda-options-form">
 				<?php
-					settings_fields( 'dashboard-access' );
-					do_settings_sections( 'dashboard-access' );
-					submit_button();
+				settings_fields( 'dashboard-access' );
+				do_settings_sections( 'dashboard-access' );
+				submit_button();
 				?>
 			</form>
 		</div><!-- .wrap -->
@@ -242,9 +242,9 @@ class RDA_Options {
 			}
 		</style>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-			<?php _e( '<strong>Advanced</strong> (limit by capability):', 'remove-dashboard-access' ); ?>
-		</label><?php $this->_output_caps_dropdown(); ?></p>
+				<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
+				<?php _e( '<strong>Advanced</strong> (limit by capability):', 'remove-dashboard-access' ); ?>
+			</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p class="description">
 			<?php printf( __( 'You can find out more about specific %s in the Codex.', 'remove-dashboard-access' ),
 				sprintf( '<a href="%1$s" target="_new">%2$s</a>',
@@ -253,7 +253,7 @@ class RDA_Options {
 				)
 			); ?>
 		</p>
-	<?php
+		<?php
 	}
 
 	/**
@@ -360,17 +360,17 @@ class RDA_Options {
 		$defaults = self::get_default_caps();
 		?>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Administrators only', 'remove-dashboard-access' ); ?>
-		</label></p>
+				<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
+				<?php _e( 'Administrators only', 'remove-dashboard-access' ); ?>
+			</label></p>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Editors and Administrators', 'remove-dashboard-access' ); ?>
-		</label></p>
+				<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
+				<?php _e( 'Editors and Administrators', 'remove-dashboard-access' ); ?>
+			</label></p>
 		<p><label>
-			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Authors, Editors, and Administrators', 'remove-dashboard-access' ); ?>
-		</label></p>
+				<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
+				<?php _e( 'Authors, Editors, and Administrators', 'remove-dashboard-access' ); ?>
+			</label></p>
 		<?php wp_nonce_field( 'rda-lockout-nonce', 'rda-lockout-nonce' ); ?>
 		<input type="hidden" id="selected-capability" name="selected-capability" value="<?php echo esc_attr( $this->settings['access_cap'] ); ?>" />
 		<span class="lockout-message notice notice-error screen-reader-text" id="lockout-message"></span>
@@ -491,9 +491,9 @@ class RDA_Options {
 	public function url_redirect_cb() {
 		?>
 		<p><label>
-			<?php _e( 'Redirect disallowed users to:', 'remove-dashboard-access' ); ?>
-			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['redirect_url'] ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove-dashboard-access' ), home_url() ); ?>" />
-		</label></p>
+				<?php _e( 'Redirect disallowed users to:', 'remove-dashboard-access' ); ?>
+				<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['redirect_url'] ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove-dashboard-access' ), home_url() ); ?>" />
+			</label></p>
 		<?php
 	}
 
@@ -527,7 +527,7 @@ class RDA_Options {
 	 * @since 1.1
 	 *
 	 * @param string $option Access switch capability.
- 	 * @return string Sanitized capability.
+	 * @return string Sanitized capability.
 	 */
 	public function sanitize_access_switch( $option ) {
 		return $option;
@@ -611,8 +611,8 @@ class RDA_Options {
 	public function settings_link( $links, $file ) {
 		// WordPress.org slug.
 		if ( 'remove-dashboard-access-for-non-admins/remove-dashboard-access.php' == $file
-			// GitHub slug
-			|| 'remove-dashboard-access/remove-dashboard-access.php' == $file
+		     // GitHub slug
+		     || 'remove-dashboard-access/remove-dashboard-access.php' == $file
 		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
 				admin_url( 'options-general.php?page=dashboard-access' ),
@@ -649,18 +649,18 @@ class RDA_Options {
 		</style>
 		<table class="rda_debug">
 			<tbody>
+			<tr>
+				<th><?php _e( 'Setting', 'remove-dashboard-access' ); ?></th>
+				<th><?php _e( 'Value', 'remove-dashboard-access' ); ?></th>
+			</tr>
+			<?php foreach ( $this->settings as $key => $value ) :
+				$value = empty( $value ) ? __( 'empty', 'remove-dashboard-access' ) : $value;
+				?>
 				<tr>
-					<th><?php _e( 'Setting', 'remove-dashboard-access' ); ?></th>
-					<th><?php _e( 'Value', 'remove-dashboard-access' ); ?></th>
+					<td><?php echo esc_html( $key ); ?></td>
+					<td><?php echo esc_html( $value ); ?></td>
 				</tr>
-				<?php foreach ( $this->settings as $key => $value ) :
-					$value = empty( $value ) ? __( 'empty', 'remove-dashboard-access' ) : $value;
-					?>
-					<tr>
-						<td><?php echo esc_html( $key ); ?></td>
-						<td><?php echo esc_html( $value ); ?></td>
-					</tr>
-				<?php endforeach; ?>
+			<?php endforeach; ?>
 			</tbody>
 		</table>
 		<?php
