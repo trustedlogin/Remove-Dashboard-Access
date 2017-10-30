@@ -1,13 +1,14 @@
 <?php
 /**
- * Remove Dashboard Access Class
+ * RDA_Remove_Access class file
  *
- * @since 1.0
+ * @since 1.2.0
+ *
+ * @package Remove_Dashboard_Access\Core
  */
 
-if ( ! class_exists( 'RDA_Remove_Access' ) ) {
 /**
- * Class used to remove access to the admin back-end.
+ * Core RDA class to handle managing admin access.
  *
  * @since 1.0
  */
@@ -19,7 +20,7 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 * @var   string $capability
 	 */
-	var $capability;
+	public $capability;
 
 	/**
 	 * RDA Settings.
@@ -27,7 +28,7 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 * @var   array $settings
 	 */
-	var $settings = array();
+	public $settings = array();
 
 	/**
 	 * Sets up the mechanism by which dashboard access is determined.
@@ -38,7 +39,7 @@ class RDA_Remove_Access {
 	 * @param string $capability Capability needed to gain dashboard access.
 	 * @param array  $settings RDA settings array.
 	 */
-	function __construct( $capability, $settings ) {
+	public function __construct( $capability, $settings ) {
 		// Bail if the capability is empty.
 		if ( empty( $capability ) ) {
 			return;
@@ -55,10 +56,9 @@ class RDA_Remove_Access {
 	 *
 	 * @since 1.0
 	 *
-	 * @uses current_user_can() Checks whether the current user has the specified capability.
 	 * @return bool False if the current user lacks the requisite capbility. True otherwise.
 	 */
-	function is_user_allowed() {
+	public function is_user_allowed() {
 		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) ) {
 			// Remove access.
 			$this->lock_it_up();
@@ -74,7 +74,7 @@ class RDA_Remove_Access {
 	 *
 	 * @since 1.0
 	 */
-	function lock_it_up() {
+	public function lock_it_up() {
 		add_action( 'admin_init', array( $this, 'dashboard_redirect' ) );
 		add_action( 'admin_head', array( $this, 'hide_menus' ) );
 		add_action( 'admin_bar_menu', array( $this, 'hide_toolbar_items' ), 999 );
@@ -150,7 +150,7 @@ class RDA_Remove_Access {
 		$redirect_url = apply_filters( 'rda_redirect_url', $this->settings['redirect_url'], $this );
 
 		if ( ( ! in_array( (string) $pagenow, $this->get_allowed_pages(), true ) || ! $this->settings['enable_profile'] )
-			&& ! empty( $redirect_url )
+		     && ! empty( $redirect_url )
 		) {
 			wp_redirect( $redirect_url );
 			exit;
@@ -189,7 +189,7 @@ class RDA_Remove_Access {
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar Toolbar instance.
 	 */
-	function hide_toolbar_items( $wp_admin_bar ) {
+	public function hide_toolbar_items( $wp_admin_bar ) {
 		$edit_profile = ! $this->settings['enable_profile'] ? 'edit-profile' : '';
 
 		if ( is_admin() ) {
@@ -221,6 +221,4 @@ class RDA_Remove_Access {
 		}
 	}
 
-} // RDA_Remove_Access
-
-} // class_exists
+}
