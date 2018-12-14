@@ -4,6 +4,8 @@
  *
  * @since 1.2.0
  * @group options
+ *
+ * @coversDefaultClass RDA_Options
  */
 class RDA_Test_Options extends WP_UnitTestCase {
 
@@ -16,12 +18,21 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	protected static $default_caps;
 
 	/**
+	 * Author user ID fixture.
+	 *
+	 * @var int
+	 * @static
+	 */
+	protected static $author_user;
+
+	/**
 	 * Set up fixtures once.
 	 */
 	public static function wpSetUpBeforeClass() {
 		$options = new RDA_Options();
 
 		self::$default_caps = RDA_Options::get_default_caps();
+		self::$author_user  = self::factory()->user->create( array( 'role' => 'author' ) );
 	}
 
 	/**
@@ -31,14 +42,13 @@ class RDA_Test_Options extends WP_UnitTestCase {
 		parent::setUp();
 
 		// Author as current user to trigger lock_it_up().
-		$this->user_id = $this->factory->user->create( array( 'role' => 'author' ) );
-		wp_set_current_user( $this->user_id );
+		wp_set_current_user( self::$author_user );
 	}
 
 	/**
 	 * Admin
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_admin_cap_switch_value_should_retrieve_admin_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -50,7 +60,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * Editor/Admin
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_editor_cap_switch_value_should_retrieve_editor_admin_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -62,7 +72,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * Author/Editor/Admin
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_author_switch_value_should_retrieve_author_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -74,7 +84,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * capability:*
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_capability_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -86,7 +96,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * *:*
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_invalid_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -96,7 +106,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_retrieve_default_caps() {
 		$expected = array(
@@ -109,7 +119,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_always_contain_an_admin_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
@@ -120,7 +130,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_always_contain_an_editor_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
@@ -131,7 +141,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_always_contain_an_author_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );

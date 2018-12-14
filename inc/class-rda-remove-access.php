@@ -10,14 +10,14 @@
 /**
  * Core RDA class to handle managing admin access.
  *
- * @since 1.0
+ * @since 1.0.0
  */
 class RDA_Remove_Access {
 
 	/**
 	 * Capability needed to access the dashboard.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 * @var   string $capability
 	 */
 	public $capability;
@@ -25,7 +25,7 @@ class RDA_Remove_Access {
 	/**
 	 * RDA Settings.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 * @var   array $settings
 	 */
 	public $settings = array();
@@ -33,7 +33,7 @@ class RDA_Remove_Access {
 	/**
 	 * Sets up the mechanism by which dashboard access is determined.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 * @since 1.1.3 Moved `is_user_allowed()` to the {@see 'init'} hook.
 	 *
 	 * @param string $capability Capability needed to gain dashboard access.
@@ -54,7 +54,7 @@ class RDA_Remove_Access {
 	/**
 	 * Determines if the current user is allowed to access the admin back end.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @return bool False if the current user lacks the requisite capbility. True otherwise.
 	 */
@@ -72,7 +72,7 @@ class RDA_Remove_Access {
 	/**
 	 * Registers callbacks for "locking up" the dashboard.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 */
 	public function lock_it_up() {
 		add_action( 'admin_init', array( $this, 'dashboard_redirect' ) );
@@ -162,7 +162,7 @@ class RDA_Remove_Access {
 	 *
 	 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
 	 *
-	 * @since 1.2
+	 * @since 1.2.0
 	 *
 	 * @return array List of allowed pages.
 	 */
@@ -173,7 +173,7 @@ class RDA_Remove_Access {
 		 *
 		 * Note: It is up to third-party developers to handle capability checking for any allowed pages.
 		 *
-		 * @since 1.2
+		 * @since 1.2.0
 		 *
 		 * @param array $pages List of allowed pages.
 		 */
@@ -185,7 +185,7 @@ class RDA_Remove_Access {
 	/**
 	 * Hides Toolbar items for disallowed users.
 	 *
-	 * @since 1.0
+	 * @since 1.0.0
 	 *
 	 * @param WP_Admin_Bar $wp_admin_bar Toolbar instance.
 	 */
@@ -198,7 +198,7 @@ class RDA_Remove_Access {
 			/**
 			 * Filters Toolbar menus to remove within the admin.
 			 *
-			 * @since 1.0
+			 * @since 1.0.0
 			 *
 			 * @param array $ids Toolbar menu IDs to remove.
 			 */
@@ -209,7 +209,7 @@ class RDA_Remove_Access {
 			/**
 			 * Filters Toolbar menus to remove on the front end.
 			 *
-			 * @since 1.0
+			 * @since 1.0.0
 			 *
 			 * @param array $ids Toolbar menu IDs to remove.
 			 */
