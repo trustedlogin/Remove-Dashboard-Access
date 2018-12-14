@@ -16,12 +16,21 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	protected static $default_caps;
 
 	/**
+	 * Author user ID fixture.
+	 *
+	 * @var int
+	 * @static
+	 */
+	protected static $author_user;
+
+	/**
 	 * Set up fixtures once.
 	 */
 	public static function wpSetUpBeforeClass() {
 		$options = new RDA_Options();
 
 		self::$default_caps = RDA_Options::get_default_caps();
+		self::$author_user  = self::factory()->user->create( array( 'role' => 'author' ) );
 	}
 
 	/**
@@ -31,8 +40,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 		parent::setUp();
 
 		// Author as current user to trigger lock_it_up().
-		$this->user_id = $this->factory->user->create( array( 'role' => 'author' ) );
-		wp_set_current_user( $this->user_id );
+		wp_set_current_user( self::$author_user );
 	}
 
 	/**
