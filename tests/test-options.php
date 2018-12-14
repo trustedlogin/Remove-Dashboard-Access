@@ -4,6 +4,8 @@
  *
  * @since 1.2.0
  * @group options
+ *
+ * @coversDefaultClass RDA_Options
  */
 class RDA_Test_Options extends WP_UnitTestCase {
 
@@ -46,7 +48,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * Admin
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_admin_cap_switch_value_should_retrieve_admin_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -58,7 +60,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * Editor/Admin
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_editor_cap_switch_value_should_retrieve_editor_admin_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -70,7 +72,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * Author/Editor/Admin
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_author_switch_value_should_retrieve_author_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -82,7 +84,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * capability:*
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_capability_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -94,7 +96,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	/**
 	 * *:*
 	 *
-	 * @covers RDA_Options::get_warning_message()
+	 * @covers ::get_warning_message()
 	 */
 	public function test_get_warning_message_with_invalid_switch_should_retrieve_generic_warning_string() {
 		$options  = $this->set_up_RDA();
@@ -104,7 +106,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_retrieve_default_caps() {
 		$expected = array(
@@ -117,7 +119,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_always_contain_an_admin_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
@@ -128,7 +130,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_always_contain_an_editor_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
@@ -139,7 +141,7 @@ class RDA_Test_Options extends WP_UnitTestCase {
 	}
 
 	/**
-	 * @covers RDA_Options::get_default_caps()
+	 * @covers ::get_default_caps()
 	 */
 	public function test_get_default_caps_should_always_contain_an_author_value_even_if_filtered() {
 		add_filter( 'rda_default_caps_for_role', '__return_empty_array' );
