@@ -9,7 +9,7 @@
 * Contributors: DrewAPicture
 * Tags: dashboard, access, users, administration
 * Requires at least: 3.1.0
-* Tested up to: 4.8.2
+* Tested up to: 5.3
 * Stable tag: 1.1.3
 
 This WordPress plugin limits user access to the dashboard based on whether users have a chosen capability or role. Disallowed users are redirected to a chosen URL.
