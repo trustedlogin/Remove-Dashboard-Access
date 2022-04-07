@@ -2,8 +2,8 @@
 Contributors: DrewAPicture
 Donate link: http://www.werdswords.com
 Tags: dashboard, access, users, administration
-Requires at least: 3.1.0
-Tested up to: 4.3.2
+Requires at least: 4.7.0
+Tested up to: 5.3
 Stable tag: 1.1.3
 
 Allows you to disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL.

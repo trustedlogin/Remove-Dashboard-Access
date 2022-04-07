@@ -1,15 +1,11 @@
 <?php
 /**
- * Remove Dashboard Access Class
+ * Legacy RDA_Remove_Access class file
  *
- * @since 1.0
- */
-
-if ( ! class_exists( 'RDA_Remove_Access' ) ) {
-/**
- * Class used to remove access to the admin back-end.
+ * @since 1.0.0
+ * @deprecated 1.2.0 Use class-rda-remove-access.php instead
  *
- * @since 1.0
+ * @package Remove_Dashboard_Access\Core
  */
 class RDA_Remove_Access {
 
@@ -149,6 +145,6 @@ class RDA_Remove_Access {
 		}
 	}	
 
-} // RDA_Remove_Access
+_deprecated_file( __FILE__, '1.2.0', 'class-rda-remove-access.php' );
 
-} // class_exists
+require_once __DIR__ . '/class-rda-remove-access.php';

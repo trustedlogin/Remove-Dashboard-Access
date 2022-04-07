@@ -1,12 +1,13 @@
 <?php
 /**
  * Plugin Name: Remove Dashboard Access
- * Plugin URI: http://werdswords.com
+ * Plugin URI: https://werdswords.com
  * Description: Removes admin dashboard access for certain users based on capability.
  * Version: 1.1.3
  * Author: Drew Jaynes (DrewAPicture)
- * Author URI: http://werdswords.com
+ * Author URI: https://werdswords.com
  * License: GPLv2
+ * Text Domain: remove-dashboard-access
 */
 
 // Bail if called directly.
@@ -15,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /** RDA_Options Class */
-require_once( dirname( __FILE__ ) . '/inc/class.rda-options.php' );
+require_once( dirname( __FILE__ ) . '/inc/class-rda-options.php' );
 
 /** RDA_Remove_Access Class */
-require_once( dirname( __FILE__ ) . '/inc/class.rda-remove-access.php' );
+require_once( dirname( __FILE__ ) . '/inc/class-rda-remove-access.php' );
 
 // Load options instance.
 if ( class_exists( 'RDA_Options' ) ) {

@@ -2,7 +2,7 @@
 /**
  * Remove Dashboard Access Uninstall
  *
- * @since 1.0
+ * @since 1.0.0
  */
 $settings = array(
 	'rda_access_switch',
