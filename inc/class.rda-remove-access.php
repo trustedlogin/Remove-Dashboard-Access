@@ -5,6 +5,11 @@
  * @since 1.0
  */
 
+// Bail if called directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 if ( ! class_exists( 'RDA_Remove_Access' ) ) {
 class RDA_Remove_Access {
 
@@ -140,7 +145,7 @@ class RDA_Remove_Access {
 		foreach ( $nodes as $id ) {
 			$wp_admin_bar->remove_menu( $id );
 		}
-	}	
+	}
 
 } // RDA_Remove_Access
 

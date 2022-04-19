@@ -1,4 +1,10 @@
 <?php
+
+// Bail if called directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
  * Remove Dashboard Access Options Class
  *
