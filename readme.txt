@@ -4,7 +4,7 @@ Donate link: http://www.werdswords.com
 Tags: dashboard, access, users, administration
 Requires at least: 3.1.0
 Tested up to: 4.1.1
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 
 Allows you to disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL.
 
@@ -101,9 +101,11 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 
 = 1.1.4 on April 18, 2022 =
 
-* Resolved: Issue when front-end editing of profiles when the `$pagenow` global is not defined ([#24](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/24))
-* Resolved: Potential `Invalid argument supplied for foreach()` PHP warning ([#22](https://github.com/trustedlogin/Remove-Dashboard-Access/pull/22))
+Remove Dashboard Access is now being maintained by [TrustedLogin](https://www.trustedlogin.com/2022/02/21/remove-dashboard-access/)! Remove Dashboard Access aligns with what we do at TrustedLogin: simply making WordPress more secure. Email any questions to [support@trustedlogin.com](mailto:support@trustedlogin.com).
+
 * Fixed: Deprecated function `screen_icon()` warning
+* Fixed: Issue when front-end editing of profiles when the `$pagenow` global is not defined ([#24](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/24))
+* Fixed: Potential `Invalid argument supplied for foreach()` PHP warning ([#22](https://github.com/trustedlogin/Remove-Dashboard-Access/pull/22))
 
 = 1.1.3 =
 

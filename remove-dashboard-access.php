@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: Remove Dashboard Access
- * Plugin URI: http://www.werdswords.com
+ * Plugin URI: https://www.trustedlogin.com/remove-dashboard-access/
  * Description: Removes Dashboard access for certain users based on capability.
- * Version: 1.1.3
- * Author: Drew Jaynes (DrewAPicture)
- * Author URI: http://www.drewapicture.com
+ * Version: 1.1.4
+ * Author: TrustedLogin
+ * Author URI: https://www.trustedlogin.com
  * License: GPLv2
 */
 
