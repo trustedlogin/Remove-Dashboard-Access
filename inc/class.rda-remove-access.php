@@ -87,7 +87,9 @@ class RDA_Remove_Access {
 		/** @global array $menu */
 		global $menu;
 
-		$menu_ids = array();
+		if ( ! $menu || ! is_array( $menu ) ) {
+			return;
+		}
 
 		// Gather menu IDs (minus profile.php).
 		foreach ( $menu as $index => $values ) {
