@@ -1,9 +1,9 @@
 === Plugin Name ===
-Contributors: DrewAPicture
-Donate link: http://www.werdswords.com
-Tags: dashboard, access, users, administration
+Contributors: TrustedLogin
+Donate link: https://www.trustedlogin.com
+Tags: dashboard, access, users, administration, login, redirect, membership, restrict
 Requires at least: 3.1.0
-Tested up to: 4.1.1
+Tested up to: 5.9.3
 Stable tag: 1.1.5
 
 Allows you to disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL.
@@ -61,7 +61,7 @@ No. Disable the plugin if you don't wish to leverage the functionality.
 
 * In the HTML page source, look for the `<li>` container for the menu node you're targeting. It should take the form of `<li id="wp-admin-bar-SOMETHING">`
 * In `<li id="wp-admin-bar-SOMETHING">`, you want the "SOMETHING" part.
-	
+
 <strong>How to filter the disallowed Toolbar nodes on the front-end:</strong>
 
 `
@@ -148,7 +148,7 @@ Bug Fixes:
 * New Filter: `rda_toolbar_nodes` - Filter which back-end Toolbar nodes are hidden
 * New Filter: `rda_frontend_toolbar_nodes` - Filter which front-end Toolbar nodes are hidden
 
-= 0.4 = 
+= 0.4 =
 
 * Refined DOING_AJAX check for logged-out users, props @nacin and @BoiteAWeb
 
@@ -166,7 +166,7 @@ Bug Fixes:
 
 == Upgrade Notice ==
 
-= 0.4 = 
+= 0.4 =
 
 * Refined DOING_AJAX check for logged-out users
 
