@@ -52,7 +52,7 @@ class RDA_Options {
 			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
 			'enable_profile' => get_option( 'rda_enable_profile', 1 ),
 			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
-			'login_message'  => get_option( 'rda_login_message', __( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
+			'login_message'  => get_option( 'rda_login_message', esc_html__( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
 		);
 
 		// Settings.
@@ -138,8 +138,8 @@ class RDA_Options {
 	 */
 	function options_page() {
 		add_options_page(
-			__( 'Dashboard Access Settings', 'remove_dashboard_access' ),
-			__( 'Dashboard Access', 'remove_dashboard_access' ),
+			esc_html__( 'Dashboard Access Settings', 'remove_dashboard_access' ),
+			esc_html__( 'Dashboard Access', 'remove_dashboard_access' ),
 			'manage_options',
 			'dashboard-access',
 			array( $this, 'options_page_cb' )
@@ -157,7 +157,7 @@ class RDA_Options {
 		?>
 		<div class="wrap">
 			<?php screen_icon(); ?>
-			<h2><?php _e( 'Dashboard Access Settings', 'remove_dashboard_access' ); ?></h2>
+			<h2><?php esc_html_e( 'Dashboard Access Settings', 'remove_dashboard_access' ); ?></h2>
 			<form action="options.php" method="POST" id="rda-options-form">
 				<?php
 					settings_fields( 'dashboard-access' );
@@ -179,12 +179,12 @@ class RDA_Options {
 	 */
 	public function settings() {
 		// Dashboard Access Controls section.
-		add_settings_section( 'rda_options', __( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'dashboard-access' );
+		add_settings_section( 'rda_options', esc_html__( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'dashboard-access' );
 
 		// Settings.
 		$sets = array(
 			'rda_access_switch'  => array(
-				'label'    => __( 'Dashboard User Access:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Dashboard User Access:', 'remove_dashboard_access' ),
 				'callback' => 'access_switch_cb',
 			),
 			'rda_access_cap'     => array(
@@ -192,15 +192,15 @@ class RDA_Options {
 				'callback' => 'access_cap_dropdown',
 			),
 			'rda_redirect_url'   => array(
-				'label'    => __( 'Redirect URL:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Redirect URL:', 'remove_dashboard_access' ),
 				'callback' => 'url_redirect_cb',
 			),
 			'rda_enable_profile' => array(
-				'label'    => __( 'User Profile Access:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'User Profile Access:', 'remove_dashboard_access' ),
 				'callback' => 'profile_enable_cb',
 			),
 			'rda_login_message'  => array(
-				'label'    => __( 'Login Message', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Login Message', 'remove_dashboard_access' ),
 				'callback' => 'login_message_cb',
 			),
 		);
@@ -215,7 +215,7 @@ class RDA_Options {
 
 		// Debug info "setting".
 		if ( ! empty( $_GET['rda_debug'] ) ) {
-			add_settings_field( 'rda_debug_mode', __( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
+			add_settings_field( 'rda_debug_mode', esc_html__( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
 		}
 
 	}
@@ -227,7 +227,7 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function settings_section() {
-		_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove_dashboard_access' );
+		esc_html_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove_dashboard_access' );
 	}
 
 	/**
@@ -243,13 +243,13 @@ class RDA_Options {
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-			<?php _e( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ); ?>
+			<?php echo wp_kses( __( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ), array( 'strong' => array() ) ); ?>
 		</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p>
-			<?php printf( __( 'You can find out more about specific %s in the Codex.', 'remove_dashboard_access' ),
+			<?php printf( esc_html__( 'You can find out more about specific %s in the Codex.', 'remove_dashboard_access' ),
 				sprintf( '<a href="%1$s" target="_new">%2$s</a>',
 					esc_url( 'http://codex.wordpress.org/Roles_and_Capabilities' ),
-					esc_html( __( 'Roles &amp; Capabilities', 'remove_dashboard_access' ) )
+					esc_html__( 'Roles &amp; Capabilities', 'remove_dashboard_access' )
 				)
 			); ?>
 		</p>
@@ -282,7 +282,7 @@ class RDA_Options {
 	public function plugin_toggle_cb() {
 		printf( '<input name="rda_toggle_plugin_off" type="checkbox" value="1" class="code" %1$s/>%2$s',
 			checked( esc_attr( $this->settings['toggle_plugin_off'] ), true, false ),
-			__( ' Disable access controls and redirection', 'remove_dashboard_access' )
+			esc_html__( ' Disable access controls and redirection', 'remove_dashboard_access' )
 		);
 	}
 
@@ -325,15 +325,15 @@ class RDA_Options {
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Administrators only', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Administrators only', 'remove_dashboard_access' ); ?>
 		</label></p>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Editors and Administrators', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Editors and Administrators', 'remove_dashboard_access' ); ?>
 		</label></p>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
-			<?php _e( 'Authors, Editors, and Administrators', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Authors, Editors, and Administrators', 'remove_dashboard_access' ); ?>
 		</label></p>
 
 	<?php
@@ -383,7 +383,7 @@ class RDA_Options {
 			print( '<select name="rda_access_cap">' );
 
 			// Default first option.
-			printf( '<option selected="selected" value="manage_options">%s</option>', __( '--- Select a Capability ---', 'removed_dashboard_access' ) );
+			printf( '<option selected="selected" value="manage_options">%s</option>', esc_html__( '--- Select a Capability ---', 'removed_dashboard_access' ) );
 
 			// Build capabilities dropdown.
 			foreach ( $capabilities as $capability => $value ) {
@@ -407,7 +407,7 @@ class RDA_Options {
 		printf( '<input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s',
 			checked( esc_attr( $this->settings['enable_profile'] ), true, false ),
 			/* Translators: The leading space is intentional to space the text away from the checkbox */
-			__( ' Allow all users to edit their profiles in the dashboard.', 'remove_dashboard_access' )
+			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove_dashboard_access' )
 		);
 	}
 
@@ -424,7 +424,7 @@ class RDA_Options {
 	public function url_redirect_cb() {
 		?>
 		<p><label>
-			<?php _e( 'Redirect disallowed users to:', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Redirect disallowed users to:', 'remove_dashboard_access' ); ?>
 			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['redirect_url'] ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove_dashboard_access' ), home_url() ); ?>" />
 		</label></p>
 		<?php
@@ -593,11 +593,11 @@ class RDA_Options {
 		<table class="rda_debug">
 			<tbody>
 				<tr>
-					<th><?php _e( 'Setting', 'remove_dashboard_access' ); ?></th>
-					<th><?php _e( 'Value', 'remove_dashboard_access' ); ?></th>
+					<th><?php esc_html_e( 'Setting', 'remove_dashboard_access' ); ?></th>
+					<th><?php esc_html_e( 'Value', 'remove_dashboard_access' ); ?></th>
 				</tr>
 				<?php foreach ( $this->settings as $key => $value ) :
-					$value = empty( $value ) ? __( 'empty', 'remove_dashboard_access' ) : $value;
+					$value = empty( $value ) ? esc_html__( 'empty', 'remove_dashboard_access' ) : $value;
 					?>
 					<tr>
 						<td><?php echo esc_html( $key ); ?></td>
