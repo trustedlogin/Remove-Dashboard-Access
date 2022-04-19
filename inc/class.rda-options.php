@@ -243,9 +243,7 @@ class RDA_Options {
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-			<?php
-                echo wp_kses( __( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ), array( 'strong' => array() ) );
-            ?>
+			<?php echo wp_kses( __( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ), array( 'strong' => array() ) ); ?>
 		</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p>
 			<?php printf( esc_html__( 'You can find out more about specific %s in the Codex.', 'remove_dashboard_access' ),
