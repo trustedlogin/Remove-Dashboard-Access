@@ -156,7 +156,6 @@ class RDA_Options {
 	function options_page_cb() {
 		?>
 		<div class="wrap">
-			<?php screen_icon(); ?>
 			<h2><?php esc_html_e( 'Dashboard Access Settings', 'remove_dashboard_access' ); ?></h2>
 			<form action="options.php" method="POST" id="rda-options-form">
 				<?php

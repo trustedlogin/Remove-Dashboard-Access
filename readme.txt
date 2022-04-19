@@ -103,6 +103,7 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 
 * Resolved: Issue when front-end editing of profiles when the `$pagenow` global is not defined ([#24](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/24))
 * Resolved: Potential `Invalid argument supplied for foreach()` PHP warning ([#22](https://github.com/trustedlogin/Remove-Dashboard-Access/pull/22))
+* Fixed: Deprecated function `screen_icon()` warning
 
 = 1.1.3 =
 
