@@ -125,7 +125,7 @@ class RDA_Options {
 		);
 
 		foreach ( $settings as $key => $value ) {
-			update_option( $key, $value );
+			add_option( $key, $value );
 		}
 	}
 
