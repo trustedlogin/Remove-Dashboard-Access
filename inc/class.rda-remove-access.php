@@ -113,7 +113,7 @@ class RDA_Remove_Access {
 		/** @global string $pagenow */
 		global $pagenow;
 
-		if ( 'profile.php' != $pagenow || ! $this->settings['enable_profile'] ) {
+		if ( ( $pagenow && 'profile.php' !== $pagenow ) || ( defined( 'IS_PROFILE_PAGE' ) && ! IS_PROFILE_PAGE ) || ! $this->settings['enable_profile'] ) {
 			wp_redirect( $this->settings['redirect_url'] );
 			exit;
 		}

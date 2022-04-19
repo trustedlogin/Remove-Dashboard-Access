@@ -99,6 +99,9 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 
 == Changelog ==
 
+= 1.1.4 on April 18, 2022 =
+
+* Resolved: Issue when front-end editing of profiles when the `$pagenow` global is not defined ([#24](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/24))
 = 1.1.3 =
 
 * Fixed a compatibility issue with bbPress and the media grid view.
