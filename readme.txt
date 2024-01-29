@@ -64,6 +64,43 @@ No. Disable the plugin if you don't wish to leverage the functionality.
 * In the HTML page source, look for the `<li>` container for the menu node you're targeting. It should take the form of `<li id="wp-admin-bar-SOMETHING">`
 * In `<li id="wp-admin-bar-SOMETHING">`, you want the "SOMETHING" part.
 
+= How can I allow access to specific pages of the Dashboard? =
+
+The function returns an associative array with `$pagenow` as the key and a nested array of key => value pairs where the key is the `$_GET` parameter and the value is the allowed value.
+
+Example: If you want to allow a URL of `admin.php?page=EXAMPLE`, there are three parts to know:
+
+- The `$pagenow` global value (`tools.php` in this case)
+- The `$_GET` key (`page` in this case)
+- The `$_GET value (`EXAMPLE in this case)
+
+Here is how we would add that URL to the allowlist:
+
+`
+/**
+ * Allow users to access a page with a URL of `tools.php?page=EXAMPLE`.
+ *
+ * @param array $pages Allowed Dashboard pages.
+ * @return array Filtered allowed Dashboard pages.
+ */
+function wpdocs_allow_example_dashboard_page( $pages ) {
+
+    // If the $pages array doesn't contain the 'admin.php' key, add it.
+    if ( ! isset( $pages['tools.php'] ) ) {
+        $pages['tools.php'] = array();
+    }
+
+    // Now add `?page=EXAMPLE` combination to the allowed parameter set for that page.
+    $pages['tools.php'][] = array(
+        'page' => 'EXAMPLE'
+    );
+
+    return $pages;
+}
+
+add_filter( 'rda_allowlist', 'wpdocs_allow_example_dashboard_page' );
+`
+
 = How can I filter the disallowed Toolbar nodes on the front-end? =
 
 `
@@ -71,7 +108,7 @@ No. Disable the plugin if you don't wish to leverage the functionality.
  * Filter hidden Toolbar menus on the front-end.
  *
  * @param array $ids Toolbar menu IDs.
- * @return array (maybe) filtered front-end Toolbar menu IDs.
+ * @return array Filtered front-end Toolbar menu IDs.
  */
 function wpdocs_hide_some_toolbar_menu( $ids ) {
 	$ids[] = 'SOMETHING';
@@ -91,7 +128,6 @@ To view debugging information on the Settings > Reading screen, visit:
 `
 example.com/options-general.php?page=dashboard-access&rda_debug=1
 `
-
 = Can I contribute to the plugin? =
 
 Yes! This plugin is in active development <a href="https://github.com/trustedlogin/Remove-Dashboard-Access" target="_new">on GitHub</a>. Pull requests are welcome!
@@ -104,11 +140,13 @@ Yes! This plugin is in active development <a href="https://github.com/trustedlog
 
 == Changelog ==
 
-= 1.1.6 on January 29, 2024 =
+= 1.2 on January 29, 2024 =
 
 * Confirmed compatibility with WordPress 6.4.2
+* New: Added a new filter, `rda_allowlist`, to configure pages that should be accessible to all users, regardless of their capabilities or roles (see FAQ for usage)
 * Improved: Added a description that clarifies that the Login Message is only displayed on the WordPress "Log In" screen
 * Improved: The User Profile Access text is now a proper label for the checkbox
+* Fixed: Allow access to the Wordfence 2FA configuration page ([#33](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/33))
 
 = 1.1.4 & 1.1.5 on April 18, 2022 =
 
