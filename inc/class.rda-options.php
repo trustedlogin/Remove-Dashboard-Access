@@ -443,7 +443,23 @@ class RDA_Options {
 	 */
 	public function login_message_cb() {
 		?>
-		<p><input name="rda_login_message" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" /></p>
+		<p><label>
+                <?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
+                <input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
+            </label>
+        </p>
+        <p class="howto">
+			<span class="howto"><?php
+
+				// translators: %s is replaced with the default login message
+				echo sprintf(
+					esc_html__( 'Leave blank to not show a message. This message will only be shown on the %1$sLog In screen%2$s, not in embedded Login/Logout blocks.', 'remove_dashboard_access' ),
+					'<a href="' . esc_url( wp_login_url() ) . '" target="_blank">',
+					'<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)' ) . '</span></a>'
+				);
+
+				?></span>
+        </p>
 		<?php
 	}
 
