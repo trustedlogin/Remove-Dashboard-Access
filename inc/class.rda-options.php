@@ -409,7 +409,7 @@ class RDA_Options {
 	 * @uses checked() Outputs the checked attribute when the option is enabled.
 	 */
 	public function profile_enable_cb() {
-		printf( '<input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s',
+		printf( '<label><input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s</label>',
 			checked( esc_attr( $this->settings['enable_profile'] ), true, false ),
 			/* Translators: The leading space is intentional to space the text away from the checkbox */
 			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove_dashboard_access' )

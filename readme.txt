@@ -102,6 +102,8 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 = 1.1.6 on January 29, 2024 =
 
 * Improved: Added a description that clarifies that the Login Message is only displayed on the WordPress "Log In" screen
+* Improved: The User Profile Access text is now a proper label for the checkbox
+
 = 1.1.4 & 1.1.5 on April 18, 2022 =
 
 Remove Dashboard Access is now being maintained by [TrustedLogin](https://www.trustedlogin.com/2022/02/21/remove-dashboard-access/)! Remove Dashboard Access aligns with what we do at TrustedLogin: simply making WordPress more secure. Email any questions to [support@trustedlogin.com](mailto:support@trustedlogin.com).
