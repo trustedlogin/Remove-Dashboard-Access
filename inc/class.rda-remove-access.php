@@ -133,6 +133,8 @@ class RDA_Remove_Access {
 	/**
 	 * Returns an array of admin pages that are allowed.
 	 *
+	 * @since 1.2
+	 *
 	 * @return array Allowlist of admin pages.
 	 */
 	private function get_allowlist() {
@@ -167,35 +169,6 @@ class RDA_Remove_Access {
 	}
 
 	/**
-	 * Checks if a set of parameters matches the current $_GET parameters.
-	 *
-	 * @since 1.2
-	 *
-	 * @param array $allowed_params_set A set of allowed GET parameters.
-	 * @return bool True if the current $_GET parameters match the allowed set, false otherwise.
-	 */
-	private function is_params_set_allowed( $allowed_params_set ) {
-
-		if ( ! is_array( $_GET ) || ! is_array( $allowed_params_set ) ) {
-			return false;
-		}
-
-		// Check if the number of parameters in both arrays is the same. This prevents sub-pages from being allowed,
-		// e.g. admin.php?page=example&subpage=secure-thing.
-		if ( count( $_GET ) !== count( $allowed_params_set ) ) {
-			return false;
-		}
-
-		foreach ( $allowed_params_set as $param_key => $param_value ) {
-			if ( ! isset( $_GET[ $param_key ] ) || $_GET[ $param_key ] !== $param_value ) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	/**
 	 * Checks if the current page is allowed.
 	 *
 	 * @since 1.2
@@ -223,6 +196,35 @@ class RDA_Remove_Access {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks if a set of parameters matches the current $_GET parameters.
+	 *
+	 * @since 1.2
+	 *
+	 * @param array $allowed_params_set A set of allowed GET parameters.
+	 * @return bool True if the current $_GET parameters match the allowed set, false otherwise.
+	 */
+	private function is_params_set_allowed( $allowed_params_set ) {
+
+		if ( ! is_array( $_GET ) || ! is_array( $allowed_params_set ) ) {
+			return false;
+		}
+
+		// Check if the number of parameters in both arrays is the same. This prevents sub-pages from being allowed,
+		// e.g. admin.php?page=example&subpage=secure-thing.
+		if ( count( $_GET ) !== count( $allowed_params_set ) ) {
+			return false;
+		}
+
+		foreach ( $allowed_params_set as $param_key => $param_value ) {
+			if ( ! isset( $_GET[ $param_key ] ) || $_GET[ $param_key ] !== $param_value ) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
