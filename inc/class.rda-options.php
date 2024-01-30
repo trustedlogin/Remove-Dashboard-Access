@@ -16,6 +16,7 @@ class RDA_Options {
 	/**
 	 * Static instance to make removing actions and filters modular.
 	 *
+	 * @var $instance RDA_Options
 	 * @since 1.1
 	 * @access public
 	 * @static
@@ -23,7 +24,7 @@ class RDA_Options {
 	public static $instance;
 
 	/**
-	 * @var $settings rda-settings options array
+	 * @var $settings array rda-settings options array
 	 *
 	 * @since 1.0
 	 * @access public

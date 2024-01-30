@@ -4,7 +4,7 @@ Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
 Tested up to: 6.4.2
-Stable tag: 1.1.6
+Stable tag: 1.2
 Requires PHP: 5.3
 
 Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL. Get set up in seconds.
