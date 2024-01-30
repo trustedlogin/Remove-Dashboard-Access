@@ -1,24 +1,40 @@
-=== Plugin Name ===
+=== Remove Dashboard Access ===
 Contributors: TrustedLogin
 Donate link: https://www.trustedlogin.com
-Tags: dashboard, access, users, administration, login, redirect, membership, restrict
+Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
-Tested up to: 5.9.3
-Stable tag: 1.1.5
+Tested up to: 6.4.2
+Stable tag: 1.2
+Requires PHP: 5.3
 
-Allows you to disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL.
+Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL. Get set up in seconds.
 
 == Description ==
 
-* Limit Dashboard access to admins only, admins + editors, admins + editors + authors, or limit by specific capability.
+The easiest and safest way to restrict access to your WordPress site's Dashboard and administrative menus. Remove Dashboard Access is a lightweight plugin that automatically redirects users who shouldn't have access to the Dashboard to a custom URL of your choosing. Redirects can also be configured on a per-role/per-capability basis, allowing you to keep certain users out of the Dashboard, while retaining access for others.
+
+* Limit Dashboard access to user roles:
+    - Admins only
+    - Admins + editors
+    - Admins, editors, and authors
+    - or restrict by specific user capability
 * Choose your own redirect URL
-* Optionally allow user profile access
-* Optionally display a message on the login screen
-* (<a href="http://wordpress.org/extend/plugins/remove-dashboard-access-for-non-admins/other_notes/">more info</a>)
+* Optionally allow users to edit their profiles
+* Display a message on the login screen so users know why they're being redirected
 
-<strong>Contribute to RDA</strong>
+Blocking access to the Dashboard is a great way to prevent clients from breaking their sites, prevent users from seeing things they shouldn't, and to keep your site's backend more secure.
 
-This plugin is in active development <a href="https://github.com/DrewAPicture/remove-dashboard-access" target="_new">on GitHub</a>. Pull requests are welcome!
+<strong>Allow only users with roles or capabilities:</strong>
+
+You can restrict Dashboard access to Admins only, Editors or above, Authors or above, or by selecting a specific user capability.
+
+<strong>Grant access to user profiles:</strong>
+
+Optionally allow all users the ability to edit their profiles in the Dashboard. Users lacking the chosen capability won't be able to access any other sections of the Dashboard.
+
+<strong>Show a custom login message:</strong>
+
+* Supply a message to display on the login screen. Leaving this blank disables the message.
 
 == Installation ==
 
@@ -39,57 +55,82 @@ The Toolbar contains certain important links (even for disallowed users) such as
 
 No. Disable the plugin if you don't wish to leverage the functionality.
 
-== Other Notes ==
-
-<strong>Capabilities:</strong>
-
-* You can limit Dashboard access to Admins only, Editors or above, Authors or above, or by selecting a capability. More information on WordPress' default roles and capabilities can be found here: http://codex.wordpress.org/Roles_and_Capabilities
-
-<strong>User Profile Access:</strong>
-
-* You can optionally allow all users the ability to edit their profiles in the Dashboard. Users lacking the chosen capability won't be able to access any other sections of the Dashboard.
-
-<strong>Login Message:</strong>
-
-* Supply a message to display on the login screen. Leaving this blank disables the message.
-
-<strong>Hiding other plugins/themes' Toolbar menus:</strong>
+= How do I hide other plugins/themes' Toolbar menus? =
 
 * Remove Dashboard Access removes some built-in WordPress Toolbar menus by default, but can be extended to hide menus from other plugins or themes via two filters: `rda_toolbar_nodes` (viewing from the admin), and `rda_frontend_toolbar_nodes` (viewing from the front-end).
 
-<strong>How to find the menu (node) id:</strong>
+= How do I find the menu (node) id? =
 
 * In the HTML page source, look for the `<li>` container for the menu node you're targeting. It should take the form of `<li id="wp-admin-bar-SOMETHING">`
 * In `<li id="wp-admin-bar-SOMETHING">`, you want the "SOMETHING" part.
 
-<strong>How to filter the disallowed Toolbar nodes on the front-end:</strong>
+= How can I allow access to specific pages of the Dashboard? =
+
+The function returns an associative array with `$pagenow` as the key and a nested array of key => value pairs where the key is the `$_GET` parameter and the value is the allowed value.
+
+Example: If you want to allow a URL of `admin.php?page=EXAMPLE`, there are three parts to know:
+
+- The `$pagenow` global value (`tools.php` in this case)
+- The `$_GET` key (`page` in this case)
+- The `$_GET value (`EXAMPLE in this case)
+
+Here is how we would add that URL to the allowlist:
+
+`
+/**
+ * Allow users to access a page with a URL of `tools.php?page=EXAMPLE`.
+ *
+ * @param array $pages Allowed Dashboard pages.
+ * @return array Filtered allowed Dashboard pages.
+ */
+function wpdocs_allow_example_dashboard_page( $pages ) {
+
+    // If the $pages array doesn't contain the 'admin.php' key, add it.
+    if ( ! isset( $pages['tools.php'] ) ) {
+        $pages['tools.php'] = array();
+    }
+
+    // Now add `?page=EXAMPLE` combination to the allowed parameter set for that page.
+    $pages['tools.php'][] = array(
+        'page' => 'EXAMPLE'
+    );
+
+    return $pages;
+}
+
+add_filter( 'rda_allowlist', 'wpdocs_allow_example_dashboard_page' );
+`
+
+= How can I filter the disallowed Toolbar nodes on the front-end? =
 
 `
 /**
  * Filter hidden Toolbar menus on the front-end.
  *
  * @param array $ids Toolbar menu IDs.
- * @return array (maybe) filtered front-end Toolbar menu IDs.
+ * @return array Filtered front-end Toolbar menu IDs.
  */
 function wpdocs_hide_some_toolbar_menu( $ids ) {
 	$ids[] = 'SOMETHING';
 	return $ids;
 }
 add_filter( 'rda_frontend_toolbar_nodes', 'wpdocs_hide_some_toolbar_menu' );
-`
 
 <strong>Common plugin Toolbar menus and their ids:</strong>
 
-* <a href="http://wordpress.org/extend/plugins/jetpack/">Jetpack by WordPress.com</a> (notifications) – 'notes'
-* <a href="http://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a> – 'wpseo-menu'
-* <a href="http://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a> – 'w3tc'
+* <a href="https://wordpress.org/extend/plugins/jetpack/">Jetpack by WordPress.com</a> (notifications) – 'notes'
+* <a href="https://wordpress.org/extend/plugins/wordpress-seo/">WordPress SEO by Yoast</a> – 'wpseo-menu'
+* <a href="https://wordpress.org/extend/plugins/w3-total-cache/">W3 Total Cache</a> – 'w3tc'
 
-<strong>Debug Mode</strong>
+= How do I enable Debug Mode? =
 
 To view debugging information on the Settings > Reading screen, visit:
 `
 example.com/options-general.php?page=dashboard-access&rda_debug=1
 `
+= Can I contribute to the plugin? =
+
+Yes! This plugin is in active development <a href="https://github.com/trustedlogin/Remove-Dashboard-Access" target="_new">on GitHub</a>. Pull requests are welcome!
 
 == Screenshots ==
 
@@ -98,6 +139,14 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 3. Optional login message.
 
 == Changelog ==
+
+= 1.2 on January 29, 2024 =
+
+* Confirmed compatibility with WordPress 6.4.2
+* New: Added a new filter, `rda_allowlist`, to configure pages that should be accessible to all users, regardless of their capabilities or roles (see FAQ for usage)
+* Improved: Added a description that clarifies that the Login Message is only displayed on the WordPress "Log In" screen
+* Improved: The User Profile Access text is now a proper label for the checkbox
+* Fixed: Allow access to the Wordfence 2FA configuration page ([#33](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/33))
 
 = 1.1.4 & 1.1.5 on April 18, 2022 =
 

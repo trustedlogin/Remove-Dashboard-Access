@@ -16,6 +16,7 @@ class RDA_Options {
 	/**
 	 * Static instance to make removing actions and filters modular.
 	 *
+	 * @var $instance RDA_Options
 	 * @since 1.1
 	 * @access public
 	 * @static
@@ -23,7 +24,7 @@ class RDA_Options {
 	public static $instance;
 
 	/**
-	 * @var $settings rda-settings options array
+	 * @var $settings array rda-settings options array
 	 *
 	 * @since 1.0
 	 * @access public
@@ -409,7 +410,7 @@ class RDA_Options {
 	 * @uses checked() Outputs the checked attribute when the option is enabled.
 	 */
 	public function profile_enable_cb() {
-		printf( '<input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s',
+		printf( '<label><input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s</label>',
 			checked( esc_attr( $this->settings['enable_profile'] ), true, false ),
 			/* Translators: The leading space is intentional to space the text away from the checkbox */
 			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove_dashboard_access' )
@@ -443,7 +444,23 @@ class RDA_Options {
 	 */
 	public function login_message_cb() {
 		?>
-		<p><input name="rda_login_message" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" /></p>
+		<p><label>
+                <?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
+                <input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
+            </label>
+        </p>
+        <p class="howto">
+			<span class="howto"><?php
+
+				// translators: %s is replaced with the default login message
+				echo sprintf(
+					esc_html__( 'Leave blank to not show a message. This message will only be shown on the %1$sLog In screen%2$s, not in embedded Login/Logout blocks.', 'remove_dashboard_access' ),
+					'<a href="' . esc_url( wp_login_url() ) . '" target="_blank">',
+					'<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)' ) . '</span></a>'
+				);
+
+				?></span>
+        </p>
 		<?php
 	}
 
