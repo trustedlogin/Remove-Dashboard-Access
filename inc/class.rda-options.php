@@ -5,12 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( class_exists( 'RDA_Options' ) ) {
+	return;
+}
+
 /**
  * Remove Dashboard Access Options Class
  *
  * @since 1.0
  */
-if ( ! class_exists( 'RDA_Options' ) ) {
 class RDA_Options {
 
 	/**
@@ -632,5 +635,3 @@ class RDA_Options {
 	}
 
 } // RDA_Options
-
-} // class exists
