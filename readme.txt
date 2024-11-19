@@ -78,7 +78,7 @@ Here is how we would add that URL to the allowlist:
 
 `
 /**
- * Allow users to access a page with a URL of `tools.php?page=EXAMPLE`.
+ * Allow users to access a page with a URL of tools.php?page=EXAMPLE
  *
  * @param array $pages Allowed Dashboard pages.
  * @return array Filtered allowed Dashboard pages.
@@ -131,6 +131,10 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 = Can I contribute to the plugin? =
 
 Yes! This plugin is in active development <a href="https://github.com/trustedlogin/Remove-Dashboard-Access" target="_new">on GitHub</a>. Pull requests are welcome!
+
+= Is the plugin GDPR compliant? =
+
+Yes. The plugin does not collect any personal data, nor does it set any cookies.
 
 == Screenshots ==
 

@@ -161,6 +161,15 @@ class RDA_Remove_Access {
 		 *         ),
 		 *     ),
 		 *  );
+		 *
+		 * You can also allow relative paths to be defined as either the key or value.
+		 *
+		 * Example: To allow the Wordfence Login Security 2FA page, with a URL of admin.php?page=WFLS, the array would be:
+		 *
+		 * array(
+		 *    'admin.php?page=WFLS' => array(),
+		 * );
+		 *
 		 * @param array $allowlist The allowlist of admin pages.
 		 */
 		$allowlist = apply_filters( 'rda_allowlist', $allowlist );
