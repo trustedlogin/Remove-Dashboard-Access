@@ -147,6 +147,7 @@ Yes! This plugin is in active development <a href="https://github.com/trustedlog
 * Improved: Added a description that clarifies that the Login Message is only displayed on the WordPress "Log In" screen
 * Improved: The User Profile Access text is now a proper label for the checkbox
 * Fixed: Allow access to the Wordfence 2FA configuration page ([#33](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/33))
+* Fixed: Text domain not properly set for translations (thanks [@fierevere](https://wordpress.org/support/topic/i18n-problem-textdomain-is-not-sethello/))
 
 = 1.1.4 & 1.1.5 on April 18, 2022 =
 

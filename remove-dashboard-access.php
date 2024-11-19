@@ -8,7 +8,8 @@
  * Author URI: https://www.trustedlogin.com
  * License: GPLv2
  * Requires PHP: 5.3
-*/
+ * Text Domain: remove_dashboard_access
+ */
 
 // Bail if called directly.
 if ( ! defined( 'ABSPATH' ) ) {
