@@ -80,14 +80,14 @@ class RDA_Options {
 		add_filter( 'login_message', array( $this, 'output_login_message' ) );
 	}
 
-    /**
-     * Load the plugin text domain for translation.
-     *
-     * @since 1.2.1
-     */
-    public function load_textdomain() {
-	    load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
-    }
+	/**
+	 * Load the plugin text domain for translation.
+	 *
+	 * @since 1.2.1
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+	}
 
 	/**
 	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
@@ -460,11 +460,11 @@ class RDA_Options {
 	public function login_message_cb() {
 		?>
 		<p><label>
-                <?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
-                <input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
-            </label>
-        </p>
-        <p class="howto">
+				<?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
+				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
+			</label>
+		</p>
+		<p class="howto">
 			<span class="howto"><?php
 
 				// translators: %s is replaced with the default login message
@@ -475,7 +475,7 @@ class RDA_Options {
 				);
 
 				?></span>
-        </p>
+		</p>
 		<?php
 	}
 
@@ -499,7 +499,7 @@ class RDA_Options {
 	 * @access public
 	 *
 	 * @param string $option Access switch capability.
- 	 * @return string Sanitized capability.
+	 * @return string Sanitized capability.
 	 */
 	public function sanitize_access_switch( $option ) {
 		return $option;
