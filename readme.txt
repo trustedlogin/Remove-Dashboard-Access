@@ -3,8 +3,8 @@ Contributors: TrustedLogin
 Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
-Tested up to: 6.4.2
-Stable tag: 1.2
+Tested up to: 6.7
+Stable tag: 1.2.1
 Requires PHP: 5.3
 
 Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL. Get set up in seconds.
@@ -143,6 +143,8 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 3. Optional login message.
 
 == Changelog ==
+
+* Fixed: Compatibility with WordPress 6.7 (there was a warning that translations were being loaded too soon)
 
 = 1.2 on January 29, 2024 =
 

@@ -53,7 +53,7 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function setup() {
-		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
 
 		$this->maybe_map_old_settings();
 
@@ -64,6 +64,9 @@ class RDA_Options {
 			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
 			'login_message'  => get_option( 'rda_login_message', esc_html__( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
 		);
+
+		// Translation.
+		add_action( 'init', array( $this, 'load_textdomain' ) );
 
 		// Settings.
 		add_action( 'admin_menu',                                array( $this, 'options_page' ) );
@@ -76,6 +79,15 @@ class RDA_Options {
 		// Login message.
 		add_filter( 'login_message', array( $this, 'output_login_message' ) );
 	}
+
+    /**
+     * Load the plugin text domain for translation.
+     *
+     * @since 1.2.1
+     */
+    public function load_textdomain() {
+	    load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+    }
 
 	/**
 	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
