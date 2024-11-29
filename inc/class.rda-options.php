@@ -321,7 +321,7 @@ class RDA_Options {
 	 * @see $this->caps_dropdown()
 	 */
 	public function access_switch_cb() {
-		echo '<a name="dashboard-access"></a>';
+		echo '<a id="dashboard-access"></a>';
 
 		$switch = $this->settings['access_switch'];
 
