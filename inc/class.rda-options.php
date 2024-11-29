@@ -143,7 +143,7 @@ class RDA_Options {
 			'rda_access_cap'     => 'manage_options',
 			'rda_redirect_url'   => home_url(),
 			'rda_enable_profile' => 1,
-			'rda_login_message'  => ''
+			'rda_login_message'  => '',
 		);
 
 		foreach ( $settings as $key => $value ) {
@@ -235,7 +235,7 @@ class RDA_Options {
 		};
 
 		// Debug info "setting".
-		if ( ! empty( $_GET['rda_debug'] ) ) {
+		if ( ! empty( $_GET['rda_debug'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			add_settings_field( 'rda_debug_mode', esc_html__( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
 		}
 
@@ -341,7 +341,7 @@ class RDA_Options {
 		$defaults = apply_filters( 'rda_default_caps_for_role', array(
 			'admin'  => 'manage_options',
 			'editor' => 'edit_others_posts',
-			'author' => 'publish_posts'
+			'author' => 'publish_posts',
 		) );
 		?>
 		<p><label>
