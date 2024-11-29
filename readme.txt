@@ -144,7 +144,10 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 
 == Changelog ==
 
+= 1.2.1 on November 29, 2024 =
+
 * Fixed: Compatibility with WordPress 6.7 (there was a warning that translations were being loaded too soon)
+* Tweak: Sanitized admin menu URL
 
 = 1.2 on January 29, 2024 =
 
