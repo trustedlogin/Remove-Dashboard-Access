@@ -154,6 +154,8 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 * Improved: The User Profile Access text is now a proper label for the checkbox
 * Fixed: Allow access to the Wordfence 2FA configuration page ([#33](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/33))
 * Fixed: Text domain not properly set for translations (thanks [@fierevere](https://wordpress.org/support/topic/i18n-problem-textdomain-is-not-sethello/))
+* Tweak: Prevent directly accessing PHP files by checking for `ABSPATH` ([#26](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/26))
+* Tweak: Prevent browsing directories on poorly-configured servers by adding `index.php` files in plugin directories
 
 = 1.1.4 & 1.1.5 on April 18, 2022 =
 
