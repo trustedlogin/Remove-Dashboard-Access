@@ -594,7 +594,7 @@ class RDA_Options {
 			|| 'remove-dashboard-access/remove-dashboard-access.php' == $file
 		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
-				admin_url( 'options-general.php?page=dashboard-access' ),
+				esc_url( admin_url( 'options-general.php?page=dashboard-access' ) ),
 				esc_html__( 'Settings', 'remove_dashboard_access' )
 			) );
 		}
