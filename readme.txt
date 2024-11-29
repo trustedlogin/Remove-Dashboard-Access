@@ -3,8 +3,8 @@ Contributors: TrustedLogin
 Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
-Tested up to: 6.4.2
-Stable tag: 1.2
+Tested up to: 6.7
+Stable tag: 1.2.1
 Requires PHP: 5.3
 
 Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL. Get set up in seconds.
@@ -78,7 +78,7 @@ Here is how we would add that URL to the allowlist:
 
 `
 /**
- * Allow users to access a page with a URL of `tools.php?page=EXAMPLE`.
+ * Allow users to access a page with a URL of tools.php?page=EXAMPLE
  *
  * @param array $pages Allowed Dashboard pages.
  * @return array Filtered allowed Dashboard pages.
@@ -132,6 +132,10 @@ example.com/options-general.php?page=dashboard-access&rda_debug=1
 
 Yes! This plugin is in active development <a href="https://github.com/trustedlogin/Remove-Dashboard-Access" target="_new">on GitHub</a>. Pull requests are welcome!
 
+= Is the plugin GDPR compliant? =
+
+Yes. The plugin does not collect any personal data, nor does it set any cookies.
+
 == Screenshots ==
 
 1. The Dashboard Access Controls settings in the Settings > Dashboard Access screen.
@@ -140,6 +144,11 @@ Yes! This plugin is in active development <a href="https://github.com/trustedlog
 
 == Changelog ==
 
+= 1.2.1 on November 29, 2024 =
+
+* Fixed: Compatibility with WordPress 6.7 (there was a warning that translations were being loaded too soon)
+* Tweak: Sanitized admin menu URL
+
 = 1.2 on January 29, 2024 =
 
 * Confirmed compatibility with WordPress 6.4.2
@@ -147,6 +156,9 @@ Yes! This plugin is in active development <a href="https://github.com/trustedlog
 * Improved: Added a description that clarifies that the Login Message is only displayed on the WordPress "Log In" screen
 * Improved: The User Profile Access text is now a proper label for the checkbox
 * Fixed: Allow access to the Wordfence 2FA configuration page ([#33](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/33))
+* Fixed: Text domain not properly set for translations (thanks [@fierevere](https://wordpress.org/support/topic/i18n-problem-textdomain-is-not-sethello/))
+* Tweak: Prevent directly accessing PHP files by checking for `ABSPATH` ([#26](https://github.com/trustedlogin/Remove-Dashboard-Access/issues/26))
+* Tweak: Prevent browsing directories on poorly-configured servers by adding `index.php` files in plugin directories
 
 = 1.1.4 & 1.1.5 on April 18, 2022 =
 

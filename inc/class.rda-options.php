@@ -5,12 +5,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if ( class_exists( 'RDA_Options' ) ) {
+	return;
+}
+
 /**
  * Remove Dashboard Access Options Class
  *
  * @since 1.0
  */
-if ( ! class_exists( 'RDA_Options' ) ) {
 class RDA_Options {
 
 	/**
@@ -50,7 +53,7 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function setup() {
-		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+
 
 		$this->maybe_map_old_settings();
 
@@ -62,6 +65,9 @@ class RDA_Options {
 			'login_message'  => get_option( 'rda_login_message', esc_html__( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
 		);
 
+		// Translation.
+		add_action( 'init', array( $this, 'load_textdomain' ) );
+
 		// Settings.
 		add_action( 'admin_menu',                                array( $this, 'options_page' ) );
 		add_action( 'admin_init',                                array( $this, 'settings'         ) );
@@ -72,6 +78,15 @@ class RDA_Options {
 
 		// Login message.
 		add_filter( 'login_message', array( $this, 'output_login_message' ) );
+	}
+
+	/**
+	 * Load the plugin text domain for translation.
+	 *
+	 * @since 1.2.1
+	 */
+	public function load_textdomain() {
+		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	/**
@@ -128,7 +143,7 @@ class RDA_Options {
 			'rda_access_cap'     => 'manage_options',
 			'rda_redirect_url'   => home_url(),
 			'rda_enable_profile' => 1,
-			'rda_login_message'  => ''
+			'rda_login_message'  => '',
 		);
 
 		foreach ( $settings as $key => $value ) {
@@ -220,7 +235,7 @@ class RDA_Options {
 		};
 
 		// Debug info "setting".
-		if ( ! empty( $_GET['rda_debug'] ) ) {
+		if ( ! empty( $_GET['rda_debug'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 			add_settings_field( 'rda_debug_mode', esc_html__( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
 		}
 
@@ -306,7 +321,7 @@ class RDA_Options {
 	 * @see $this->caps_dropdown()
 	 */
 	public function access_switch_cb() {
-		echo '<a name="dashboard-access"></a>';
+		echo '<a id="dashboard-access"></a>';
 
 		$switch = $this->settings['access_switch'];
 
@@ -326,7 +341,7 @@ class RDA_Options {
 		$defaults = apply_filters( 'rda_default_caps_for_role', array(
 			'admin'  => 'manage_options',
 			'editor' => 'edit_others_posts',
-			'author' => 'publish_posts'
+			'author' => 'publish_posts',
 		) );
 		?>
 		<p><label>
@@ -445,11 +460,11 @@ class RDA_Options {
 	public function login_message_cb() {
 		?>
 		<p><label>
-                <?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
-                <input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
-            </label>
-        </p>
-        <p class="howto">
+				<?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
+				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
+			</label>
+		</p>
+		<p class="howto">
 			<span class="howto"><?php
 
 				// translators: %s is replaced with the default login message
@@ -460,7 +475,7 @@ class RDA_Options {
 				);
 
 				?></span>
-        </p>
+		</p>
 		<?php
 	}
 
@@ -484,7 +499,7 @@ class RDA_Options {
 	 * @access public
 	 *
 	 * @param string $option Access switch capability.
- 	 * @return string Sanitized capability.
+	 * @return string Sanitized capability.
 	 */
 	public function sanitize_access_switch( $option ) {
 		return $option;
@@ -579,7 +594,7 @@ class RDA_Options {
 			|| 'remove-dashboard-access/remove-dashboard-access.php' == $file
 		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
-				admin_url( 'options-general.php?page=dashboard-access' ),
+				esc_url( admin_url( 'options-general.php?page=dashboard-access' ) ),
 				esc_html__( 'Settings', 'remove_dashboard_access' )
 			) );
 		}
@@ -632,5 +647,3 @@ class RDA_Options {
 	}
 
 } // RDA_Options
-
-} // class exists
