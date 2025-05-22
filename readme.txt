@@ -147,7 +147,7 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 = 1.2.2 on May 22, 2025 =
 
 * Fixed: Compatibility with WordPress 6.8 `_load_textdomain_just_in_time` warning
-
+* Fixed: The plugin prevented `admin-post.php` from being accessible, which broke some expected functionality (thanks [@brambil](https://wordpress.org/support/topic/bug-wp-admin-admin-post-php-not-working/))
 
 = 1.2.1 on November 29, 2024 =
 

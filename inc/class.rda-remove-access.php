@@ -58,14 +58,29 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 *
 	 * @uses current_user_can() Checks whether the current user has the specified capability.
+	 * @uses $this->is_allowed_page() Checks if the current page is allowed.
+	 *
 	 * @return null Bail if the current user has the requisite capability.
 	 */
 	function is_user_allowed() {
-		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) ) {
-			$this->lock_it_up();
-		} else {
-			return; // Bail
+
+		if( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			return;
 		}
+
+		if ( $this->is_allowed_page() ) {
+			return;
+		}
+
+		if ( ! $this->capability ) {
+			return;
+		}
+
+		if ( current_user_can( $this->capability ) ) {
+			return;
+		}
+
+		$this->lock_it_up();
 	}
 
 	/**
@@ -145,6 +160,7 @@ class RDA_Remove_Access {
 					'page' => 'WFLS', // Wordfence Login Security 2FA
 				),
 			),
+			'admin-post.php' => array(),
 		);
 
 		/**
