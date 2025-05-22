@@ -97,7 +97,7 @@ class RDA_Options {
 			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
 			'enable_profile' => get_option( 'rda_enable_profile', 1 ),
 			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
-			'login_message'  => get_option( 'rda_login_message', esc_html__( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
+			'login_message'  => get_option( 'rda_login_message', '' ),
 		);
 
 		return $this->settings;
