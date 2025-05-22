@@ -54,16 +54,7 @@ class RDA_Options {
 	 */
 	public function setup() {
 
-
 		$this->maybe_map_old_settings();
-
-		$this->settings = array(
-			'access_switch'  => get_option( 'rda_access_switch', 'manage_options' ),
-			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
-			'enable_profile' => get_option( 'rda_enable_profile', 1 ),
-			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
-			'login_message'  => get_option( 'rda_login_message', esc_html__( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
-		);
 
 		// Translation.
 		add_action( 'init', array( $this, 'load_textdomain' ) );
@@ -88,6 +79,41 @@ class RDA_Options {
 	public function load_textdomain() {
 		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
+
+	/**
+	 * Get all plugin settings.
+	 *
+	 * @since 1.2.1
+	 *
+	 * @return array $settings
+	 */
+	public function get_settings() {
+		if ( $this->settings ) {
+			return $this->settings;
+		}
+
+		$this->settings = array(
+			'access_switch'  => get_option( 'rda_access_switch', 'manage_options' ),
+			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
+			'enable_profile' => get_option( 'rda_enable_profile', 1 ),
+			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
+			'login_message'  => get_option( 'rda_login_message', esc_html__( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
+		);
+
+		return $this->settings;
+	}
+
+	/**
+	 * Get a single plugin setting.
+	 *
+	 * @since 1.2.1
+	 */
+	public function get_setting( $key ) {
+		$settings = $this->get_settings();
+
+		return $settings[ $key ];
+	}
+
 
 	/**
 	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
@@ -260,7 +286,7 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function access_cap_dropdown() {
-		$switch = $this->settings['access_switch'];
+		$switch = $this->get_setting( 'access_switch' );
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
@@ -301,8 +327,10 @@ class RDA_Options {
 	 * @see $this->options_setup()
 	 */
 	public function plugin_toggle_cb() {
+		$toggle_plugin_off = $this->get_setting( 'toggle_plugin_off' );
+
 		printf( '<input name="rda_toggle_plugin_off" type="checkbox" value="1" class="code" %1$s/>%2$s',
-			checked( esc_attr( $this->settings['toggle_plugin_off'] ), true, false ),
+			checked( esc_attr( $toggle_plugin_off ), true, false ),
 			esc_html__( ' Disable access controls and redirection', 'remove_dashboard_access' )
 		);
 	}
@@ -323,7 +351,7 @@ class RDA_Options {
 	public function access_switch_cb() {
 		echo '<a id="dashboard-access"></a>';
 
-		$switch = $this->settings['access_switch'];
+		$switch = $this->get_setting( 'access_switch' );
 
 		/**
 		 * Filter the capability defaults for admins, editors, and authors.
@@ -399,6 +427,8 @@ class RDA_Options {
 		// Alphabetize for nicer display.
 		ksort( $capabilities );
 
+		$access_cap = $this->get_setting( 'access_cap' );
+
 		if ( ! empty( $capabilities ) ) {
 			// Start <select> element.
 			print( '<select name="rda_access_cap">' );
@@ -408,7 +438,7 @@ class RDA_Options {
 
 			// Build capabilities dropdown.
 			foreach ( $capabilities as $capability => $value ) {
-				printf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $value ), selected( $this->settings['access_cap'], $value ), esc_html( $capability ) );
+				printf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $value ), selected( $access_cap, $value ), esc_html( $capability ) );
 			}
 			print( '</select>' );
 		}
@@ -425,8 +455,10 @@ class RDA_Options {
 	 * @uses checked() Outputs the checked attribute when the option is enabled.
 	 */
 	public function profile_enable_cb() {
+		$enable_profile = $this->get_setting( 'enable_profile' );
+
 		printf( '<label><input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s</label>',
-			checked( esc_attr( $this->settings['enable_profile'] ), true, false ),
+			checked( esc_attr( $enable_profile ), true, false ),
 			/* Translators: The leading space is intentional to space the text away from the checkbox */
 			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove_dashboard_access' )
 		);
@@ -443,10 +475,11 @@ class RDA_Options {
 	 * @see $this->options_setup()
 	 */
 	public function url_redirect_cb() {
+		$redirect_url = $this->get_setting( 'redirect_url' );
 		?>
 		<p><label>
 			<?php esc_html_e( 'Redirect disallowed users to:', 'remove_dashboard_access' ); ?>
-			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['redirect_url'] ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove_dashboard_access' ), home_url() ); ?>" />
+			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $redirect_url ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove_dashboard_access' ), home_url() ); ?>" />
 		</label></p>
 		<?php
 	}
@@ -458,10 +491,11 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function login_message_cb() {
+		$login_message = $this->get_setting( 'login_message' );
 		?>
 		<p><label>
 				<?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
-				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
+				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $login_message ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
 			</label>
 		</p>
 		<p class="howto">
@@ -486,8 +520,10 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function output_login_message( $message ) {
-		if ( ! empty( $this->settings['login_message'] ) ) {
-			$message .= '<p class="message">' . esc_html( $this->settings['login_message'] ) . '</p>';
+		$login_message = $this->get_setting( 'login_message' );
+
+		if ( ! empty( $login_message ) ) {
+			$message .= '<p class="message">' . esc_html( $login_message ) . '</p>';
 		}
 		return $message;
 	}
@@ -564,9 +600,11 @@ class RDA_Options {
 	 * @since 1.0
 	 * @access public
 	 *
-	 * @return string $this->settings['access_cap'] if set, otherwise, 'manage_options' (filterable).
+	 * @return string The 'access_cap' setting if set, otherwise, 'manage_options' (filterable).
 	 */
 	public function capability() {
+		$access_cap = $this->get_setting( 'access_cap' );
+
 		/**
 		 * Filter the access capability.
 		 *
@@ -574,7 +612,7 @@ class RDA_Options {
 		 *
 		 * @param string $capability Capability needed to access the Dashboard.
 		 */
-		return apply_filters( 'rda_access_capability', $this->settings['access_cap'] );
+		return apply_filters( 'rda_access_capability', $access_cap );
 	}
 
 	/**
@@ -633,7 +671,7 @@ class RDA_Options {
 					<th><?php esc_html_e( 'Setting', 'remove_dashboard_access' ); ?></th>
 					<th><?php esc_html_e( 'Value', 'remove_dashboard_access' ); ?></th>
 				</tr>
-				<?php foreach ( $this->settings as $key => $value ) :
+				<?php foreach ( $this->get_settings() as $key => $value ) :
 					$value = empty( $value ) ? esc_html__( 'empty', 'remove_dashboard_access' ) : $value;
 					?>
 					<tr>

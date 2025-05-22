@@ -3,7 +3,7 @@ Contributors: TrustedLogin
 Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
-Tested up to: 6.7
+Tested up to: 6.8.1
 Stable tag: 1.2.1
 Requires PHP: 5.3
 
@@ -143,6 +143,11 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 3. Optional login message.
 
 == Changelog ==
+
+= 1.2.2 on May 22, 2025 =
+
+* Fixed: Compatibility with WordPress 6.8 `_load_textdomain_just_in_time` warning
+
 
 = 1.2.1 on November 29, 2024 =
 
