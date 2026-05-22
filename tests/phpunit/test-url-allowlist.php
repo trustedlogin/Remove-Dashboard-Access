@@ -419,4 +419,42 @@ class Test_URL_Allowlist extends RDA_TestCase {
 		$this->assertStringContainsString( 'class="widefat', $markup );
 		$this->assertStringContainsString( '/wp-admin/admin.php?page=foo', $markup, 'Textarea must echo the stored value.' );
 	}
+
+	/**
+	 * The wildcard ability is invisible from the UI unless we tell admins
+	 * about it. The textarea help text MUST surface both the syntax (`*`)
+	 * and a concrete example, otherwise the feature only exists for people
+	 * who read the changelog.
+	 */
+	public function test_url_allowlist_cb_advertises_wildcards() {
+		$options = new RDA_Options();
+
+		ob_start();
+		$options->url_allowlist_cb();
+		$markup = ob_get_clean();
+
+		$this->assertStringContainsString(
+			'<code>*</code>',
+			$markup,
+			'The description must mention the `*` wildcard inline.'
+		);
+		$this->assertStringContainsString(
+			'?page=tl-*',
+			$markup,
+			'The description must show a concrete wildcard example, not just say the word "wildcard".'
+		);
+		$this->assertStringContainsString(
+			'tl-*',
+			esc_attr( '/wp-admin/admin.php?page=trustedlogin-secrets' . "\n" .
+				'/wp-admin/admin.php?page=tl-*' . "\n" .
+				'/wp-admin/admin-post.php' ),
+			'Sanity: the placeholder text contains a wildcard example so empty-state users see one without reading description.'
+		);
+		// And confirm the placeholder itself in the rendered markup carries it.
+		$this->assertStringContainsString(
+			'?page=tl-*',
+			$markup,
+			'The textarea placeholder must demonstrate the wildcard form.'
+		);
+	}
 }

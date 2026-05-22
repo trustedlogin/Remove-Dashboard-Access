@@ -540,13 +540,31 @@ class RDA_Options {
 
 		printf(
 			'<textarea name="rda_url_allowlist" class="widefat code" rows="5" placeholder="%1$s">%2$s</textarea>',
-			esc_attr__( "/wp-admin/admin.php?page=trustedlogin-secrets\n/wp-admin/admin-post.php", 'remove_dashboard_access' ),
+			esc_attr__( "/wp-admin/admin.php?page=trustedlogin-secrets\n/wp-admin/admin.php?page=tl-*\n/wp-admin/admin-post.php", 'remove_dashboard_access' ),
 			esc_textarea( $url_allowlist )
 		);
 
 		echo '<p class="description">';
 		esc_html_e(
-			'One URL per line. Each URL listed here is exempt from the dashboard redirect. Absolute URLs on this site are converted to relative paths on save; external hosts and protocol-relative URLs are dropped.',
+			'One URL per line. Each URL listed here is exempt from the dashboard redirect.',
+			'remove_dashboard_access'
+		);
+		echo ' ';
+		echo wp_kses(
+			/* translators: %1$s is an inline-code example, e.g. <code>?page=tl-*</code>; %2$s and %3$s are example page slugs. */
+			sprintf(
+				__( 'Use %1$s as a wildcard in a query value to allow related sub-pages at once — for example, %2$s matches %3$s, %4$s, and any other %5$s page.', 'remove_dashboard_access' ),
+				'<code>*</code>',
+				'<code>?page=tl-*</code>',
+				'<code>tl-secrets</code>',
+				'<code>tl-config</code>',
+				'<code>tl-&hellip;</code>'
+			),
+			array( 'code' => array() )
+		);
+		echo ' ';
+		esc_html_e(
+			'Absolute URLs on this site are converted to relative paths on save; external hosts and protocol-relative URLs are dropped.',
 			'remove_dashboard_access'
 		);
 		echo '</p>';
