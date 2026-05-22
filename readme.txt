@@ -1,5 +1,5 @@
 === Remove Dashboard Access ===
-Contributors: TrustedLogin
+Contributors: TrustedLogin, alexclassroom
 Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
@@ -177,7 +177,7 @@ This release adds an Allowed URLs setting with wildcard support, groups the more
 
 * `admin-post.php` is now reachable as the 1.2.2 release notes promised. It had been quietly blocked despite the documentation saying it should be exempt.
 * Two-step admin flows on allow-listed pages — like Wordfence Login Security's 2FA OTP step — no longer get rejected just because the request carries extra query parameters.
-* Translations from [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/remove-dashboard-access-for-non-admins/) will now actually load on your site. The plugin's text domain didn't match the WordPress.org slug, so community-submitted translations (including zh_TW) were silently being dropped. Thanks to the zh_TW translator who surfaced this.
+* Translations from [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/remove-dashboard-access-for-non-admins/) will now actually load on your site. The plugin's text domain didn't match the WordPress.org slug, so community-submitted translations (including zh_TW) were silently being dropped. Thanks to Alex Lion (阿力獅) ([@alexclassroom](https://github.com/alexclassroom)) for surfacing this and contributing the fix.
 * A handful of strings that weren't translatable before — most notably the screen-reader hint on the Login Message link — are now translatable.
 * The uninstall script only runs when WordPress is actually uninstalling the plugin, not on stray requests to its file.
 
