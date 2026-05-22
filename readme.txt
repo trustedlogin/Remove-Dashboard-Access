@@ -21,6 +21,8 @@ The easiest and safest way to restrict access to your WordPress site's Dashboard
 * Choose your own redirect URL
 * Optionally allow users to edit their profiles
 * Display a message on the login screen so users know why they're being redirected
+* Allow specific admin pages through the redirect — paste a list of URLs your customers should still be able to reach (with wildcard support for grouping related pages)
+* Optionally extend the block to `admin-ajax.php` requests for stricter lockdown
 
 Blocking access to the Dashboard is a great way to prevent clients from breaking their sites, prevent users from seeing things they shouldn't, and to keep your site's backend more secure.
 
@@ -35,6 +37,16 @@ Optionally allow all users the ability to edit their profiles in the Dashboard. 
 <strong>Show a custom login message:</strong>
 
 * Supply a message to display on the login screen. Leaving this blank disables the message.
+
+<strong>Allow specific admin pages through the redirect:</strong>
+
+Sometimes you want to lock down the Dashboard but still let your customers reach one or two specific admin pages — a payment confirmation, a [TrustedLogin](https://www.trustedlogin.com/) secret-share screen, a custom report. Paste those URLs into the Allowed URLs box (one per line, relative or absolute), and matching requests will skip the redirect.
+
+Use `*` as a wildcard inside a query value to match a whole group of pages at once. For example, `?page=tl-*` allows `tl-secrets`, `tl-config`, and any other page whose slug starts with `tl-`.
+
+<strong>Optionally block AJAX requests too:</strong>
+
+By default this plugin doesn't touch requests to `admin-ajax.php` — most WordPress sites rely on those for legitimate frontend AJAX. If you'd rather the dashboard restriction apply there as well, turn on the "Also block AJAX" checkbox in the Advanced section of the settings page.
 
 == Installation ==
 
