@@ -1,6 +1,6 @@
 {
   "name": "remove-dashboard-access",
-  "version": "1.3.0",
+  "version": "1.3.1",
   "private": true,
   "description": "Dev tooling for Remove Dashboard Access. Powered by @wordpress/scripts + @wordpress/env.",
   "license": "GPL-2.0-or-later",
