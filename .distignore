@@ -30,6 +30,11 @@
 /vulnerability-report.md
 /vulnerability-report-2.md
 
+# WordPress.org plugin-page assets (banner, icon, screenshots).
+# The 10up deploy action syncs this directory separately to the SVN
+# /assets/ path, so it must NOT be included in the trunk plugin zip.
+/.wordpress-org
+
 # CI + git plumbing
 /.github
 /.git
