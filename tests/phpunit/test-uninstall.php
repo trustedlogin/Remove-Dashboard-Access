@@ -24,6 +24,7 @@ class Test_Uninstall extends RDA_TestCase {
 		update_option( 'rda_enable_profile', 1 );
 		update_option( 'rda_login_message',  '' );
 		update_option( 'rda_lock_ajax',      0 );
+		update_option( 'rda_url_allowlist',  '' );
 	}
 
 	/**
@@ -74,5 +75,6 @@ class Test_Uninstall extends RDA_TestCase {
 		$this->assertFalse( get_option( 'rda_enable_profile' ), 'rda_enable_profile must be deleted.' );
 		$this->assertFalse( get_option( 'rda_login_message' ),  'rda_login_message must be deleted.' );
 		$this->assertFalse( get_option( 'rda_lock_ajax' ),      'rda_lock_ajax must be deleted.' );
+		$this->assertFalse( get_option( 'rda_url_allowlist' ), 'rda_url_allowlist must be deleted.' );
 	}
 }

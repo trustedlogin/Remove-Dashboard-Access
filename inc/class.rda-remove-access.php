@@ -205,6 +205,29 @@ class RDA_Remove_Access {
 			'admin-post.php' => array(),
 		);
 
+		// Merge admin-configured URL allow-list entries (1.3.0). Each line of
+		// the textarea becomes a pagenow-keyed entry alongside the static
+		// defaults, so the same matcher handles both sources uniformly.
+		$user_entries = $this->parse_url_allowlist(
+			isset( $this->settings['url_allowlist'] ) ? (string) $this->settings['url_allowlist'] : ''
+		);
+
+		foreach ( $user_entries as $entry ) {
+			$pagenow = $entry['pagenow'];
+			if ( ! isset( $allowlist[ $pagenow ] ) ) {
+				$allowlist[ $pagenow ] = array();
+			}
+
+			if ( empty( $entry['params'] ) ) {
+				// Path-only entry → broadest possible "allow this page" semantics.
+				// We replace the page's param-set list with a single empty array,
+				// which is_allowed_page() reads as "no GET constraint."
+				$allowlist[ $pagenow ] = array();
+			} else {
+				$allowlist[ $pagenow ][] = $entry['params'];
+			}
+		}
+
 		/**
 		 * Filter the allowlist of admin pages.
 		 *
@@ -238,6 +261,67 @@ class RDA_Remove_Access {
 		$allowlist = apply_filters( 'rda_allowlist', $allowlist );
 
 		return $allowlist;
+	}
+
+	/**
+	 * Parse the admin-configured URL allow-list textarea into {pagenow, params} entries.
+	 *
+	 * Each line is treated as a relative path (sanitize_url_allowlist normalizes
+	 * absolute URLs to relative before storage, so we should always see paths
+	 * here — but we defensively re-parse to be robust against direct DB edits).
+	 *
+	 * A path that ends in `/` (e.g. `/wp-admin/?foo=bar`) has its pagenow
+	 * normalized to `index.php` to match WP core's $pagenow computation.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $raw Newline-separated allow-list string.
+	 * @return array List of `array( 'pagenow' => string, 'params' => array )` entries.
+	 */
+	private function parse_url_allowlist( $raw ) {
+		if ( ! is_string( $raw ) || '' === trim( $raw ) ) {
+			return array();
+		}
+
+		$entries = array();
+		$lines   = preg_split( '/\R/', $raw );
+
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+			if ( '' === $line ) {
+				continue;
+			}
+
+			$path  = wp_parse_url( $line, PHP_URL_PATH );
+			$query = wp_parse_url( $line, PHP_URL_QUERY );
+
+			if ( empty( $path ) ) {
+				continue;
+			}
+
+			// Directory-style URLs (`/wp-admin/`) map to index.php on the server.
+			if ( '/' === substr( $path, -1 ) ) {
+				$pagenow = 'index.php';
+			} else {
+				$pagenow = basename( $path );
+				if ( '' === $pagenow ) {
+					$pagenow = 'index.php';
+				}
+			}
+
+			$params = array();
+			if ( ! empty( $query ) ) {
+				wp_parse_str( $query, $params );
+			}
+
+			$entries[] = array(
+				'pagenow' => $pagenow,
+				'params'  => $params,
+			);
+		}
+
+		return $entries;
 	}
 
 	/**

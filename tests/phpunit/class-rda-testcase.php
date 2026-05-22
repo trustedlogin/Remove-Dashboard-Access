@@ -85,6 +85,7 @@ abstract class RDA_TestCase extends WP_UnitTestCase {
 			'redirect_url'   => home_url(),
 			'login_message'  => '',
 			'lock_ajax'      => 0,
+			'url_allowlist'  => '',
 		);
 
 		$settings = array_merge( $defaults, $settings );

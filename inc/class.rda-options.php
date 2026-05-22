@@ -99,6 +99,7 @@ class RDA_Options {
 			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
 			'login_message'  => get_option( 'rda_login_message', '' ),
 			'lock_ajax'      => get_option( 'rda_lock_ajax', 0 ),
+			'url_allowlist'  => get_option( 'rda_url_allowlist', '' ),
 		);
 
 		return $this->settings;
@@ -172,6 +173,7 @@ class RDA_Options {
 			'rda_enable_profile' => 1,
 			'rda_login_message'  => '',
 			'rda_lock_ajax'      => 0,
+			'rda_url_allowlist'  => '',
 		);
 
 		foreach ( $settings as $key => $value ) {
@@ -255,6 +257,10 @@ class RDA_Options {
 			'rda_lock_ajax'      => array(
 				'label'    => esc_html__( 'AJAX Requests:', 'remove_dashboard_access' ),
 				'callback' => 'lock_ajax_cb',
+			),
+			'rda_url_allowlist'  => array(
+				'label'    => esc_html__( 'Allowed URLs:', 'remove_dashboard_access' ),
+				'callback' => 'url_allowlist_cb',
 			),
 		);
 
@@ -517,6 +523,134 @@ class RDA_Options {
 				?></span>
 		</p>
 		<?php
+	}
+
+	/**
+	 * URL allow-list textarea display callback.
+	 *
+	 * Renders a `widefat` textarea — one URL per line, relative or absolute
+	 * (absolute URLs on the same host get converted to relative on save).
+	 * Each matching URL is exempt from the dashboard redirect.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	public function url_allowlist_cb() {
+		$url_allowlist = $this->get_setting( 'url_allowlist' );
+
+		printf(
+			'<textarea name="rda_url_allowlist" class="widefat code" rows="5" placeholder="%1$s">%2$s</textarea>',
+			esc_attr__( "/wp-admin/admin.php?page=trustedlogin-secrets\n/wp-admin/admin-post.php", 'remove_dashboard_access' ),
+			esc_textarea( $url_allowlist )
+		);
+
+		echo '<p class="description">';
+		esc_html_e(
+			'One URL per line. Each URL listed here is exempt from the dashboard redirect. Absolute URLs on this site are converted to relative paths on save; external hosts and protocol-relative URLs are dropped.',
+			'remove_dashboard_access'
+		);
+		echo '</p>';
+	}
+
+	/**
+	 * URL allow-list sanitize callback.
+	 *
+	 * For each line of the textarea: trim whitespace, normalize to a same-origin
+	 * relative path (or drop), strip URL fragments, and dedupe. Returns the
+	 * cleaned newline-separated string for storage.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 *
+	 * @param mixed $option Raw textarea value.
+	 * @return string Cleaned newline-separated URL list.
+	 */
+	public function sanitize_url_allowlist( $option ) {
+		if ( ! is_string( $option ) || '' === $option ) {
+			return '';
+		}
+
+		$lines = preg_split( '/\R/', $option );
+		$clean = array();
+
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+			if ( '' === $line ) {
+				continue;
+			}
+
+			$relative = $this->normalize_url_to_relative( $line );
+			if ( null === $relative ) {
+				continue;
+			}
+
+			$clean[] = $relative;
+		}
+
+		$clean = array_values( array_unique( $clean ) );
+
+		return implode( "\n", $clean );
+	}
+
+	/**
+	 * Normalize a single allow-list URL line to a same-origin relative path.
+	 *
+	 * Drops external hosts and protocol-relative URLs (host confusion risk);
+	 * strips fragments; auto-prepends a leading slash for bare relative paths.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $url Raw URL string.
+	 * @return string|null Cleaned relative path with optional query string, or null if invalid.
+	 */
+	private function normalize_url_to_relative( $url ) {
+		// Reject protocol-relative URLs outright — `//evil.example/foo` would
+		// be host-confused in many redirect/match contexts and there's no
+		// reason a same-site allow-list should accept them.
+		if ( 0 === strpos( $url, '//' ) ) {
+			return null;
+		}
+
+		// Absolute URL: keep only if the host matches this site.
+		if ( preg_match( '#^https?://#i', $url ) ) {
+			$url_host  = wp_parse_url( $url, PHP_URL_HOST );
+			$home_host = wp_parse_url( home_url(), PHP_URL_HOST );
+
+			if ( empty( $url_host ) || empty( $home_host ) ) {
+				return null;
+			}
+
+			if ( strtolower( $url_host ) !== strtolower( $home_host ) ) {
+				return null;
+			}
+
+			$path  = wp_parse_url( $url, PHP_URL_PATH );
+			$query = wp_parse_url( $url, PHP_URL_QUERY );
+
+			if ( empty( $path ) ) {
+				return null;
+			}
+
+			return $path . ( $query ? '?' . $query : '' );
+		}
+
+		// Relative path: must contain a path component.
+		// Strip everything from `#` onwards (fragments never reach the server).
+		$hash_pos = strpos( $url, '#' );
+		if ( false !== $hash_pos ) {
+			$url = substr( $url, 0, $hash_pos );
+		}
+
+		if ( '' === $url ) {
+			return null;
+		}
+
+		if ( '/' !== $url[0] ) {
+			$url = '/' . $url;
+		}
+
+		return $url;
 	}
 
 	/**

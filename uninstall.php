@@ -20,6 +20,7 @@ $settings = array(
 	'rda_enable_profile',
 	'rda_login_message',
 	'rda_lock_ajax',
+	'rda_url_allowlist',
 );
 
 foreach ( $settings as $setting ) {
