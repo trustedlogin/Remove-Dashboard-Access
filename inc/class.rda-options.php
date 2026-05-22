@@ -77,7 +77,7 @@ class RDA_Options {
 	 * @since 1.2.1
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'remove-dashboard-access-for-non-admins', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
 
 	/**
@@ -190,8 +190,8 @@ class RDA_Options {
 	 */
 	function options_page() {
 		add_options_page(
-			esc_html__( 'Dashboard Access Settings', 'remove_dashboard_access' ),
-			esc_html__( 'Dashboard Access', 'remove_dashboard_access' ),
+			esc_html__( 'Dashboard Access Settings', 'remove-dashboard-access-for-non-admins' ),
+			esc_html__( 'Dashboard Access', 'remove-dashboard-access-for-non-admins' ),
 			'manage_options',
 			'dashboard-access',
 			array( $this, 'options_page_cb' )
@@ -208,7 +208,7 @@ class RDA_Options {
 	function options_page_cb() {
 		?>
 		<div class="wrap">
-			<h2><?php esc_html_e( 'Dashboard Access Settings', 'remove_dashboard_access' ); ?></h2>
+			<h2><?php esc_html_e( 'Dashboard Access Settings', 'remove-dashboard-access-for-non-admins' ); ?></h2>
 			<form action="options.php" method="POST" id="rda-options-form">
 				<?php
 					settings_fields( 'dashboard-access' );
@@ -232,7 +232,7 @@ class RDA_Options {
 		// Dashboard Access Controls section — the everyday settings.
 		add_settings_section(
 			'rda_options',
-			esc_html__( 'Dashboard Access Controls', 'remove_dashboard_access' ),
+			esc_html__( 'Dashboard Access Controls', 'remove-dashboard-access-for-non-admins' ),
 			array( $this, 'settings_section' ),
 			'dashboard-access'
 		);
@@ -243,7 +243,7 @@ class RDA_Options {
 		// instead of one long list.
 		add_settings_section(
 			'rda_options_advanced',
-			esc_html__( 'Advanced', 'remove_dashboard_access' ),
+			esc_html__( 'Advanced', 'remove-dashboard-access-for-non-admins' ),
 			array( $this, 'settings_section_advanced' ),
 			'dashboard-access'
 		);
@@ -252,7 +252,7 @@ class RDA_Options {
 		// own section value land under the Advanced heading.
 		$sets = array(
 			'rda_access_switch'  => array(
-				'label'    => esc_html__( 'Dashboard User Access:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Dashboard User Access:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'access_switch_cb',
 			),
 			'rda_access_cap'     => array(
@@ -260,24 +260,24 @@ class RDA_Options {
 				'callback' => 'access_cap_dropdown',
 			),
 			'rda_redirect_url'   => array(
-				'label'    => esc_html__( 'Redirect URL:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Redirect URL:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'url_redirect_cb',
 			),
 			'rda_enable_profile' => array(
-				'label'    => esc_html__( 'User Profile Access:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'User Profile Access:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'profile_enable_cb',
 			),
 			'rda_login_message'  => array(
-				'label'    => esc_html__( 'Login Message', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Login Message', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'login_message_cb',
 			),
 			'rda_lock_ajax'      => array(
-				'label'    => esc_html__( 'AJAX Requests:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'AJAX Requests:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'lock_ajax_cb',
 				'section'  => 'rda_options_advanced',
 			),
 			'rda_url_allowlist'  => array(
-				'label'    => esc_html__( 'Allowed URLs:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Allowed URLs:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'url_allowlist_cb',
 				'section'  => 'rda_options_advanced',
 			),
@@ -294,7 +294,7 @@ class RDA_Options {
 
 		// Debug info "setting".
 		if ( ! empty( $_GET['rda_debug'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			add_settings_field( 'rda_debug_mode', esc_html__( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
+			add_settings_field( 'rda_debug_mode', esc_html__( 'Debug Info', 'remove-dashboard-access-for-non-admins' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
 		}
 
 	}
@@ -306,7 +306,7 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function settings_section() {
-		esc_html_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove_dashboard_access' );
+		esc_html_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove-dashboard-access-for-non-admins' );
 	}
 
 	/**
@@ -319,7 +319,7 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function settings_section_advanced() {
-		esc_html_e( 'Less-common options for sites with custom AJAX endpoints or admin pages that should remain reachable.', 'remove_dashboard_access' );
+		esc_html_e( 'Less-common options for sites with custom AJAX endpoints or admin pages that should remain reachable.', 'remove-dashboard-access-for-non-admins' );
 	}
 
 	/**
@@ -335,13 +335,13 @@ class RDA_Options {
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-			<?php echo wp_kses( __( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ), array( 'strong' => array() ) ); ?>
+			<?php echo wp_kses( __( '<strong>Advanced</strong>: Limit by capability:', 'remove-dashboard-access-for-non-admins' ), array( 'strong' => array() ) ); ?>
 		</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p>
-			<?php printf( esc_html__( 'You can find out more about specific %s in the Codex.', 'remove_dashboard_access' ),
+			<?php printf( esc_html__( 'You can find out more about specific %s in the Codex.', 'remove-dashboard-access-for-non-admins' ),
 				sprintf( '<a href="%1$s" target="_new">%2$s</a>',
 					esc_url( 'http://codex.wordpress.org/Roles_and_Capabilities' ),
-					esc_html__( 'Roles &amp; Capabilities', 'remove_dashboard_access' )
+					esc_html__( 'Roles &amp; Capabilities', 'remove-dashboard-access-for-non-admins' )
 				)
 			); ?>
 		</p>
@@ -376,7 +376,7 @@ class RDA_Options {
 
 		printf( '<input name="rda_toggle_plugin_off" type="checkbox" value="1" class="code" %1$s/>%2$s',
 			checked( esc_attr( $toggle_plugin_off ), true, false ),
-			esc_html__( ' Disable access controls and redirection', 'remove_dashboard_access' )
+			esc_html__( ' Disable access controls and redirection', 'remove-dashboard-access-for-non-admins' )
 		);
 	}
 
@@ -419,15 +419,15 @@ class RDA_Options {
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
-			<?php esc_html_e( 'Administrators only', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Administrators only', 'remove-dashboard-access-for-non-admins' ); ?>
 		</label></p>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
-			<?php esc_html_e( 'Editors and Administrators', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Editors and Administrators', 'remove-dashboard-access-for-non-admins' ); ?>
 		</label></p>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
-			<?php esc_html_e( 'Authors, Editors, and Administrators', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Authors, Editors, and Administrators', 'remove-dashboard-access-for-non-admins' ); ?>
 		</label></p>
 
 	<?php
@@ -479,7 +479,7 @@ class RDA_Options {
 			print( '<select name="rda_access_cap">' );
 
 			// Default first option.
-			printf( '<option selected="selected" value="manage_options">%s</option>', esc_html__( '--- Select a Capability ---', 'removed_dashboard_access' ) );
+			printf( '<option selected="selected" value="manage_options">%s</option>', esc_html__( '--- Select a Capability ---', 'remove-dashboard-access-for-non-admins' ) );
 
 			// Build capabilities dropdown.
 			foreach ( $capabilities as $capability => $value ) {
@@ -505,7 +505,7 @@ class RDA_Options {
 		printf( '<label><input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s</label>',
 			checked( esc_attr( $enable_profile ), true, false ),
 			/* Translators: The leading space is intentional to space the text away from the checkbox */
-			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove_dashboard_access' )
+			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove-dashboard-access-for-non-admins' )
 		);
 	}
 
@@ -523,8 +523,8 @@ class RDA_Options {
 		$redirect_url = $this->get_setting( 'redirect_url' );
 		?>
 		<p><label>
-			<?php esc_html_e( 'Redirect disallowed users to:', 'remove_dashboard_access' ); ?>
-			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $redirect_url ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove_dashboard_access' ), home_url() ); ?>" />
+			<?php esc_html_e( 'Redirect disallowed users to:', 'remove-dashboard-access-for-non-admins' ); ?>
+			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $redirect_url ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove-dashboard-access-for-non-admins' ), home_url() ); ?>" />
 		</label></p>
 		<?php
 	}
@@ -539,8 +539,8 @@ class RDA_Options {
 		$login_message = $this->get_setting( 'login_message' );
 		?>
 		<p><label>
-				<?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
-				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $login_message ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
+				<?php esc_html_e( 'Display this message to users above the login form:', 'remove-dashboard-access-for-non-admins' ); ?>
+				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $login_message ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove-dashboard-access-for-non-admins' ); ?>" />
 			</label>
 		</p>
 		<p class="howto">
@@ -548,9 +548,9 @@ class RDA_Options {
 
 				// translators: %s is replaced with the default login message
 				echo sprintf(
-					esc_html__( 'Leave blank to not show a message. This message will only be shown on the %1$sLog In screen%2$s, not in embedded Login/Logout blocks.', 'remove_dashboard_access' ),
+					esc_html__( 'Leave blank to not show a message. This message will only be shown on the %1$sLog In screen%2$s, not in embedded Login/Logout blocks.', 'remove-dashboard-access-for-non-admins' ),
 					'<a href="' . esc_url( wp_login_url() ) . '" target="_blank">',
-					'<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)' ) . '</span></a>'
+					'<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)', 'remove-dashboard-access-for-non-admins' ) . '</span></a>'
 				);
 
 				?></span>
@@ -573,20 +573,20 @@ class RDA_Options {
 
 		printf(
 			'<textarea name="rda_url_allowlist" class="widefat code" rows="5" placeholder="%1$s">%2$s</textarea>',
-			esc_attr__( "/wp-admin/admin.php?page=trustedlogin-secrets\n/wp-admin/admin.php?page=tl-*\n/wp-admin/admin-post.php", 'remove_dashboard_access' ),
+			esc_attr__( "/wp-admin/admin.php?page=trustedlogin-secrets\n/wp-admin/admin.php?page=tl-*\n/wp-admin/admin-post.php", 'remove-dashboard-access-for-non-admins' ),
 			esc_textarea( $url_allowlist )
 		);
 
 		echo '<p class="description">';
 		esc_html_e(
 			'One URL per line. Each URL listed here is exempt from the dashboard redirect.',
-			'remove_dashboard_access'
+			'remove-dashboard-access-for-non-admins'
 		);
 		echo ' ';
 		echo wp_kses(
 			/* translators: %1$s is an inline-code example, e.g. <code>?page=tl-*</code>; %2$s and %3$s are example page slugs. */
 			sprintf(
-				__( 'Use %1$s as a wildcard in a query value to allow related sub-pages at once — for example, %2$s matches %3$s, %4$s, and any other %5$s page.', 'remove_dashboard_access' ),
+				__( 'Use %1$s as a wildcard in a query value to allow related sub-pages at once — for example, %2$s matches %3$s, %4$s, and any other %5$s page.', 'remove-dashboard-access-for-non-admins' ),
 				'<code>*</code>',
 				'<code>?page=tl-*</code>',
 				'<code>tl-secrets</code>',
@@ -598,7 +598,7 @@ class RDA_Options {
 		echo ' ';
 		esc_html_e(
 			'Absolute URLs on this site are converted to relative paths on save; external hosts and protocol-relative URLs are dropped.',
-			'remove_dashboard_access'
+			'remove-dashboard-access-for-non-admins'
 		);
 		echo '</p>';
 	}
@@ -748,8 +748,8 @@ class RDA_Options {
 			'<label><input name="rda_lock_ajax" type="checkbox" value="1" class="code" %1$s/>%2$s</label><p class="description">%3$s</p>',
 			checked( (bool) $lock_ajax, true, false ),
 			/* Translators: leading space spaces the text away from the checkbox. */
-			esc_html__( ' Also block disallowed users from admin-ajax.php requests.', 'remove_dashboard_access' ),
-			esc_html__( 'Most sites should leave this off — AJAX endpoints conventionally enforce their own capability checks. Enable only if you know your AJAX surface relies on this plugin to gate it.', 'remove_dashboard_access' )
+			esc_html__( ' Also block disallowed users from admin-ajax.php requests.', 'remove-dashboard-access-for-non-admins' ),
+			esc_html__( 'Most sites should leave this off — AJAX endpoints conventionally enforce their own capability checks. Enable only if you know your AJAX surface relies on this plugin to gate it.', 'remove-dashboard-access-for-non-admins' )
 		);
 	}
 
@@ -939,7 +939,7 @@ class RDA_Options {
 		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
 				esc_url( admin_url( 'options-general.php?page=dashboard-access' ) ),
-				esc_html__( 'Settings', 'remove_dashboard_access' )
+				esc_html__( 'Settings', 'remove-dashboard-access-for-non-admins' )
 			) );
 		}
 		return $links;
@@ -974,11 +974,11 @@ class RDA_Options {
 		<table class="rda_debug">
 			<tbody>
 				<tr>
-					<th><?php esc_html_e( 'Setting', 'remove_dashboard_access' ); ?></th>
-					<th><?php esc_html_e( 'Value', 'remove_dashboard_access' ); ?></th>
+					<th><?php esc_html_e( 'Setting', 'remove-dashboard-access-for-non-admins' ); ?></th>
+					<th><?php esc_html_e( 'Value', 'remove-dashboard-access-for-non-admins' ); ?></th>
 				</tr>
 				<?php foreach ( $this->get_settings() as $key => $value ) :
-					$value = empty( $value ) ? esc_html__( 'empty', 'remove_dashboard_access' ) : $value;
+					$value = empty( $value ) ? esc_html__( 'empty', 'remove-dashboard-access-for-non-admins' ) : $value;
 					?>
 					<tr>
 						<td><?php echo esc_html( $key ); ?></td>
