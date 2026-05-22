@@ -146,18 +146,35 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 
 = 1.3.0 on May 22, 2026 =
 
-* Security: Settings now validate capability values against the live role list — a tampered POST can no longer save an empty or unknown capability and silently disable the plugin's gate (CREW audit Finding #4).
-* Security: The disallowed-user redirect now uses `wp_safe_redirect()`. Admin-configured external redirect targets continue to work via an inline `allowed_redirect_hosts` filter, while opportunistic redirects through unrelated hosts are blocked (Finding #5).
-* Security: `uninstall.php` now exits early when `WP_UNINSTALL_PLUGIN` is not defined (Finding #6).
-* Fixed: `admin-post.php` is now actually reachable as documented — the empty-array allowlist entry was previously interpreted as "never matches" instead of "no GET constraint" (Finding #3).
-* Fixed: Allowlist entries now match by GET-param subset instead of exact count, so legitimate sub-flows of allowed pages (such as Wordfence Login Security's 2FA OTP step) are no longer rejected (Finding #7).
-* Added: Allowlist entries for `admin.php?page=<slug>` now verify the target submenu page is actually registered before letting the URL through (Finding #2).
-* Added: "Advanced" sub-heading on the Dashboard Access settings page groups the AJAX and URL allow-list controls separately from the everyday Dashboard Access Controls, so the page reads as two short sections instead of one long list.
-* Added: "Also block AJAX" checkbox on the Dashboard Access settings page to enable the cap gate on `admin-ajax.php` requests, plus a matching `rda_strict_ajax` filter for code-level overrides (default off — preserves prior behavior) (Finding #1).
-* Added: "Allowed URLs" textarea on the Dashboard Access settings page — paste any number of URLs (relative or absolute, one per line) and matching requests skip the redirect. Absolute URLs on the same host are converted to relative paths on save; foreign hosts, protocol-relative URLs, non-http(s) schemes (`javascript:`, `data:`, `file:`, …), and overly-broad directory entries (`/`, `/wp-admin/`) are rejected at the sanitizer. Path-only entries (no query string) match any GET params; entries with a query string require those exact params (extra params on the request are OK, so 2FA/OTP sub-flows keep working).
-* Added: Wildcards in allow-list query values — write `?page=tl-*` to allow `tl-secrets`, `tl-config`, etc. without enumerating each. Only `*` is special; every other character — including `?`, `[`, `]`, `\`, `.` — is matched literally. The matcher is a linear no-regex walk, so even pathological patterns can't cause ReDoS. Wildcards still respect the submenu-registration check, so they can't be used to reach unregistered admin pages.
-* Tooling: New unit test suite (`@wordpress/scripts` + `wp-env` + PHPUnit) covering every gate above. Run with `npm test`.
-* Fixed: Plugin text domain corrected to `remove-dashboard-access-for-non-admins`, matching the wordpress.org slug. Translations submitted to translate.wordpress.org will now actually load on user sites — the old underscore-style domain (`remove_dashboard_access`) didn't match the slug, so community translations were silently dropped. Also adds a missing text domain to a previously-untranslatable screen-reader string (`(This link opens in a new window.)`) and corrects a stale typo (`removed_dashboard_access` on the capability dropdown's default option). Thanks to the zh_TW translator who surfaced this.
+This release adds an Allowed URLs setting with wildcard support, groups the more advanced options under their own section, and fixes several long-standing admin-page-access and translation issues.
+
+#### 🚀 Added
+
+* **Allowed URLs** — A new textarea on the Dashboard Access settings page where you can paste any URLs that should skip the dashboard redirect, one per line. Useful for letting customers reach a specific admin page (like a payment confirmation or a TrustedLogin secret-share screen) without giving them the rest of the dashboard.
+* **Wildcards in Allowed URLs** — Use `*` inside a query value to match a group of pages at once. For example, `?page=tl-*` lets through `tl-secrets`, `tl-config`, and any other page slug that starts with `tl-`.
+* **Also block AJAX** — A new checkbox in the Advanced section to extend the dashboard restriction to `admin-ajax.php` requests too. Most sites should leave this off; turn it on only if you know your AJAX endpoints rely on this plugin to keep them gated.
+* **Advanced section** — The settings page now has two clear groups: the everyday Dashboard Access Controls at the top, and an Advanced section below for AJAX blocking and the Allowed URLs list. Easier to scan, less intimidating for new users.
+
+#### ✨ Improved
+
+* The settings page now validates the capability values you save. A typo, empty value, or unknown capability can no longer be saved and silently disable the dashboard restriction.
+* The disallowed-user redirect uses WordPress's safer `wp_safe_redirect()`. Your configured redirect URL still works, including external destinations — but accidental redirects to other hosts are now blocked.
+* When you add an `admin.php?page=…` entry to the allow-list, the plugin now confirms the page is actually registered by another plugin before letting visitors through.
+
+#### 🐛 Fixed
+
+* `admin-post.php` is now reachable as the 1.2.2 release notes promised. It had been quietly blocked despite the documentation saying it should be exempt.
+* Two-step admin flows on allow-listed pages — like Wordfence Login Security's 2FA OTP step — no longer get rejected just because the request carries extra query parameters.
+* Translations from [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/remove-dashboard-access-for-non-admins/) will now actually load on your site. The plugin's text domain didn't match the WordPress.org slug, so community-submitted translations (including zh_TW) were silently being dropped. Thanks to the zh_TW translator who surfaced this.
+* A handful of strings that weren't translatable before — most notably the screen-reader hint on the Login Message link — are now translatable.
+* The uninstall script only runs when WordPress is actually uninstalling the plugin, not on stray requests to its file.
+
+#### 💻 Developer Updates
+
+* Text domain renamed from `remove_dashboard_access` to `remove-dashboard-access-for-non-admins` to match the WordPress.org slug. If you maintain custom `.po`/`.mo` files in `/languages/`, rename them to use the new domain.
+* New `rda_strict_ajax` filter mirrors the "Also block AJAX" setting for code-level control on a per-site basis.
+* The existing `rda_allowlist` filter still works; entries now support `*` wildcards inside query values.
+* New unit test suite using `@wordpress/scripts` + `wp-env` + PHPUnit. Run locally with `npm test`.
 
 = 1.2.2 on May 22, 2025 =
 
