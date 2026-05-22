@@ -44,14 +44,43 @@ test.describe( 'WP.org screenshots', () => {
 	test( 'screenshot-2: User Profile Access option', async ( { page } ) => {
 		await page.goto( SETTINGS_URL );
 
-		// Locate the table row for the User Profile Access setting.
-		const row = page.locator( 'tr', {
-			has: page.locator( 'th', { hasText: 'User Profile Access:' } ),
+		// Capture a 3-row strip — Redirect URL → User Profile Access → Login
+		// Message — so the profile-access feature is visible alongside the
+		// nearby user-facing settings it interacts with. Single-row crops look
+		// awkwardly thin in the wordpress.org listing.
+		const firstRow = page.locator( 'tr', {
+			has: page.locator( 'th', { hasText: 'Redirect URL:' } ),
+		} );
+		const lastRow = page.locator( 'tr', {
+			has: page.locator( 'th', { hasText: 'Login Message' } ),
 		} );
 
-		await expect( row ).toBeVisible();
-		await row.screenshot( {
+		await expect( firstRow ).toBeVisible();
+		await expect( lastRow ).toBeVisible();
+
+		const firstBox = await firstRow.boundingBox();
+		const lastBox = await lastRow.boundingBox();
+		if ( ! firstBox || ! lastBox ) {
+			throw new Error(
+				'Could not resolve bounding boxes for the screenshot-2 row range.'
+			);
+		}
+
+		// Anchor the clip to the form-table's left edge for a clean crop.
+		const formTable = page.locator( 'table.form-table' ).first();
+		const tableBox = await formTable.boundingBox();
+		if ( ! tableBox ) {
+			throw new Error( 'Could not resolve the form-table bounding box.' );
+		}
+
+		await page.screenshot( {
 			path: path.join( ASSETS_DIR, 'screenshot-2.png' ),
+			clip: {
+				x: tableBox.x,
+				y: firstBox.y,
+				width: tableBox.width,
+				height: lastBox.y + lastBox.height - firstBox.y,
+			},
 		} );
 	} );
 
