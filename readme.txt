@@ -4,8 +4,10 @@ Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
 Tested up to: 7.0
-Stable tag: 1.3.0
+Stable tag: 1.3.1
 Requires PHP: 5.3
+License: GPLv2 or later
+License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL. Get set up in seconds.
 
@@ -155,6 +157,14 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 3. Optional login message.
 
 == Changelog ==
+
+= 1.3.1 on May 22, 2026 =
+
+This release adds the missing `License` headers that the wordpress.org plugin reviewer flagged during the 1.3.0 import. No functional change.
+
+#### 🐛 Fixed
+
+* Added the `License: GPLv2 or later` and `License URI: https://www.gnu.org/licenses/gpl-2.0.html` headers to `readme.txt` and normalized the plugin file's `License:` header to the same canonical form. The plugin has always been GPLv2-licensed; the headers were just missing from the locations wordpress.org's plugin directory parses.
 
 = 1.3.0 on May 22, 2026 =
 
