@@ -17,9 +17,13 @@
     "lint:php:fix": "wp-env run tests-cli --env-cwd=wp-content/plugins/Remove-Dashboard-Access -- ./vendor/bin/phpcbf",
     "test": "npm run test:unit:php",
     "test:unit:php": "wp-env run tests-cli --env-cwd=wp-content/plugins/Remove-Dashboard-Access -- ./vendor/bin/phpunit",
-    "test:unit:php:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/Remove-Dashboard-Access -- ./vendor/bin/phpunit --coverage-text"
+    "test:unit:php:coverage": "wp-env run tests-cli --env-cwd=wp-content/plugins/Remove-Dashboard-Access -- ./vendor/bin/phpunit --coverage-text",
+    "screenshots": "playwright test --config=playwright.config.js",
+    "screenshots:headed": "playwright test --config=playwright.config.js --headed",
+    "screenshots:install": "playwright install chromium"
   },
   "devDependencies": {
+    "@playwright/test": "^1.50.0",
     "@wordpress/env": "^10.10.0",
     "@wordpress/scripts": "^30.5.0"
   }

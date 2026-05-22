@@ -12,6 +12,11 @@
 /clover.xml
 /coverage/
 
+# Playwright
+/playwright-report/
+/test-results/
+/tests/e2e/.auth/
+
 # wp-env state
 /.wp-env.override.json
 

@@ -25,6 +25,9 @@
 
 # Tests
 /tests
+/playwright.config.js
+/playwright-report
+/test-results
 
 # Internal security docs — not for the public-facing WP.org listing.
 /vulnerability-report.md
