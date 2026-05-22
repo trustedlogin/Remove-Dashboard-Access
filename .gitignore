@@ -26,3 +26,7 @@
 .vscode/
 *.swp
 *.swo
+
+# Plugin-local credentials (WP.org SVN creds for manual deploys / asset
+# fixes). `.env.example` is the template — committed, no real values.
+/.env

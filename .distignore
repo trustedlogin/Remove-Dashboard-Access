@@ -51,3 +51,7 @@
 .vscode
 *.swp
 *.swo
+
+# Plugin-local secrets — must never leave the contributor's machine.
+/.env
+/.env.example
