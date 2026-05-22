@@ -1,0 +1,53 @@
+# Files and directories the 10up deploy action strips before pushing to
+# the WordPress.org SVN trunk. Everything here stays on GitHub only.
+
+# Dev dependencies
+/node_modules
+/vendor
+
+# Build / test artifacts
+/.phpunit.result.cache
+/.phpunit.cache
+/coverage
+/clover.xml
+
+# Local environment
+/.wp-env.json
+/.wp-env.override.json
+
+# Tooling configs
+/package.json
+/package-lock.json
+/composer.json
+/composer.lock
+/phpunit.xml.dist
+/phpcs.xml.dist
+
+# Tests
+/tests
+/playwright.config.js
+/playwright-report
+/test-results
+
+# Internal security docs — not for the public-facing WP.org listing.
+/vulnerability-report.md
+/vulnerability-report-2.md
+
+# WordPress.org plugin-page assets (banner, icon, screenshots).
+# The 10up deploy action syncs this directory separately to the SVN
+# /assets/ path, so it must NOT be included in the trunk plugin zip.
+/.wordpress-org
+
+# CI + git plumbing
+/.github
+/.git
+/.gitignore
+/.gitattributes
+/.editorconfig
+
+# Editor / OS noise
+.DS_Store
+.idea
+.vscode
+*.swp
+*.swo

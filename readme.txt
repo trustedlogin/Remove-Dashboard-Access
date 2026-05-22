@@ -1,10 +1,10 @@
 === Remove Dashboard Access ===
-Contributors: TrustedLogin
+Contributors: TrustedLogin, alexclassroom
 Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
-Tested up to: 6.7
-Stable tag: 1.2.1
+Tested up to: 7.0
+Stable tag: 1.3.0
 Requires PHP: 5.3
 
 Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL. Get set up in seconds.
@@ -21,6 +21,8 @@ The easiest and safest way to restrict access to your WordPress site's Dashboard
 * Choose your own redirect URL
 * Optionally allow users to edit their profiles
 * Display a message on the login screen so users know why they're being redirected
+* Allow specific admin pages through the redirect — paste a list of URLs your customers should still be able to reach (with wildcard support for grouping related pages)
+* Optionally extend the block to `admin-ajax.php` requests for stricter lockdown
 
 Blocking access to the Dashboard is a great way to prevent clients from breaking their sites, prevent users from seeing things they shouldn't, and to keep your site's backend more secure.
 
@@ -35,6 +37,16 @@ Optionally allow all users the ability to edit their profiles in the Dashboard. 
 <strong>Show a custom login message:</strong>
 
 * Supply a message to display on the login screen. Leaving this blank disables the message.
+
+<strong>Allow specific admin pages through the redirect:</strong>
+
+Sometimes you want to lock down the Dashboard but still let your customers reach one or two specific admin pages — a payment confirmation, a [TrustedLogin](https://www.trustedlogin.com/) secret-share screen, a custom report. Paste those URLs into the Allowed URLs box (one per line, relative or absolute), and matching requests will skip the redirect.
+
+Use `*` as a wildcard inside a query value to match a whole group of pages at once. For example, `?page=tl-*` allows `tl-secrets`, `tl-config`, and any other page whose slug starts with `tl-`.
+
+<strong>Optionally block AJAX requests too:</strong>
+
+By default this plugin doesn't touch requests to `admin-ajax.php` — most WordPress sites rely on those for legitimate frontend AJAX. If you'd rather the dashboard restriction apply there as well, turn on the "Also block AJAX" checkbox in the Advanced section of the settings page.
 
 == Installation ==
 
@@ -143,6 +155,43 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 3. Optional login message.
 
 == Changelog ==
+
+= 1.3.0 on May 22, 2026 =
+
+This release adds an Allowed URLs setting with wildcard support, groups the more advanced options under their own section, and fixes several long-standing admin-page-access and translation issues.
+
+#### 🚀 Added
+
+* **Allowed URLs** — A new textarea on the Dashboard Access settings page where you can paste any URLs that should skip the dashboard redirect, one per line. Useful for letting customers reach a specific admin page (like a payment confirmation or a TrustedLogin secret-share screen) without giving them the rest of the dashboard.
+* **Wildcards in Allowed URLs** — Use `*` inside a query value to match a group of pages at once. For example, `?page=tl-*` lets through `tl-secrets`, `tl-config`, and any other page slug that starts with `tl-`.
+* **Also block AJAX** — A new checkbox in the Advanced section to extend the dashboard restriction to `admin-ajax.php` requests too. Most sites should leave this off; turn it on only if you know your AJAX endpoints rely on this plugin to keep them gated.
+* **Advanced section** — The settings page now has two clear groups: the everyday Dashboard Access Controls at the top, and an Advanced section below for AJAX blocking and the Allowed URLs list. Easier to scan, less intimidating for new users.
+
+#### ✨ Improved
+
+* The settings page now validates the capability values you save. A typo, empty value, or unknown capability can no longer be saved and silently disable the dashboard restriction.
+* The disallowed-user redirect uses WordPress's safer `wp_safe_redirect()`. Your configured redirect URL still works, including external destinations — but accidental redirects to other hosts are now blocked.
+* When you add an `admin.php?page=…` entry to the allow-list, the plugin now confirms the page is actually registered by another plugin before letting visitors through.
+
+#### 🐛 Fixed
+
+* `admin-post.php` is now reachable as the 1.2.2 release notes promised. It had been quietly blocked despite the documentation saying it should be exempt.
+* Two-step admin flows on allow-listed pages — like Wordfence Login Security's 2FA OTP step — no longer get rejected just because the request carries extra query parameters.
+* Translations from [translate.wordpress.org](https://translate.wordpress.org/projects/wp-plugins/remove-dashboard-access-for-non-admins/) will now actually load on your site. The plugin's text domain didn't match the WordPress.org slug, so community-submitted translations (including zh_TW) were silently being dropped. Thanks to Alex Lion (阿力獅) ([@alexclassroom](https://github.com/alexclassroom)) for surfacing this and contributing the fix.
+* A handful of strings that weren't translatable before — most notably the screen-reader hint on the Login Message link — are now translatable.
+* The uninstall script only runs when WordPress is actually uninstalling the plugin, not on stray requests to its file.
+
+#### 💻 Developer Updates
+
+* Text domain renamed from `remove_dashboard_access` to `remove-dashboard-access-for-non-admins` to match the WordPress.org slug. If you maintain custom `.po`/`.mo` files in `/languages/`, rename them to use the new domain.
+* New `rda_strict_ajax` filter mirrors the "Also block AJAX" setting for code-level control on a per-site basis.
+* The existing `rda_allowlist` filter still works; entries now support `*` wildcards inside query values.
+* New unit test suite using `@wordpress/scripts` + `wp-env` + PHPUnit. Run locally with `npm test`.
+
+= 1.2.2 on May 22, 2025 =
+
+* Fixed: Compatibility with WordPress 6.8 `_load_textdomain_just_in_time` warning
+* Fixed: The plugin prevented `admin-post.php` from being accessible, which broke some expected functionality (thanks [@brambil](https://wordpress.org/support/topic/bug-wp-admin-admin-post-php-not-working/))
 
 = 1.2.1 on November 29, 2024 =
 

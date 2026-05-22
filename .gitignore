@@ -1,0 +1,28 @@
+# Dependencies
+/node_modules/
+/vendor/
+
+# Build output
+/build/
+/dist/
+
+# Test artifacts
+/.phpunit.result.cache
+/.phpunit.cache/
+/clover.xml
+/coverage/
+
+# Playwright
+/playwright-report/
+/test-results/
+/tests/e2e/.auth/
+
+# wp-env state
+/.wp-env.override.json
+
+# Local-only editor / OS noise
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo

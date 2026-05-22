@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<ruleset name="Remove Dashboard Access">
+	<description>WordPress + WP-VIP-go coding standards for Remove Dashboard Access.</description>
+
+	<file>.</file>
+
+	<exclude-pattern>/node_modules/</exclude-pattern>
+	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/tests/phpunit/fixtures/</exclude-pattern>
+
+	<arg name="extensions" value="php"/>
+	<arg name="colors"/>
+	<arg value="ps"/>
+
+	<rule ref="WordPress">
+		<exclude name="WordPress.Files.FileName"/>
+	</rule>
+
+	<config name="testVersion" value="5.3-"/>
+	<rule ref="PHPCompatibilityWP"/>
+
+	<config name="minimum_wp_version" value="5.0"/>
+</ruleset>

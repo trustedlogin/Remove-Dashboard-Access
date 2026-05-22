@@ -58,14 +58,54 @@ class RDA_Remove_Access {
 	 * @since 1.0
 	 *
 	 * @uses current_user_can() Checks whether the current user has the specified capability.
+	 * @uses $this->is_allowed_page() Checks if the current page is allowed.
+	 *
 	 * @return null Bail if the current user has the requisite capability.
 	 */
 	function is_user_allowed() {
-		if ( $this->capability && ! current_user_can( $this->capability ) && ! defined( 'DOING_AJAX' ) ) {
-			$this->lock_it_up();
-		} else {
-			return; // Bail
+
+		if ( defined( 'DOING_AJAX' ) && DOING_AJAX ) {
+			// The admin checkbox under Settings → Dashboard Access drives the
+			// default; the rda_strict_ajax filter can still override it either
+			// way (e.g. a site-specific mu-plugin forcing strict mode regardless
+			// of the option, or vice versa).
+			$default_strict = ! empty( $this->settings['lock_ajax'] );
+
+			/**
+			 * Filter whether the dashboard lock applies to AJAX requests.
+			 *
+			 * By default the plugin exempts `/wp-admin/admin-ajax.php` so individual
+			 * AJAX handlers can do their own cap checks (this matches WP's broader
+			 * convention). The "Also block AJAX" setting on the Dashboard Access
+			 * settings page seeds the default for this filter; the filter still
+			 * has the final word so code can override either way.
+			 *
+			 * @since 1.3.0
+			 *
+			 * @param bool   $strict     Whether to enforce the cap check on AJAX. Seeded by the
+			 *                           "rda_lock_ajax" option (default false).
+			 * @param string $capability The configured access capability.
+			 */
+			$strict_ajax = apply_filters( 'rda_strict_ajax', $default_strict, $this->capability );
+
+			if ( ! $strict_ajax ) {
+				return;
+			}
 		}
+
+		if ( $this->is_allowed_page() ) {
+			return;
+		}
+
+		if ( ! $this->capability ) {
+			return;
+		}
+
+		if ( current_user_can( $this->capability ) ) {
+			return;
+		}
+
+		$this->lock_it_up();
 	}
 
 	/**
@@ -125,7 +165,24 @@ class RDA_Remove_Access {
 		}
 
 		if ( ( $pagenow && 'profile.php' !== $pagenow ) || ( defined( 'IS_PROFILE_PAGE' ) && ! IS_PROFILE_PAGE ) || ! $this->settings['enable_profile'] ) {
-			wp_redirect( $this->settings['redirect_url'] );
+			$redirect_url = $this->settings['redirect_url'];
+
+			// Add the configured redirect host to the safe-redirect allowlist so
+			// `wp_safe_redirect()` honors admin-configured external destinations
+			// (the plugin's documented behavior since 1.0). Hosts other than this
+			// one still fall back to home_url() per WP core.
+			$redirect_host = wp_parse_url( $redirect_url, PHP_URL_HOST );
+			if ( $redirect_host ) {
+				$filter = static function ( $hosts ) use ( $redirect_host ) {
+					$hosts[] = $redirect_host;
+					return $hosts;
+				};
+				add_filter( 'allowed_redirect_hosts', $filter );
+				wp_safe_redirect( $redirect_url );
+				remove_filter( 'allowed_redirect_hosts', $filter );
+			} else {
+				wp_safe_redirect( $redirect_url );
+			}
 			exit;
 		}
 	}
@@ -145,36 +202,168 @@ class RDA_Remove_Access {
 					'page' => 'WFLS', // Wordfence Login Security 2FA
 				),
 			),
+			'admin-post.php' => array(),
 		);
+
+		// Merge admin-configured URL allow-list entries (1.3.0). Each line of
+		// the textarea becomes a pagenow-keyed entry alongside the static
+		// defaults, so the same matcher handles both sources uniformly.
+		$user_entries = $this->parse_url_allowlist(
+			isset( $this->settings['url_allowlist'] ) ? (string) $this->settings['url_allowlist'] : ''
+		);
+
+		foreach ( $user_entries as $entry ) {
+			$pagenow = $entry['pagenow'];
+			if ( ! isset( $allowlist[ $pagenow ] ) ) {
+				$allowlist[ $pagenow ] = array();
+			}
+
+			if ( empty( $entry['params'] ) ) {
+				// Path-only entry → broadest possible "allow this page" semantics.
+				// We replace the page's param-set list with a single empty array,
+				// which is_allowed_page() reads as "no GET constraint."
+				$allowlist[ $pagenow ] = array();
+			} else {
+				$allowlist[ $pagenow ][] = $entry['params'];
+			}
+		}
 
 		/**
 		 * Filter the allowlist of admin pages.
-		 * The function returns an associative array with $pagenow as the key and a nested array of key => value pairs
-		 * where the key is the $_GET variable and the value is the allowed value.
 		 *
-		 * Example: To allow the Wordfence Login Security 2FA page, with a URL of admin.php?page=WFLS, the array would be:
+		 * Structure: associative array keyed by `$pagenow`. The value is a list of
+		 * allowed `$_GET` param sets. A request matches when its `$_GET` is a
+		 * superset of any one set in the list (so additional params like 2FA OTP
+		 * codes do not break the allowlist). An empty array means "this page is
+		 * allowed regardless of GET params."
+		 *
+		 * Example — allow Wordfence 2FA (`admin.php?page=WFLS`, plus any extra
+		 * params like `&wfls-action=otp&otp=…`):
 		 *
 		 *  array(
 		 *     'admin.php' => array(
-		 *         array(
-		 *           'page' => 'WFLS',
-		 *         ),
+		 *         array( 'page' => 'WFLS' ),
 		 *     ),
 		 *  );
 		 *
-		 * You can also allow relative paths to be defined as either the key or value.
+		 * Example — allow `admin-post.php` with no constraints on GET params:
 		 *
-		 * Example: To allow the Wordfence Login Security 2FA page, with a URL of admin.php?page=WFLS, the array would be:
+		 *  array(
+		 *     'admin-post.php' => array(),
+		 *  );
 		 *
-		 * array(
-		 *    'admin.php?page=WFLS' => array(),
-		 * );
+		 * @since 1.2
+		 * @since 1.3.0 Matcher changed from exact-count to subset; empty page entry
+		 *              now means "no GET constraint" instead of "never matches."
 		 *
 		 * @param array $allowlist The allowlist of admin pages.
 		 */
 		$allowlist = apply_filters( 'rda_allowlist', $allowlist );
 
 		return $allowlist;
+	}
+
+	/**
+	 * Parse the admin-configured URL allow-list textarea into {pagenow, params} entries.
+	 *
+	 * Each line is treated as a relative path (sanitize_url_allowlist normalizes
+	 * absolute URLs to relative before storage, so we should always see paths
+	 * here — but we defensively re-parse to be robust against direct DB edits).
+	 *
+	 * A path that ends in `/` (e.g. `/wp-admin/?foo=bar`) has its pagenow
+	 * normalized to `index.php` to match WP core's $pagenow computation.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $raw Newline-separated allow-list string.
+	 * @return array List of `array( 'pagenow' => string, 'params' => array )` entries.
+	 */
+	private function parse_url_allowlist( $raw ) {
+		if ( ! is_string( $raw ) || '' === trim( $raw ) ) {
+			return array();
+		}
+
+		$entries = array();
+		$lines   = preg_split( '/\R/', $raw );
+
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+			if ( '' === $line ) {
+				continue;
+			}
+
+			$path  = wp_parse_url( $line, PHP_URL_PATH );
+			$query = wp_parse_url( $line, PHP_URL_QUERY );
+
+			if ( empty( $path ) ) {
+				continue;
+			}
+
+			$pagenow = $this->path_to_pagenow( $path );
+			if ( '' === $pagenow ) {
+				continue;
+			}
+
+			$params = array();
+			if ( ! empty( $query ) ) {
+				wp_parse_str( $query, $params );
+			}
+
+			$entries[] = array(
+				'pagenow' => $pagenow,
+				'params'  => $params,
+			);
+		}
+
+		return $entries;
+	}
+
+	/**
+	 * Compute the `$pagenow` that WP core would assign to a request whose
+	 * REQUEST_URI starts with the given path.
+	 *
+	 * Mirrors the regex + transformations in `wp-includes/vars.php`:
+	 *
+	 * 1. Strip the `/wp-admin/` (or network/user variant) prefix.
+	 * 2. Trim leading/trailing slashes.
+	 * 3. Empty / "index" / "index.php" → `index.php`.
+	 * 4. Otherwise: take everything up to the first `/`, lowercase it,
+	 *    and append `.php` if it isn't already present.
+	 *
+	 * Keeping this in lockstep with WP is important — a mismatch means
+	 * the allow-list entry never actually matches the live request.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $path Path component (e.g. `/wp-admin/users.php/`).
+	 * @return string `$pagenow`-compatible string (e.g. `users.php`), or '' if path was invalid.
+	 */
+	private function path_to_pagenow( $path ) {
+		if ( ! is_string( $path ) || '' === $path ) {
+			return '';
+		}
+
+		$path = preg_replace( '#^/wp-admin/(network/|user/)?#i', '', $path );
+		$path = trim( $path, '/' );
+
+		if ( '' === $path || 'index' === $path || 'index.php' === $path ) {
+			return 'index.php';
+		}
+
+		// Take only the first segment.
+		if ( preg_match( '#(.*?)(/|$)#', $path, $matches ) ) {
+			$pagenow = strtolower( $matches[1] );
+		} else {
+			$pagenow = strtolower( $path );
+		}
+
+		if ( '.php' !== substr( $pagenow, -4 ) ) {
+			$pagenow .= '.php';
+		}
+
+		return $pagenow;
 	}
 
 	/**
@@ -197,14 +386,70 @@ class RDA_Remove_Access {
 			return false;
 		}
 
+		// Empty page entry → page allowed with no GET param constraints.
+		// (Previously this returned false because the inner foreach never ran.)
+		if ( empty( $allowlist[ $pagenow ] ) ) {
+			return $this->is_target_page_registered( $pagenow );
+		}
+
 		// Iterate over each set of allowed GET parameters for the current page.
 		foreach ( $allowlist[ $pagenow ] as $allowed_params_set ) {
-			if ( $this->is_params_set_allowed( $allowed_params_set ) ) {
-				return true;
+			if ( ! $this->is_params_set_allowed( $allowed_params_set ) ) {
+				continue;
 			}
+
+			// Belt-and-suspenders: for `admin.php?page=<slug>` allowlist entries,
+			// confirm the target submenu page is actually registered in WP. Without
+			// this, the admin chrome renders for any allowlist key even when the
+			// plugin that supplies that page (e.g. Wordfence) isn't active.
+			if ( ! $this->is_target_page_registered( $pagenow ) ) {
+				continue;
+			}
+
+			return true;
 		}
 
 		return false;
+	}
+
+	/**
+	 * Verify that the requested admin page is actually registered with WordPress.
+	 *
+	 * For `admin.php?page=<slug>` requests, this calls `get_plugin_page_hook()` to
+	 * confirm `<slug>` has been registered via `add_menu_page()` / `add_submenu_page()`.
+	 * For other pagenows (admin-post.php, profile.php, etc.) we can't easily verify
+	 * registration — those are WP-core scripts and we trust them.
+	 *
+	 * @since 1.3.0
+	 *
+	 * @param string $pagenow Current admin page.
+	 * @return bool True if the page is a registered admin surface; false otherwise.
+	 */
+	private function is_target_page_registered( $pagenow ) {
+		if ( 'admin.php' !== $pagenow ) {
+			return true;
+		}
+
+		if ( empty( $_GET['page'] ) ) {
+			return false;
+		}
+
+		$page_slug = wp_unslash( $_GET['page'] );
+		if ( ! is_string( $page_slug ) ) {
+			return false;
+		}
+
+		// `get_plugin_page_hook()` lives in wp-admin/includes/plugin.php, which
+		// is NOT auto-loaded on the `init` hook (admin scaffolding only loads
+		// once a wp-admin request actually reaches admin.php). Lazy-load so
+		// the check works whichever hook calls it.
+		if ( ! function_exists( 'get_plugin_page_hook' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		}
+
+		$hook = get_plugin_page_hook( $page_slug, $pagenow );
+
+		return null !== $hook;
 	}
 
 	/**
@@ -221,19 +466,110 @@ class RDA_Remove_Access {
 			return false;
 		}
 
-		// Check if the number of parameters in both arrays is the same. This prevents sub-pages from being allowed,
-		// e.g. admin.php?page=example&subpage=secure-thing.
-		if ( count( $_GET ) !== count( $allowed_params_set ) ) {
-			return false;
-		}
-
+		// Subset match: every key/value in the allowed set must appear in $_GET.
+		// Additional params are permitted so legitimate sub-flows of an allowed
+		// page (e.g. WFLS 2FA's `&wfls-action=otp&otp=…`) still match.
+		// The is_target_page_registered() check in is_allowed_page() is what
+		// prevents accidentally exposing the admin shell on a `?page=` slug
+		// that no plugin actually registered.
 		foreach ( $allowed_params_set as $param_key => $param_value ) {
-			if ( ! isset( $_GET[ $param_key ] ) || $_GET[ $param_key ] !== $param_value ) {
+			if ( ! isset( $_GET[ $param_key ] ) ) {
+				return false;
+			}
+
+			$actual = $_GET[ $param_key ];
+
+			// Reject mismatched container types up front — an array submission
+			// can never satisfy a scalar allow-list value (or vice versa).
+			if ( ! is_string( $actual ) || ! is_string( $param_value ) ) {
+				return false;
+			}
+
+			// Wildcard glob (1.3.0): when the allow-list value contains `*`,
+			// match against the request value via a simple `*`-only glob.
+			// Intentionally NOT using fnmatch — fnmatch adds `?` and `[…]`
+			// metacharacters that surprise non-programmer admins and widen
+			// the allow surface in ways that aren't obvious from the textarea.
+			if ( false !== strpos( $param_value, '*' ) ) {
+				if ( ! $this->wildcard_match( $param_value, $actual ) ) {
+					return false;
+				}
+				continue;
+			}
+
+			if ( $actual !== $param_value ) {
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Glob-match a single `*`-only pattern against a string.
+	 *
+	 * Only `*` is treated as a wildcard (any number of characters, including
+	 * zero). Every other character — including regex metacharacters `?`,
+	 * `[`, `]`, `\`, `.` — is matched literally.
+	 *
+	 * Implementation is a linear, no-regex walk: split the pattern on `*`,
+	 * then sequentially match each segment in the subject with forward-only
+	 * progress. This guarantees O(n) on the subject's length regardless of
+	 * how many `*`s the admin throws into the pattern, so ReDoS isn't a
+	 * concern even with pathological admin-supplied patterns.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $pattern Allow-list value possibly containing `*`.
+	 * @param string $subject Actual request value to test.
+	 * @return bool True if the subject matches the pattern.
+	 */
+	private function wildcard_match( $pattern, $subject ) {
+		// Fast path: no wildcard → exact compare.
+		if ( false === strpos( $pattern, '*' ) ) {
+			return $pattern === $subject;
+		}
+
+		$segments = explode( '*', $pattern );
+		$count    = count( $segments );
+
+		// First segment must be a prefix of the subject.
+		$first = $segments[0];
+		if ( '' !== $first ) {
+			if ( 0 !== strpos( $subject, $first ) ) {
+				return false;
+			}
+		}
+		$offset = strlen( $first );
+
+		// Middle segments must appear in order, each after the previous.
+		for ( $i = 1; $i < $count - 1; $i++ ) {
+			$segment = $segments[ $i ];
+			if ( '' === $segment ) {
+				// Consecutive `*`s in the pattern — no constraint here.
+				continue;
+			}
+
+			$pos = strpos( $subject, $segment, $offset );
+			if ( false === $pos ) {
+				return false;
+			}
+			$offset = $pos + strlen( $segment );
+		}
+
+		// Last segment must be a suffix.
+		$last = $segments[ $count - 1 ];
+		if ( '' === $last ) {
+			return true;
+		}
+
+		$last_len = strlen( $last );
+		if ( strlen( $subject ) < $offset + $last_len ) {
+			return false;
+		}
+
+		return substr( $subject, -$last_len ) === $last;
 	}
 
 	/**

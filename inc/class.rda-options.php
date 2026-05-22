@@ -54,16 +54,7 @@ class RDA_Options {
 	 */
 	public function setup() {
 
-
 		$this->maybe_map_old_settings();
-
-		$this->settings = array(
-			'access_switch'  => get_option( 'rda_access_switch', 'manage_options' ),
-			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
-			'enable_profile' => get_option( 'rda_enable_profile', 1 ),
-			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
-			'login_message'  => get_option( 'rda_login_message', esc_html__( 'This site is in maintenance mode.', 'remove_dashboard_access' ) ),
-		);
 
 		// Translation.
 		add_action( 'init', array( $this, 'load_textdomain' ) );
@@ -86,8 +77,45 @@ class RDA_Options {
 	 * @since 1.2.1
 	 */
 	public function load_textdomain() {
-		load_plugin_textdomain( 'remove_dashboard_access', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
+		load_plugin_textdomain( 'remove-dashboard-access-for-non-admins', false, dirname( plugin_basename( __FILE__ ) ) . '/languages/' );
 	}
+
+	/**
+	 * Get all plugin settings.
+	 *
+	 * @since 1.2.1
+	 *
+	 * @return array $settings
+	 */
+	public function get_settings() {
+		if ( $this->settings ) {
+			return $this->settings;
+		}
+
+		$this->settings = array(
+			'access_switch'  => get_option( 'rda_access_switch', 'manage_options' ),
+			'access_cap'     => get_option( 'rda_access_cap',     'manage_options' ),
+			'enable_profile' => get_option( 'rda_enable_profile', 1 ),
+			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
+			'login_message'  => get_option( 'rda_login_message', '' ),
+			'lock_ajax'      => get_option( 'rda_lock_ajax', 0 ),
+			'url_allowlist'  => get_option( 'rda_url_allowlist', '' ),
+		);
+
+		return $this->settings;
+	}
+
+	/**
+	 * Get a single plugin setting.
+	 *
+	 * @since 1.2.1
+	 */
+	public function get_setting( $key ) {
+		$settings = $this->get_settings();
+
+		return $settings[ $key ];
+	}
+
 
 	/**
 	 * (maybe) Map old settings (1.0-) to the new ones (1.1+).
@@ -144,6 +172,8 @@ class RDA_Options {
 			'rda_redirect_url'   => home_url(),
 			'rda_enable_profile' => 1,
 			'rda_login_message'  => '',
+			'rda_lock_ajax'      => 0,
+			'rda_url_allowlist'  => '',
 		);
 
 		foreach ( $settings as $key => $value ) {
@@ -160,8 +190,8 @@ class RDA_Options {
 	 */
 	function options_page() {
 		add_options_page(
-			esc_html__( 'Dashboard Access Settings', 'remove_dashboard_access' ),
-			esc_html__( 'Dashboard Access', 'remove_dashboard_access' ),
+			esc_html__( 'Dashboard Access Settings', 'remove-dashboard-access-for-non-admins' ),
+			esc_html__( 'Dashboard Access', 'remove-dashboard-access-for-non-admins' ),
 			'manage_options',
 			'dashboard-access',
 			array( $this, 'options_page_cb' )
@@ -178,7 +208,7 @@ class RDA_Options {
 	function options_page_cb() {
 		?>
 		<div class="wrap">
-			<h2><?php esc_html_e( 'Dashboard Access Settings', 'remove_dashboard_access' ); ?></h2>
+			<h2><?php esc_html_e( 'Dashboard Access Settings', 'remove-dashboard-access-for-non-admins' ); ?></h2>
 			<form action="options.php" method="POST" id="rda-options-form">
 				<?php
 					settings_fields( 'dashboard-access' );
@@ -199,13 +229,30 @@ class RDA_Options {
 	 * @see $this->setup()
 	 */
 	public function settings() {
-		// Dashboard Access Controls section.
-		add_settings_section( 'rda_options', esc_html__( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'dashboard-access' );
+		// Dashboard Access Controls section — the everyday settings.
+		add_settings_section(
+			'rda_options',
+			esc_html__( 'Dashboard Access Controls', 'remove-dashboard-access-for-non-admins' ),
+			array( $this, 'settings_section' ),
+			'dashboard-access'
+		);
 
-		// Settings.
+		// Advanced section — power-user toggles that most sites won't need.
+		// Registering a second section here puts a sub-heading between Login
+		// Message and AJAX Requests so the settings page reads as two groups
+		// instead of one long list.
+		add_settings_section(
+			'rda_options_advanced',
+			esc_html__( 'Advanced', 'remove-dashboard-access-for-non-admins' ),
+			array( $this, 'settings_section_advanced' ),
+			'dashboard-access'
+		);
+
+		// Settings. `section` defaults to `rda_options`; entries with their
+		// own section value land under the Advanced heading.
 		$sets = array(
 			'rda_access_switch'  => array(
-				'label'    => esc_html__( 'Dashboard User Access:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Dashboard User Access:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'access_switch_cb',
 			),
 			'rda_access_cap'     => array(
@@ -213,21 +260,32 @@ class RDA_Options {
 				'callback' => 'access_cap_dropdown',
 			),
 			'rda_redirect_url'   => array(
-				'label'    => esc_html__( 'Redirect URL:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Redirect URL:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'url_redirect_cb',
 			),
 			'rda_enable_profile' => array(
-				'label'    => esc_html__( 'User Profile Access:', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'User Profile Access:', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'profile_enable_cb',
 			),
 			'rda_login_message'  => array(
-				'label'    => esc_html__( 'Login Message', 'remove_dashboard_access' ),
+				'label'    => esc_html__( 'Login Message', 'remove-dashboard-access-for-non-admins' ),
 				'callback' => 'login_message_cb',
+			),
+			'rda_lock_ajax'      => array(
+				'label'    => esc_html__( 'AJAX Requests:', 'remove-dashboard-access-for-non-admins' ),
+				'callback' => 'lock_ajax_cb',
+				'section'  => 'rda_options_advanced',
+			),
+			'rda_url_allowlist'  => array(
+				'label'    => esc_html__( 'Allowed URLs:', 'remove-dashboard-access-for-non-admins' ),
+				'callback' => 'url_allowlist_cb',
+				'section'  => 'rda_options_advanced',
 			),
 		);
 
 		foreach ( $sets as $id => $settings ) {
-			add_settings_field( $id, $settings['label'], array( $this, $settings['callback'] ), 'dashboard-access', 'rda_options' );
+			$section = isset( $settings['section'] ) ? $settings['section'] : 'rda_options';
+			add_settings_field( $id, $settings['label'], array( $this, $settings['callback'] ), 'dashboard-access', $section );
 
 			// Pretty lame that we need separate sanitize callbacks for everything.
 			$sanitize_callback = str_replace( 'rda', 'sanitize', $id );
@@ -236,7 +294,7 @@ class RDA_Options {
 
 		// Debug info "setting".
 		if ( ! empty( $_GET['rda_debug'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
-			add_settings_field( 'rda_debug_mode', esc_html__( 'Debug Info', 'remove_dashboard_access' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
+			add_settings_field( 'rda_debug_mode', esc_html__( 'Debug Info', 'remove-dashboard-access-for-non-admins' ), array( $this, '_debug_mode' ), 'dashboard-access', 'rda_options' );
 		}
 
 	}
@@ -248,7 +306,20 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function settings_section() {
-		esc_html_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove_dashboard_access' );
+		esc_html_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove-dashboard-access-for-non-admins' );
+	}
+
+	/**
+	 * Advanced settings section display callback.
+	 *
+	 * Renders the short description below the "Advanced" sub-heading so admins
+	 * understand why these toggles sit apart from the main controls.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	public function settings_section_advanced() {
+		esc_html_e( 'Less-common options for sites with custom AJAX endpoints or admin pages that should remain reachable.', 'remove-dashboard-access-for-non-admins' );
 	}
 
 	/**
@@ -260,17 +331,17 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function access_cap_dropdown() {
-		$switch = $this->settings['access_switch'];
+		$switch = $this->get_setting( 'access_switch' );
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="capability" class="tag" <?php checked( 'capability', esc_attr( $switch ) ); ?> />
-			<?php echo wp_kses( __( '<strong>Advanced</strong>: Limit by capability:', 'remove_dashboard_access' ), array( 'strong' => array() ) ); ?>
+			<?php echo wp_kses( __( '<strong>Advanced</strong>: Limit by capability:', 'remove-dashboard-access-for-non-admins' ), array( 'strong' => array() ) ); ?>
 		</label><?php $this->_output_caps_dropdown(); ?></p>
 		<p>
-			<?php printf( esc_html__( 'You can find out more about specific %s in the Codex.', 'remove_dashboard_access' ),
+			<?php printf( esc_html__( 'You can find out more about specific %s in the Codex.', 'remove-dashboard-access-for-non-admins' ),
 				sprintf( '<a href="%1$s" target="_new">%2$s</a>',
 					esc_url( 'http://codex.wordpress.org/Roles_and_Capabilities' ),
-					esc_html__( 'Roles &amp; Capabilities', 'remove_dashboard_access' )
+					esc_html__( 'Roles &amp; Capabilities', 'remove-dashboard-access-for-non-admins' )
 				)
 			); ?>
 		</p>
@@ -301,9 +372,11 @@ class RDA_Options {
 	 * @see $this->options_setup()
 	 */
 	public function plugin_toggle_cb() {
+		$toggle_plugin_off = $this->get_setting( 'toggle_plugin_off' );
+
 		printf( '<input name="rda_toggle_plugin_off" type="checkbox" value="1" class="code" %1$s/>%2$s',
-			checked( esc_attr( $this->settings['toggle_plugin_off'] ), true, false ),
-			esc_html__( ' Disable access controls and redirection', 'remove_dashboard_access' )
+			checked( esc_attr( $toggle_plugin_off ), true, false ),
+			esc_html__( ' Disable access controls and redirection', 'remove-dashboard-access-for-non-admins' )
 		);
 	}
 
@@ -323,7 +396,7 @@ class RDA_Options {
 	public function access_switch_cb() {
 		echo '<a id="dashboard-access"></a>';
 
-		$switch = $this->settings['access_switch'];
+		$switch = $this->get_setting( 'access_switch' );
 
 		/**
 		 * Filter the capability defaults for admins, editors, and authors.
@@ -346,15 +419,15 @@ class RDA_Options {
 		?>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['admin'] ); ?>" class="tag" <?php checked( $defaults['admin'], esc_attr( $switch ) ); ?> />
-			<?php esc_html_e( 'Administrators only', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Administrators only', 'remove-dashboard-access-for-non-admins' ); ?>
 		</label></p>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['editor'] ); ?>" class="tag" <?php checked( $defaults['editor'], esc_attr( $switch ) ); ?> />
-			<?php esc_html_e( 'Editors and Administrators', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Editors and Administrators', 'remove-dashboard-access-for-non-admins' ); ?>
 		</label></p>
 		<p><label>
 			<input name="rda_access_switch" type="radio" value="<?php echo esc_attr( $defaults['author'] ); ?>" class="tag" <?php checked( $defaults['author'], esc_attr( $switch ) ); ?> />
-			<?php esc_html_e( 'Authors, Editors, and Administrators', 'remove_dashboard_access' ); ?>
+			<?php esc_html_e( 'Authors, Editors, and Administrators', 'remove-dashboard-access-for-non-admins' ); ?>
 		</label></p>
 
 	<?php
@@ -399,16 +472,18 @@ class RDA_Options {
 		// Alphabetize for nicer display.
 		ksort( $capabilities );
 
+		$access_cap = $this->get_setting( 'access_cap' );
+
 		if ( ! empty( $capabilities ) ) {
 			// Start <select> element.
 			print( '<select name="rda_access_cap">' );
 
 			// Default first option.
-			printf( '<option selected="selected" value="manage_options">%s</option>', esc_html__( '--- Select a Capability ---', 'removed_dashboard_access' ) );
+			printf( '<option selected="selected" value="manage_options">%s</option>', esc_html__( '--- Select a Capability ---', 'remove-dashboard-access-for-non-admins' ) );
 
 			// Build capabilities dropdown.
 			foreach ( $capabilities as $capability => $value ) {
-				printf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $value ), selected( $this->settings['access_cap'], $value ), esc_html( $capability ) );
+				printf( '<option value="%1$s" %2$s>%3$s</option>', esc_attr( $value ), selected( $access_cap, $value ), esc_html( $capability ) );
 			}
 			print( '</select>' );
 		}
@@ -425,10 +500,12 @@ class RDA_Options {
 	 * @uses checked() Outputs the checked attribute when the option is enabled.
 	 */
 	public function profile_enable_cb() {
+		$enable_profile = $this->get_setting( 'enable_profile' );
+
 		printf( '<label><input name="rda_enable_profile" type="checkbox" value="1" class="code" %1$s/>%2$s</label>',
-			checked( esc_attr( $this->settings['enable_profile'] ), true, false ),
+			checked( esc_attr( $enable_profile ), true, false ),
 			/* Translators: The leading space is intentional to space the text away from the checkbox */
-			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove_dashboard_access' )
+			esc_html__( ' Allow all users to edit their profiles in the dashboard.', 'remove-dashboard-access-for-non-admins' )
 		);
 	}
 
@@ -443,10 +520,11 @@ class RDA_Options {
 	 * @see $this->options_setup()
 	 */
 	public function url_redirect_cb() {
+		$redirect_url = $this->get_setting( 'redirect_url' );
 		?>
 		<p><label>
-			<?php esc_html_e( 'Redirect disallowed users to:', 'remove_dashboard_access' ); ?>
-			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $this->settings['redirect_url'] ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove_dashboard_access' ), home_url() ); ?>" />
+			<?php esc_html_e( 'Redirect disallowed users to:', 'remove-dashboard-access-for-non-admins' ); ?>
+			<input name="rda_redirect_url" class="regular-text" type="text" value="<?php echo esc_attr( $redirect_url ); ?>" placeholder="<?php printf( esc_attr__( 'Default: %s', 'remove-dashboard-access-for-non-admins' ), home_url() ); ?>" />
 		</label></p>
 		<?php
 	}
@@ -458,10 +536,11 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function login_message_cb() {
+		$login_message = $this->get_setting( 'login_message' );
 		?>
 		<p><label>
-				<?php esc_html_e( 'Display this message to users above the login form:', 'remove_dashboard_access' ); ?>
-				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $this->settings['login_message'] ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove_dashboard_access' ); ?>" />
+				<?php esc_html_e( 'Display this message to users above the login form:', 'remove-dashboard-access-for-non-admins' ); ?>
+				<input name="rda_login_message" class="widefat" type="text" value="<?php echo esc_attr( $login_message ); ?>" placeholder="<?php esc_attr_e( '(Disabled when empty)', 'remove-dashboard-access-for-non-admins' ); ?>" />
 			</label>
 		</p>
 		<p class="howto">
@@ -469,14 +548,222 @@ class RDA_Options {
 
 				// translators: %s is replaced with the default login message
 				echo sprintf(
-					esc_html__( 'Leave blank to not show a message. This message will only be shown on the %1$sLog In screen%2$s, not in embedded Login/Logout blocks.', 'remove_dashboard_access' ),
+					esc_html__( 'Leave blank to not show a message. This message will only be shown on the %1$sLog In screen%2$s, not in embedded Login/Logout blocks.', 'remove-dashboard-access-for-non-admins' ),
 					'<a href="' . esc_url( wp_login_url() ) . '" target="_blank">',
-					'<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)' ) . '</span></a>'
+					'<span class="screen-reader-text"> ' . esc_html__( '(This link opens in a new window.)', 'remove-dashboard-access-for-non-admins' ) . '</span></a>'
 				);
 
 				?></span>
 		</p>
 		<?php
+	}
+
+	/**
+	 * URL allow-list textarea display callback.
+	 *
+	 * Renders a `widefat` textarea — one URL per line, relative or absolute
+	 * (absolute URLs on the same host get converted to relative on save).
+	 * Each matching URL is exempt from the dashboard redirect.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	public function url_allowlist_cb() {
+		$url_allowlist = $this->get_setting( 'url_allowlist' );
+
+		printf(
+			'<textarea name="rda_url_allowlist" class="widefat code" rows="5" placeholder="%1$s">%2$s</textarea>',
+			esc_attr__( "/wp-admin/admin.php?page=customer-portal\n/wp-admin/admin.php?page=customer-*", 'remove-dashboard-access-for-non-admins' ),
+			esc_textarea( $url_allowlist )
+		);
+
+		echo '<p class="description">';
+		esc_html_e(
+			'One URL per line. Each URL listed here is exempt from the dashboard redirect.',
+			'remove-dashboard-access-for-non-admins'
+		);
+		echo ' ';
+		echo wp_kses(
+			/* translators: %1$s is an inline-code example, e.g. <code>?page=customer-*</code>; %3$s and %4$s are example page slugs. */
+			sprintf(
+				__( 'Use %1$s as a wildcard in a query value to allow related sub-pages at once — for example, %2$s matches %3$s, %4$s, and any other %5$s page.', 'remove-dashboard-access-for-non-admins' ),
+				'<code>*</code>',
+				'<code>?page=customer-*</code>',
+				'<code>customer-portal</code>',
+				'<code>customer-invoices</code>',
+				'<code>customer-&hellip;</code>'
+			),
+			array( 'code' => array() )
+		);
+		echo ' ';
+		esc_html_e(
+			'Absolute URLs on this site are converted to relative paths on save; external hosts and protocol-relative URLs are dropped.',
+			'remove-dashboard-access-for-non-admins'
+		);
+		echo '</p>';
+	}
+
+	/**
+	 * URL allow-list sanitize callback.
+	 *
+	 * For each line of the textarea: trim whitespace, normalize to a same-origin
+	 * relative path (or drop), strip URL fragments, and dedupe. Returns the
+	 * cleaned newline-separated string for storage.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 *
+	 * @param mixed $option Raw textarea value.
+	 * @return string Cleaned newline-separated URL list.
+	 */
+	public function sanitize_url_allowlist( $option ) {
+		if ( ! is_string( $option ) || '' === $option ) {
+			return '';
+		}
+
+		$lines = preg_split( '/\R/', $option );
+		$clean = array();
+
+		foreach ( $lines as $line ) {
+			// Strip null bytes and other ASCII control chars (except tab)
+			// before any structural parsing — they're never legitimate in a
+			// URL and they break downstream strpos/parse_url assumptions.
+			$line = preg_replace( '/[\x00-\x08\x0E-\x1F\x7F]/', '', $line );
+
+			// Then run sanitize_text_field: strips HTML, trims whitespace,
+			// removes percent-encoded octets, and is what WP itself uses
+			// for single-line user input.
+			$line = sanitize_text_field( $line );
+			if ( '' === $line ) {
+				continue;
+			}
+
+			$relative = $this->normalize_url_to_relative( $line );
+			if ( null === $relative ) {
+				continue;
+			}
+
+			// Reject "allow everything" entries — a path ending in `/` with
+			// no query string would whitelist every request under that
+			// directory, including the dashboard root itself.
+			$parsed_path  = wp_parse_url( $relative, PHP_URL_PATH );
+			$parsed_query = wp_parse_url( $relative, PHP_URL_QUERY );
+			if ( $parsed_path && '/' === substr( $parsed_path, -1 ) && empty( $parsed_query ) ) {
+				continue;
+			}
+
+			$clean[] = $relative;
+		}
+
+		$clean = array_values( array_unique( $clean ) );
+
+		return implode( "\n", $clean );
+	}
+
+	/**
+	 * Normalize a single allow-list URL line to a same-origin relative path.
+	 *
+	 * Drops external hosts and protocol-relative URLs (host confusion risk);
+	 * strips fragments; auto-prepends a leading slash for bare relative paths.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $url Raw URL string.
+	 * @return string|null Cleaned relative path with optional query string, or null if invalid.
+	 */
+	private function normalize_url_to_relative( $url ) {
+		// Reject protocol-relative URLs outright — `//evil.example/foo` would
+		// be host-confused in many redirect/match contexts and there's no
+		// reason a same-site allow-list should accept them.
+		if ( 0 === strpos( $url, '//' ) ) {
+			return null;
+		}
+
+		// Absolute URL: keep only if the host matches this site.
+		if ( preg_match( '#^https?://#i', $url ) ) {
+			$url_host  = wp_parse_url( $url, PHP_URL_HOST );
+			$home_host = wp_parse_url( home_url(), PHP_URL_HOST );
+
+			if ( empty( $url_host ) || empty( $home_host ) ) {
+				return null;
+			}
+
+			if ( strtolower( $url_host ) !== strtolower( $home_host ) ) {
+				return null;
+			}
+
+			$path  = wp_parse_url( $url, PHP_URL_PATH );
+			$query = wp_parse_url( $url, PHP_URL_QUERY );
+
+			if ( empty( $path ) ) {
+				return null;
+			}
+
+			return $path . ( $query ? '?' . $query : '' );
+		}
+
+		// Relative path: must contain a path component.
+		// Strip everything from `#` onwards (fragments never reach the server).
+		$hash_pos = strpos( $url, '#' );
+		if ( false !== $hash_pos ) {
+			$url = substr( $url, 0, $hash_pos );
+		}
+
+		if ( '' === $url ) {
+			return null;
+		}
+
+		// Reject anything that looks like a non-http(s) URI scheme. A real
+		// relative path never has `:` before the first `/`. This blocks
+		// `javascript:`, `data:`, `file:`, and friends from being stored as
+		// "/javascript:..." after the leading-slash prepend below.
+		$colon_pos = strpos( $url, ':' );
+		$slash_pos = strpos( $url, '/' );
+		if ( false !== $colon_pos && ( false === $slash_pos || $colon_pos < $slash_pos ) ) {
+			return null;
+		}
+
+		if ( '/' !== $url[0] ) {
+			$url = '/' . $url;
+		}
+
+		return $url;
+	}
+
+	/**
+	 * AJAX strict-mode checkbox display callback.
+	 *
+	 * Renders a checkbox letting admins opt into applying the dashboard cap
+	 * gate to `/wp-admin/admin-ajax.php` requests. Off by default to preserve
+	 * the WordPress convention that AJAX endpoints handle their own auth.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	public function lock_ajax_cb() {
+		$lock_ajax = $this->get_setting( 'lock_ajax' );
+
+		printf(
+			'<label><input name="rda_lock_ajax" type="checkbox" value="1" class="code" %1$s/>%2$s</label><p class="description">%3$s</p>',
+			checked( (bool) $lock_ajax, true, false ),
+			/* Translators: leading space spaces the text away from the checkbox. */
+			esc_html__( ' Also block disallowed users from admin-ajax.php requests.', 'remove-dashboard-access-for-non-admins' ),
+			esc_html__( 'Most sites should leave this off — AJAX endpoints conventionally enforce their own capability checks. Enable only if you know your AJAX surface relies on this plugin to gate it.', 'remove-dashboard-access-for-non-admins' )
+		);
+	}
+
+	/**
+	 * AJAX strict-mode sanitize callback.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 *
+	 * @param mixed $option Submitted value.
+	 * @return int 1 if the checkbox was checked, 0 otherwise.
+	 */
+	public function sanitize_lock_ajax( $option ) {
+		return empty( $option ) ? 0 : 1;
 	}
 
 	/**
@@ -486,8 +773,10 @@ class RDA_Options {
 	 * @access public
 	 */
 	public function output_login_message( $message ) {
-		if ( ! empty( $this->settings['login_message'] ) ) {
-			$message .= '<p class="message">' . esc_html( $this->settings['login_message'] ) . '</p>';
+		$login_message = $this->get_setting( 'login_message' );
+
+		if ( ! empty( $login_message ) ) {
+			$message .= '<p class="message">' . esc_html( $login_message ) . '</p>';
 		}
 		return $message;
 	}
@@ -495,28 +784,81 @@ class RDA_Options {
 	/**
 	 * Access Switch sanitize callback.
 	 *
+	 * Accepts: the literal string 'capability' (signaling advanced mode), or one
+	 * of the role-default capabilities returned by `rda_default_caps_for_role`.
+	 * Any other value is rejected and falls back to 'manage_options' so a
+	 * tampered POST cannot disable the lock by stuffing in an empty string or
+	 * an arbitrary cap that every subscriber holds.
+	 *
 	 * @since 1.1
+	 * @since 1.3.0 Validates against the documented allowed values.
 	 * @access public
 	 *
 	 * @param string $option Access switch capability.
-	 * @return string Sanitized capability.
+	 * @return string Sanitized capability, or 'manage_options' if invalid.
 	 */
 	public function sanitize_access_switch( $option ) {
-		return $option;
+		$option = is_string( $option ) ? $option : '';
+
+		$defaults = apply_filters( 'rda_default_caps_for_role', array(
+			'admin'  => 'manage_options',
+			'editor' => 'edit_others_posts',
+			'author' => 'publish_posts',
+		) );
+
+		$allowed = array_values( $defaults );
+		$allowed[] = 'capability';
+
+		if ( in_array( $option, $allowed, true ) ) {
+			return $option;
+		}
+
+		return 'manage_options';
 	}
 
 	/**
 	 * Access capability sanitize callback.
 	 *
+	 * Accepts any capability that actually exists in `$wp_roles`. Anything else
+	 * — empty strings, arbitrary text from a tampered POST, or capabilities that
+	 * no role grants — falls back to the value of 'rda_access_switch' so the
+	 * lock cannot be silently disabled.
+	 *
 	 * @since 1.1
+	 * @since 1.3.0 Validates against the live `$wp_roles` capability list.
 	 * @access public
 	 *
 	 * @param string $option Access capability.
-	 * @return string Sanitized capability. If the option is empty, default to the value of
+	 * @return string Sanitized capability. If the option is empty or invalid, falls back to
 	 *                'rda_access_switch'.
 	 */
 	public function sanitize_access_cap( $option ) {
-		return empty( $option ) ? get_option( 'rda_access_switch' ) : $option;
+		$fallback = get_option( 'rda_access_switch', 'manage_options' );
+
+		if ( empty( $option ) || ! is_string( $option ) ) {
+			return $fallback;
+		}
+
+		/** @global WP_Roles $wp_roles */
+		global $wp_roles;
+
+		if ( ! isset( $wp_roles ) || ! is_a( $wp_roles, 'WP_Roles' ) ) {
+			// Edge case: roles not yet initialized. Fall back rather than blindly trust.
+			return $fallback;
+		}
+
+		$known_caps = array();
+		foreach ( $wp_roles->role_objects as $role ) {
+			if ( ! empty( $role->capabilities ) && is_array( $role->capabilities ) ) {
+				$known_caps = array_merge( $known_caps, array_keys( $role->capabilities ) );
+			}
+		}
+
+		if ( in_array( $option, $known_caps, true ) ) {
+			return $option;
+		}
+
+		return $fallback;
 	}
 
 	/**
@@ -564,9 +906,11 @@ class RDA_Options {
 	 * @since 1.0
 	 * @access public
 	 *
-	 * @return string $this->settings['access_cap'] if set, otherwise, 'manage_options' (filterable).
+	 * @return string The 'access_cap' setting if set, otherwise, 'manage_options' (filterable).
 	 */
 	public function capability() {
+		$access_cap = $this->get_setting( 'access_cap' );
+
 		/**
 		 * Filter the access capability.
 		 *
@@ -574,7 +918,7 @@ class RDA_Options {
 		 *
 		 * @param string $capability Capability needed to access the Dashboard.
 		 */
-		return apply_filters( 'rda_access_capability', $this->settings['access_cap'] );
+		return apply_filters( 'rda_access_capability', $access_cap );
 	}
 
 	/**
@@ -595,7 +939,7 @@ class RDA_Options {
 		) {
 			array_unshift( $links, sprintf( '<a href="%1$s">%2$s</a>',
 				esc_url( admin_url( 'options-general.php?page=dashboard-access' ) ),
-				esc_html__( 'Settings', 'remove_dashboard_access' )
+				esc_html__( 'Settings', 'remove-dashboard-access-for-non-admins' )
 			) );
 		}
 		return $links;
@@ -630,11 +974,11 @@ class RDA_Options {
 		<table class="rda_debug">
 			<tbody>
 				<tr>
-					<th><?php esc_html_e( 'Setting', 'remove_dashboard_access' ); ?></th>
-					<th><?php esc_html_e( 'Value', 'remove_dashboard_access' ); ?></th>
+					<th><?php esc_html_e( 'Setting', 'remove-dashboard-access-for-non-admins' ); ?></th>
+					<th><?php esc_html_e( 'Value', 'remove-dashboard-access-for-non-admins' ); ?></th>
 				</tr>
-				<?php foreach ( $this->settings as $key => $value ) :
-					$value = empty( $value ) ? esc_html__( 'empty', 'remove_dashboard_access' ) : $value;
+				<?php foreach ( $this->get_settings() as $key => $value ) :
+					$value = empty( $value ) ? esc_html__( 'empty', 'remove-dashboard-access-for-non-admins' ) : $value;
 					?>
 					<tr>
 						<td><?php echo esc_html( $key ); ?></td>
