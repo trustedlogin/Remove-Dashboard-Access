@@ -98,6 +98,7 @@ class RDA_Options {
 			'enable_profile' => get_option( 'rda_enable_profile', 1 ),
 			'redirect_url'   => get_option( 'rda_redirect_url', home_url() ),
 			'login_message'  => get_option( 'rda_login_message', '' ),
+			'lock_ajax'      => get_option( 'rda_lock_ajax', 0 ),
 		);
 
 		return $this->settings;
@@ -170,6 +171,7 @@ class RDA_Options {
 			'rda_redirect_url'   => home_url(),
 			'rda_enable_profile' => 1,
 			'rda_login_message'  => '',
+			'rda_lock_ajax'      => 0,
 		);
 
 		foreach ( $settings as $key => $value ) {
@@ -249,6 +251,10 @@ class RDA_Options {
 			'rda_login_message'  => array(
 				'label'    => esc_html__( 'Login Message', 'remove_dashboard_access' ),
 				'callback' => 'login_message_cb',
+			),
+			'rda_lock_ajax'      => array(
+				'label'    => esc_html__( 'AJAX Requests:', 'remove_dashboard_access' ),
+				'callback' => 'lock_ajax_cb',
 			),
 		);
 
@@ -514,6 +520,41 @@ class RDA_Options {
 	}
 
 	/**
+	 * AJAX strict-mode checkbox display callback.
+	 *
+	 * Renders a checkbox letting admins opt into applying the dashboard cap
+	 * gate to `/wp-admin/admin-ajax.php` requests. Off by default to preserve
+	 * the WordPress convention that AJAX endpoints handle their own auth.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	public function lock_ajax_cb() {
+		$lock_ajax = $this->get_setting( 'lock_ajax' );
+
+		printf(
+			'<label><input name="rda_lock_ajax" type="checkbox" value="1" class="code" %1$s/>%2$s</label><p class="description">%3$s</p>',
+			checked( (bool) $lock_ajax, true, false ),
+			/* Translators: leading space spaces the text away from the checkbox. */
+			esc_html__( ' Also block disallowed users from admin-ajax.php requests.', 'remove_dashboard_access' ),
+			esc_html__( 'Most sites should leave this off — AJAX endpoints conventionally enforce their own capability checks. Enable only if you know your AJAX surface relies on this plugin to gate it.', 'remove_dashboard_access' )
+		);
+	}
+
+	/**
+	 * AJAX strict-mode sanitize callback.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 *
+	 * @param mixed $option Submitted value.
+	 * @return int 1 if the checkbox was checked, 0 otherwise.
+	 */
+	public function sanitize_lock_ajax( $option ) {
+		return empty( $option ) ? 0 : 1;
+	}
+
+	/**
 	 * Login Message option callback.
 	 *
 	 * @since 1.1
@@ -531,28 +572,81 @@ class RDA_Options {
 	/**
 	 * Access Switch sanitize callback.
 	 *
+	 * Accepts: the literal string 'capability' (signaling advanced mode), or one
+	 * of the role-default capabilities returned by `rda_default_caps_for_role`.
+	 * Any other value is rejected and falls back to 'manage_options' so a
+	 * tampered POST cannot disable the lock by stuffing in an empty string or
+	 * an arbitrary cap that every subscriber holds.
+	 *
 	 * @since 1.1
+	 * @since 1.3.0 Validates against the documented allowed values.
 	 * @access public
 	 *
 	 * @param string $option Access switch capability.
-	 * @return string Sanitized capability.
+	 * @return string Sanitized capability, or 'manage_options' if invalid.
 	 */
 	public function sanitize_access_switch( $option ) {
-		return $option;
+		$option = is_string( $option ) ? $option : '';
+
+		$defaults = apply_filters( 'rda_default_caps_for_role', array(
+			'admin'  => 'manage_options',
+			'editor' => 'edit_others_posts',
+			'author' => 'publish_posts',
+		) );
+
+		$allowed = array_values( $defaults );
+		$allowed[] = 'capability';
+
+		if ( in_array( $option, $allowed, true ) ) {
+			return $option;
+		}
+
+		return 'manage_options';
 	}
 
 	/**
 	 * Access capability sanitize callback.
 	 *
+	 * Accepts any capability that actually exists in `$wp_roles`. Anything else
+	 * — empty strings, arbitrary text from a tampered POST, or capabilities that
+	 * no role grants — falls back to the value of 'rda_access_switch' so the
+	 * lock cannot be silently disabled.
+	 *
 	 * @since 1.1
+	 * @since 1.3.0 Validates against the live `$wp_roles` capability list.
 	 * @access public
 	 *
 	 * @param string $option Access capability.
-	 * @return string Sanitized capability. If the option is empty, default to the value of
+	 * @return string Sanitized capability. If the option is empty or invalid, falls back to
 	 *                'rda_access_switch'.
 	 */
 	public function sanitize_access_cap( $option ) {
-		return empty( $option ) ? get_option( 'rda_access_switch' ) : $option;
+		$fallback = get_option( 'rda_access_switch', 'manage_options' );
+
+		if ( empty( $option ) || ! is_string( $option ) ) {
+			return $fallback;
+		}
+
+		/** @global WP_Roles $wp_roles */
+		global $wp_roles;
+
+		if ( ! isset( $wp_roles ) || ! is_a( $wp_roles, 'WP_Roles' ) ) {
+			// Edge case: roles not yet initialized. Fall back rather than blindly trust.
+			return $fallback;
+		}
+
+		$known_caps = array();
+		foreach ( $wp_roles->role_objects as $role ) {
+			if ( ! empty( $role->capabilities ) && is_array( $role->capabilities ) ) {
+				$known_caps = array_merge( $known_caps, array_keys( $role->capabilities ) );
+			}
+		}
+
+		if ( in_array( $option, $known_caps, true ) ) {
+			return $option;
+		}
+
+		return $fallback;
 	}
 
 	/**

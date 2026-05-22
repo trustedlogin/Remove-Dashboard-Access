@@ -3,8 +3,8 @@ Contributors: TrustedLogin
 Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
-Tested up to: 6.8.1
-Stable tag: 1.2.2
+Tested up to: 7.0
+Stable tag: 1.3.0
 Requires PHP: 5.3
 
 Disable Dashboard access for users of a specific role or capability. Disallowed users are redirected to a chosen URL. Get set up in seconds.
@@ -143,6 +143,17 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 3. Optional login message.
 
 == Changelog ==
+
+= 1.3.0 on May 22, 2026 =
+
+* Security: Settings now validate capability values against the live role list — a tampered POST can no longer save an empty or unknown capability and silently disable the plugin's gate (CREW audit Finding #4).
+* Security: The disallowed-user redirect now uses `wp_safe_redirect()`. Admin-configured external redirect targets continue to work via an inline `allowed_redirect_hosts` filter, while opportunistic redirects through unrelated hosts are blocked (Finding #5).
+* Security: `uninstall.php` now exits early when `WP_UNINSTALL_PLUGIN` is not defined (Finding #6).
+* Fixed: `admin-post.php` is now actually reachable as documented — the empty-array allowlist entry was previously interpreted as "never matches" instead of "no GET constraint" (Finding #3).
+* Fixed: Allowlist entries now match by GET-param subset instead of exact count, so legitimate sub-flows of allowed pages (such as Wordfence Login Security's 2FA OTP step) are no longer rejected (Finding #7).
+* Added: Allowlist entries for `admin.php?page=<slug>` now verify the target submenu page is actually registered before letting the URL through (Finding #2).
+* Added: "Also block AJAX" checkbox on the Dashboard Access settings page to enable the cap gate on `admin-ajax.php` requests, plus a matching `rda_strict_ajax` filter for code-level overrides (default off — preserves prior behavior) (Finding #1).
+* Tooling: New unit test suite (`@wordpress/scripts` + `wp-env` + PHPUnit) covering every gate above. Run with `npm test`.
 
 = 1.2.2 on May 22, 2025 =
 
