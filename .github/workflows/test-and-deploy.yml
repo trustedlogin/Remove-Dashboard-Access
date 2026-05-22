@@ -1,0 +1,81 @@
+name: Test and Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+  pull_request:
+    branches:
+      - main
+      - develop
+
+# Required GitHub secrets for the deploy job:
+#   - SVN_USERNAME   (the WordPress.org committer username)
+#   - SVN_PASSWORD   (the WordPress.org committer password)
+# Plugin slug on WordPress.org: remove-dashboard-access-for-non-admins
+# The deploy is driven by `Stable tag:` in readme.txt; bump that to ship.
+
+jobs:
+  test:
+    name: PHPUnit (wp-env)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      - name: Start wp-env
+        run: npx wp-env start
+
+      - name: Install Composer dev dependencies in tests-cli
+        run: |
+          npx wp-env run tests-cli \
+            --env-cwd=wp-content/plugins/Remove-Dashboard-Access \
+            -- composer install --no-progress --no-interaction
+
+      - name: Run PHPUnit suite
+        run: npm test
+
+      - name: Dump wp-env logs on failure
+        if: failure()
+        run: npx wp-env logs
+
+  deploy:
+    name: Deploy to WordPress.org
+    needs: test
+    # Only deploy on direct push to main (not PRs, not develop). Tagged
+    # releases via `git tag` would also work; this matches the contributor
+    # convention of "merge to main = ship."
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: WordPress Plugin Deploy
+        id: deploy
+        uses: 10up/action-wordpress-plugin-deploy@stable
+        with:
+          generate-zip: true
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          SLUG: remove-dashboard-access-for-non-admins
+
+      - name: Upload deploy artifact
+        if: steps.deploy.outputs.zip-path != ''
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ github.event.repository.name }}-${{ github.sha }}
+          path: ${{ steps.deploy.outputs.zip-path }}
