@@ -573,7 +573,7 @@ class RDA_Options {
 
 		printf(
 			'<textarea name="rda_url_allowlist" class="widefat code" rows="5" placeholder="%1$s">%2$s</textarea>',
-			esc_attr__( "/wp-admin/admin.php?page=trustedlogin-secrets\n/wp-admin/admin.php?page=tl-*\n/wp-admin/admin-post.php", 'remove-dashboard-access-for-non-admins' ),
+			esc_attr__( "/wp-admin/admin.php?page=customer-portal\n/wp-admin/admin.php?page=customer-*", 'remove-dashboard-access-for-non-admins' ),
 			esc_textarea( $url_allowlist )
 		);
 
@@ -584,14 +584,14 @@ class RDA_Options {
 		);
 		echo ' ';
 		echo wp_kses(
-			/* translators: %1$s is an inline-code example, e.g. <code>?page=tl-*</code>; %2$s and %3$s are example page slugs. */
+			/* translators: %1$s is an inline-code example, e.g. <code>?page=customer-*</code>; %3$s and %4$s are example page slugs. */
 			sprintf(
 				__( 'Use %1$s as a wildcard in a query value to allow related sub-pages at once — for example, %2$s matches %3$s, %4$s, and any other %5$s page.', 'remove-dashboard-access-for-non-admins' ),
 				'<code>*</code>',
-				'<code>?page=tl-*</code>',
-				'<code>tl-secrets</code>',
-				'<code>tl-config</code>',
-				'<code>tl-&hellip;</code>'
+				'<code>?page=customer-*</code>',
+				'<code>customer-portal</code>',
+				'<code>customer-invoices</code>',
+				'<code>customer-&hellip;</code>'
 			),
 			array( 'code' => array() )
 		);

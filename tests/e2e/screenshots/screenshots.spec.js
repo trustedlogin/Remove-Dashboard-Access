@@ -34,6 +34,11 @@ const LOGIN_MESSAGE_SAMPLE =
 // Picked an example.com URL on purpose — readers shouldn't see a localhost
 // address and wonder whether the screenshot was meant for them.
 const REDIRECT_URL_SAMPLE = 'https://example.com/my-dashboard/';
+// Example URLs pre-populated into the Allowed URLs textarea so the field
+// reads as configured in screenshot-1. Generic on purpose (no plugin slugs
+// from a specific vendor) so readers can transpose to their own site.
+const ALLOWED_URLS_SAMPLE =
+	'/wp-admin/admin.php?page=customer-portal\n/wp-admin/admin.php?page=customer-*';
 
 // Composition constants — one padding number per flow per
 // gk:screenshot/references/padding.md "consistency across siblings".
@@ -72,6 +77,9 @@ test.describe( 'WP.org screenshots', () => {
 		await page
 			.locator( 'input[name="rda_login_message"]' )
 			.fill( LOGIN_MESSAGE_SAMPLE );
+		await page
+			.locator( 'textarea[name="rda_url_allowlist"]' )
+			.fill( ALLOWED_URLS_SAMPLE );
 		await page.locator( '#submit' ).click();
 		await page.waitForLoadState( 'networkidle' );
 
