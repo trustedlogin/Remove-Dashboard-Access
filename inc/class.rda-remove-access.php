@@ -300,14 +300,9 @@ class RDA_Remove_Access {
 				continue;
 			}
 
-			// Directory-style URLs (`/wp-admin/`) map to index.php on the server.
-			if ( '/' === substr( $path, -1 ) ) {
-				$pagenow = 'index.php';
-			} else {
-				$pagenow = basename( $path );
-				if ( '' === $pagenow ) {
-					$pagenow = 'index.php';
-				}
+			$pagenow = $this->path_to_pagenow( $path );
+			if ( '' === $pagenow ) {
+				continue;
 			}
 
 			$params = array();
@@ -322,6 +317,53 @@ class RDA_Remove_Access {
 		}
 
 		return $entries;
+	}
+
+	/**
+	 * Compute the `$pagenow` that WP core would assign to a request whose
+	 * REQUEST_URI starts with the given path.
+	 *
+	 * Mirrors the regex + transformations in `wp-includes/vars.php`:
+	 *
+	 * 1. Strip the `/wp-admin/` (or network/user variant) prefix.
+	 * 2. Trim leading/trailing slashes.
+	 * 3. Empty / "index" / "index.php" → `index.php`.
+	 * 4. Otherwise: take everything up to the first `/`, lowercase it,
+	 *    and append `.php` if it isn't already present.
+	 *
+	 * Keeping this in lockstep with WP is important — a mismatch means
+	 * the allow-list entry never actually matches the live request.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $path Path component (e.g. `/wp-admin/users.php/`).
+	 * @return string `$pagenow`-compatible string (e.g. `users.php`), or '' if path was invalid.
+	 */
+	private function path_to_pagenow( $path ) {
+		if ( ! is_string( $path ) || '' === $path ) {
+			return '';
+		}
+
+		$path = preg_replace( '#^/wp-admin/(network/|user/)?#i', '', $path );
+		$path = trim( $path, '/' );
+
+		if ( '' === $path || 'index' === $path || 'index.php' === $path ) {
+			return 'index.php';
+		}
+
+		// Take only the first segment.
+		if ( preg_match( '#(.*?)(/|$)#', $path, $matches ) ) {
+			$pagenow = strtolower( $matches[1] );
+		} else {
+			$pagenow = strtolower( $path );
+		}
+
+		if ( '.php' !== substr( $pagenow, -4 ) ) {
+			$pagenow .= '.php';
+		}
+
+		return $pagenow;
 	}
 
 	/**
@@ -431,12 +473,103 @@ class RDA_Remove_Access {
 		// prevents accidentally exposing the admin shell on a `?page=` slug
 		// that no plugin actually registered.
 		foreach ( $allowed_params_set as $param_key => $param_value ) {
-			if ( ! isset( $_GET[ $param_key ] ) || $_GET[ $param_key ] !== $param_value ) {
+			if ( ! isset( $_GET[ $param_key ] ) ) {
+				return false;
+			}
+
+			$actual = $_GET[ $param_key ];
+
+			// Reject mismatched container types up front — an array submission
+			// can never satisfy a scalar allow-list value (or vice versa).
+			if ( ! is_string( $actual ) || ! is_string( $param_value ) ) {
+				return false;
+			}
+
+			// Wildcard glob (1.3.0): when the allow-list value contains `*`,
+			// match against the request value via a simple `*`-only glob.
+			// Intentionally NOT using fnmatch — fnmatch adds `?` and `[…]`
+			// metacharacters that surprise non-programmer admins and widen
+			// the allow surface in ways that aren't obvious from the textarea.
+			if ( false !== strpos( $param_value, '*' ) ) {
+				if ( ! $this->wildcard_match( $param_value, $actual ) ) {
+					return false;
+				}
+				continue;
+			}
+
+			if ( $actual !== $param_value ) {
 				return false;
 			}
 		}
 
 		return true;
+	}
+
+	/**
+	 * Glob-match a single `*`-only pattern against a string.
+	 *
+	 * Only `*` is treated as a wildcard (any number of characters, including
+	 * zero). Every other character — including regex metacharacters `?`,
+	 * `[`, `]`, `\`, `.` — is matched literally.
+	 *
+	 * Implementation is a linear, no-regex walk: split the pattern on `*`,
+	 * then sequentially match each segment in the subject with forward-only
+	 * progress. This guarantees O(n) on the subject's length regardless of
+	 * how many `*`s the admin throws into the pattern, so ReDoS isn't a
+	 * concern even with pathological admin-supplied patterns.
+	 *
+	 * @since 1.3.0
+	 * @access private
+	 *
+	 * @param string $pattern Allow-list value possibly containing `*`.
+	 * @param string $subject Actual request value to test.
+	 * @return bool True if the subject matches the pattern.
+	 */
+	private function wildcard_match( $pattern, $subject ) {
+		// Fast path: no wildcard → exact compare.
+		if ( false === strpos( $pattern, '*' ) ) {
+			return $pattern === $subject;
+		}
+
+		$segments = explode( '*', $pattern );
+		$count    = count( $segments );
+
+		// First segment must be a prefix of the subject.
+		$first = $segments[0];
+		if ( '' !== $first ) {
+			if ( 0 !== strpos( $subject, $first ) ) {
+				return false;
+			}
+		}
+		$offset = strlen( $first );
+
+		// Middle segments must appear in order, each after the previous.
+		for ( $i = 1; $i < $count - 1; $i++ ) {
+			$segment = $segments[ $i ];
+			if ( '' === $segment ) {
+				// Consecutive `*`s in the pattern — no constraint here.
+				continue;
+			}
+
+			$pos = strpos( $subject, $segment, $offset );
+			if ( false === $pos ) {
+				return false;
+			}
+			$offset = $pos + strlen( $segment );
+		}
+
+		// Last segment must be a suffix.
+		$last = $segments[ $count - 1 ];
+		if ( '' === $last ) {
+			return true;
+		}
+
+		$last_len = strlen( $last );
+		if ( strlen( $subject ) < $offset + $last_len ) {
+			return false;
+		}
+
+		return substr( $subject, -$last_len ) === $last;
 	}
 
 	/**

@@ -574,13 +574,30 @@ class RDA_Options {
 		$clean = array();
 
 		foreach ( $lines as $line ) {
-			$line = trim( $line );
+			// Strip null bytes and other ASCII control chars (except tab)
+			// before any structural parsing — they're never legitimate in a
+			// URL and they break downstream strpos/parse_url assumptions.
+			$line = preg_replace( '/[\x00-\x08\x0E-\x1F\x7F]/', '', $line );
+
+			// Then run sanitize_text_field: strips HTML, trims whitespace,
+			// removes percent-encoded octets, and is what WP itself uses
+			// for single-line user input.
+			$line = sanitize_text_field( $line );
 			if ( '' === $line ) {
 				continue;
 			}
 
 			$relative = $this->normalize_url_to_relative( $line );
 			if ( null === $relative ) {
+				continue;
+			}
+
+			// Reject "allow everything" entries — a path ending in `/` with
+			// no query string would whitelist every request under that
+			// directory, including the dashboard root itself.
+			$parsed_path  = wp_parse_url( $relative, PHP_URL_PATH );
+			$parsed_query = wp_parse_url( $relative, PHP_URL_QUERY );
+			if ( $parsed_path && '/' === substr( $parsed_path, -1 ) && empty( $parsed_query ) ) {
 				continue;
 			}
 
@@ -643,6 +660,16 @@ class RDA_Options {
 		}
 
 		if ( '' === $url ) {
+			return null;
+		}
+
+		// Reject anything that looks like a non-http(s) URI scheme. A real
+		// relative path never has `:` before the first `/`. This blocks
+		// `javascript:`, `data:`, `file:`, and friends from being stored as
+		// "/javascript:..." after the leading-slash prepend below.
+		$colon_pos = strpos( $url, ':' );
+		$slash_pos = strpos( $url, '/' );
+		if ( false !== $colon_pos && ( false === $slash_pos || $colon_pos < $slash_pos ) ) {
 			return null;
 		}
 

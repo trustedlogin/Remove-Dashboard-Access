@@ -254,6 +254,131 @@ class Test_URL_Allowlist extends RDA_TestCase {
 		);
 	}
 
+	// ----------------------------------------------------------------------
+	// Wildcards in param values
+	// ----------------------------------------------------------------------
+
+	public function test_wildcard_star_in_param_value_matches_any_value() {
+		// F#2's page-registration check still applies to wildcard entries,
+		// so register a target page for the wildcard to resolve against.
+		$this->login_as( 'administrator' );
+		add_menu_page( 'Anything', 'Anything', 'read', 'anything-at-all', '__return_null' );
+
+		$access = $this->make_access( array(
+			'url_allowlist' => '/wp-admin/admin.php?page=*',
+		) );
+
+		$this->set_pagenow( 'admin.php' );
+		$_GET = array( 'page' => 'anything-at-all' );
+
+		$this->assertTrue(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'`?page=*` must match any registered `page` value.'
+		);
+	}
+
+	public function test_wildcard_prefix_matches_only_prefix() {
+		$this->login_as( 'administrator' );
+		add_menu_page( 'TL Secrets', 'TL Secrets', 'read', 'tl-secrets', '__return_null' );
+
+		$access = $this->make_access( array(
+			'url_allowlist' => '/wp-admin/admin.php?page=tl-*',
+		) );
+
+		$this->set_pagenow( 'admin.php' );
+		$_GET = array( 'page' => 'tl-secrets' );
+
+		$this->assertTrue(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'`?page=tl-*` must match `tl-secrets`.'
+		);
+	}
+
+	public function test_wildcard_prefix_rejects_non_prefix_value() {
+		$access = $this->make_access( array(
+			'url_allowlist' => '/wp-admin/admin.php?page=tl-*',
+		) );
+
+		$this->set_pagenow( 'admin.php' );
+		$_GET = array( 'page' => 'other-thing' );
+
+		$this->assertFalse(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'`?page=tl-*` must NOT match a value without the `tl-` prefix.'
+		);
+	}
+
+	public function test_wildcard_suffix_match() {
+		$this->login_as( 'administrator' );
+		add_menu_page( 'Plugin Config', 'Plugin Config', 'read', 'plugin-config', '__return_null' );
+
+		$access = $this->make_access( array(
+			'url_allowlist' => '/wp-admin/admin.php?page=*-config',
+		) );
+
+		$this->set_pagenow( 'admin.php' );
+		$_GET = array( 'page' => 'plugin-config' );
+
+		$this->assertTrue(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'`?page=*-config` must match values ending in `-config`.'
+		);
+	}
+
+	public function test_wildcard_middle_match() {
+		$this->login_as( 'administrator' );
+		add_menu_page( 'TL Helpdesk', 'TL Helpdesk', 'read', 'tl-helpdesk-secrets', '__return_null' );
+
+		$access = $this->make_access( array(
+			'url_allowlist' => '/wp-admin/admin.php?page=tl-*-secrets',
+		) );
+
+		$this->set_pagenow( 'admin.php' );
+		$_GET = array( 'page' => 'tl-helpdesk-secrets' );
+
+		$this->assertTrue(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'`?page=tl-*-secrets` must match `tl-helpdesk-secrets`.'
+		);
+	}
+
+	public function test_wildcard_does_not_match_missing_key() {
+		$access = $this->make_access( array(
+			'url_allowlist' => '/wp-admin/admin.php?page=*',
+		) );
+
+		$this->set_pagenow( 'admin.php' );
+		$_GET = array(); // no `page` key
+
+		$this->assertFalse(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'`?page=*` still requires the `page` key to exist; missing key must NOT match.'
+		);
+	}
+
+	public function test_mixed_literal_and_wildcard_params() {
+		$this->login_as( 'administrator' );
+		add_menu_page( 'Foo', 'Foo', 'read', 'foo', '__return_null' );
+
+		$access = $this->make_access( array(
+			'url_allowlist' => '/wp-admin/admin.php?page=foo&action=*',
+		) );
+
+		$this->set_pagenow( 'admin.php' );
+		$_GET = array( 'page' => 'foo', 'action' => 'delete' );
+
+		$this->assertTrue(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'Mixed literal + wildcard params must both be respected.'
+		);
+
+		$_GET = array( 'page' => 'bar', 'action' => 'delete' );
+		$this->assertFalse(
+			$this->invoke( $access, 'is_allowed_page' ),
+			'Literal param must still be strict-matched even when sibling is wildcard.'
+		);
+	}
+
 	public function test_rda_allowlist_filter_still_runs_after_url_merge() {
 		$filter = static function ( $allowlist ) {
 			$allowlist['custom-filter-page.php'] = array();
