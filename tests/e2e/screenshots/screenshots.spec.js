@@ -24,7 +24,12 @@ const path = require( 'path' );
 
 const SETTINGS_URL = '/wp-admin/options-general.php?page=dashboard-access';
 const ASSETS_DIR = path.join( __dirname, '..', '..', '..', '.wordpress-org', 'assets' );
-const LOGIN_MESSAGE_SAMPLE = 'Welcome — please sign in to continue.';
+// Sample text used in screenshot-3 — chosen so the rendered message obviously
+// reads as a custom restriction notice an admin would set, not a generic
+// greeting. The on-brand framing makes the screenshot self-explanatory in the
+// wordpress.org listing without a caption.
+const LOGIN_MESSAGE_SAMPLE =
+	'Dashboard access is restricted. Please sign in with an authorized account.';
 
 // Composition constants — one padding number per flow per
 // gk:screenshot/references/padding.md "consistency across siblings".
