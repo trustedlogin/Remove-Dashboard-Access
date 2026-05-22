@@ -147,6 +147,16 @@ jobs:
           # `refs/heads/main`, producing the nonsense SVN path
           # `tags/refs/heads/main` and a hard failure.
           VERSION: ${{ steps.version.outputs.version }}
+          # The 10up action's default ASSETS_DIR is `.wordpress-org`
+          # and it rsyncs THAT directory's contents into SVN
+          # `/assets/`. Our PNGs live one level deeper at
+          # `.wordpress-org/assets/`, so without this override the
+          # 1.3.0 deploy uploaded everything to `/assets/assets/*.png`
+          # — wordpress.org's plugin page reads from `/assets/*.png`,
+          # leaving the listing without banner/icon/screenshots until
+          # we fixed it by hand (SVN r3544334). Pin the deeper path
+          # so the action looks where our PNGs actually are.
+          ASSETS_DIR: .wordpress-org/assets
 
       - name: Upload deploy artifact
         if: steps.deploy.outputs.zip-path != ''
