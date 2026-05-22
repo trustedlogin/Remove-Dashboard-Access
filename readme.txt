@@ -1,5 +1,5 @@
 === Remove Dashboard Access ===
-Contributors: TrustedLogin, alexclassroom
+Contributors: TrustedLogin
 Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
