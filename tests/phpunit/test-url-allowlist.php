@@ -421,6 +421,51 @@ class Test_URL_Allowlist extends RDA_TestCase {
 	}
 
 	/**
+	 * The Advanced sub-heading separates power-user toggles (AJAX, URL
+	 * allow-list) from the everyday Dashboard Access Controls. Pin the
+	 * presence of both sections + the field assignments so a future
+	 * refactor can't quietly merge them back into one long list.
+	 */
+	public function test_advanced_section_registered_with_correct_fields() {
+		global $wp_settings_sections, $wp_settings_fields;
+
+		// Trigger the settings-registration callback directly. We deliberately
+		// avoid `do_action( 'admin_init' )` because that would also fire
+		// dashboard_redirect (hooked by RDA_Remove_Access when a non-cap user
+		// is current), which would `wp_safe_redirect` + `exit` and abort
+		// the test runner.
+		RDA_Options::$instance->settings();
+
+		$this->assertArrayHasKey( 'dashboard-access', $wp_settings_sections );
+		$page = $wp_settings_sections['dashboard-access'];
+
+		$this->assertArrayHasKey( 'rda_options', $page,             'Default section "rda_options" must still register.' );
+		$this->assertArrayHasKey( 'rda_options_advanced', $page,    'New "Advanced" section must register.' );
+
+		$this->assertSame(
+			'Advanced',
+			$page['rda_options_advanced']['title'],
+			'The Advanced section heading is what admins see; do not silently retitle it.'
+		);
+
+		$fields = $wp_settings_fields['dashboard-access'];
+
+		// AJAX + URL allow-list belong to Advanced now.
+		$this->assertArrayHasKey( 'rda_lock_ajax',     $fields['rda_options_advanced'] );
+		$this->assertArrayHasKey( 'rda_url_allowlist', $fields['rda_options_advanced'] );
+
+		// Everyday settings stay in the default section.
+		$this->assertArrayHasKey( 'rda_access_switch',  $fields['rda_options'] );
+		$this->assertArrayHasKey( 'rda_redirect_url',   $fields['rda_options'] );
+		$this->assertArrayHasKey( 'rda_enable_profile', $fields['rda_options'] );
+		$this->assertArrayHasKey( 'rda_login_message',  $fields['rda_options'] );
+
+		// And neither advanced field leaks into the default section.
+		$this->assertArrayNotHasKey( 'rda_lock_ajax',     $fields['rda_options'] );
+		$this->assertArrayNotHasKey( 'rda_url_allowlist', $fields['rda_options'] );
+	}
+
+	/**
 	 * The wildcard ability is invisible from the UI unless we tell admins
 	 * about it. The textarea help text MUST surface both the syntax (`*`)
 	 * and a concrete example, otherwise the feature only exists for people

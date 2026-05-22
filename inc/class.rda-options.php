@@ -229,10 +229,27 @@ class RDA_Options {
 	 * @see $this->setup()
 	 */
 	public function settings() {
-		// Dashboard Access Controls section.
-		add_settings_section( 'rda_options', esc_html__( 'Dashboard Access Controls', 'remove_dashbord_access' ), array( $this, 'settings_section' ), 'dashboard-access' );
+		// Dashboard Access Controls section — the everyday settings.
+		add_settings_section(
+			'rda_options',
+			esc_html__( 'Dashboard Access Controls', 'remove_dashboard_access' ),
+			array( $this, 'settings_section' ),
+			'dashboard-access'
+		);
 
-		// Settings.
+		// Advanced section — power-user toggles that most sites won't need.
+		// Registering a second section here puts a sub-heading between Login
+		// Message and AJAX Requests so the settings page reads as two groups
+		// instead of one long list.
+		add_settings_section(
+			'rda_options_advanced',
+			esc_html__( 'Advanced', 'remove_dashboard_access' ),
+			array( $this, 'settings_section_advanced' ),
+			'dashboard-access'
+		);
+
+		// Settings. `section` defaults to `rda_options`; entries with their
+		// own section value land under the Advanced heading.
 		$sets = array(
 			'rda_access_switch'  => array(
 				'label'    => esc_html__( 'Dashboard User Access:', 'remove_dashboard_access' ),
@@ -257,15 +274,18 @@ class RDA_Options {
 			'rda_lock_ajax'      => array(
 				'label'    => esc_html__( 'AJAX Requests:', 'remove_dashboard_access' ),
 				'callback' => 'lock_ajax_cb',
+				'section'  => 'rda_options_advanced',
 			),
 			'rda_url_allowlist'  => array(
 				'label'    => esc_html__( 'Allowed URLs:', 'remove_dashboard_access' ),
 				'callback' => 'url_allowlist_cb',
+				'section'  => 'rda_options_advanced',
 			),
 		);
 
 		foreach ( $sets as $id => $settings ) {
-			add_settings_field( $id, $settings['label'], array( $this, $settings['callback'] ), 'dashboard-access', 'rda_options' );
+			$section = isset( $settings['section'] ) ? $settings['section'] : 'rda_options';
+			add_settings_field( $id, $settings['label'], array( $this, $settings['callback'] ), 'dashboard-access', $section );
 
 			// Pretty lame that we need separate sanitize callbacks for everything.
 			$sanitize_callback = str_replace( 'rda', 'sanitize', $id );
@@ -287,6 +307,19 @@ class RDA_Options {
 	 */
 	public function settings_section() {
 		esc_html_e( 'Dashboard access can be restricted to users of certain roles only or users with a specific capability.', 'remove_dashboard_access' );
+	}
+
+	/**
+	 * Advanced settings section display callback.
+	 *
+	 * Renders the short description below the "Advanced" sub-heading so admins
+	 * understand why these toggles sit apart from the main controls.
+	 *
+	 * @since 1.3.0
+	 * @access public
+	 */
+	public function settings_section_advanced() {
+		esc_html_e( 'Less-common options for sites with custom AJAX endpoints or admin pages that should remain reachable.', 'remove_dashboard_access' );
 	}
 
 	/**
