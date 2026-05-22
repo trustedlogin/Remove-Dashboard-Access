@@ -85,8 +85,30 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "Detected plugin version: $VERSION"
 
+      # Idempotency guard. The 10up action FAILS if the SVN tag for the
+      # current Stable tag already exists — which would happen on any
+      # re-run of the same release (manual workflow_dispatch, a
+      # follow-up commit to main that doesn't bump the version, etc.).
+      # Pre-check whether the SVN tag is already there and short-circuit
+      # the deploy step if so. The tag + release steps still run; they
+      # have their own existence guards.
+      - name: Check whether SVN already has this version tagged
+        id: svn_tag_check
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+          SLUG: remove-dashboard-access-for-non-admins
+        run: |
+          if svn ls "https://plugins.svn.wordpress.org/${SLUG}/tags/${VERSION}" --non-interactive >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "::notice::SVN tag ${VERSION} already exists on wordpress.org; skipping the 10up deploy step."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "SVN tag ${VERSION} not present; proceeding with deploy."
+          fi
+
       - name: WordPress Plugin Deploy
         id: deploy
+        if: steps.svn_tag_check.outputs.exists == 'false'
         uses: 10up/action-wordpress-plugin-deploy@stable
         with:
           generate-zip: true
@@ -94,6 +116,11 @@ jobs:
           SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
           SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
           SLUG: remove-dashboard-access-for-non-admins
+          # Pass VERSION explicitly. Without this, the 10up action
+          # falls back to $GITHUB_REF which on a push-to-main is
+          # `refs/heads/main`, producing the nonsense SVN path
+          # `tags/refs/heads/main` and a hard failure.
+          VERSION: ${{ steps.version.outputs.version }}
 
       - name: Upload deploy artifact
         if: steps.deploy.outputs.zip-path != ''
