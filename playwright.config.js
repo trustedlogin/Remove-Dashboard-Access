@@ -20,10 +20,16 @@ module.exports = defineConfig( {
 	expect: { timeout: 5_000 },
 	use: {
 		baseURL,
-		// Match WP.org's high-DPI display rendering — visitors see screenshots
-		// scaled, and crisper source images survive that downscale better.
+		// `gk:screenshot/references/resolution.md` says 3× DPR for docs,
+		// but the WP-admin chrome rendered at our viewport × 3 blows past the
+		// 2000-px-on-longest-side ceiling the same skill enforces. The skill's
+		// own escape hatch — "drop to deviceScaleFactor: 2 (then ≤ 1000 px CSS)"
+		// — applies here. 2× still renders crisply on retina.
 		deviceScaleFactor: 2,
-		viewport: { width: 1280, height: 800 },
+		// Narrower viewport than the dev default so 2× output stays ≤ 1920 px
+		// wide and the cropped form-table doesn't trail off into empty WP-admin
+		// gutter on either side.
+		viewport: { width: 960, height: 720 },
 		// Don't auto-screenshot on failure; we capture deliberately per test.
 		screenshot: 'off',
 		video: 'off',
