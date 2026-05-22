@@ -16,10 +16,21 @@ on:
 # Plugin slug on WordPress.org: remove-dashboard-access-for-non-admins
 # The deploy is driven by `Stable tag:` in readme.txt; bump that to ship.
 
+# Minimum-privilege default. Jobs that need write access opt in explicitly
+# via their own `permissions:` block. Without this, GitHub's repo default
+# (often `write-all`) would silently grant the test job more scope than it
+# needs.
+permissions:
+  contents: read
+
 jobs:
   test:
     name: PHPUnit (wp-env)
     runs-on: ubuntu-latest
+
+    # Test job reads code from the repo; nothing else.
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout
@@ -58,6 +69,16 @@ jobs:
     # convention of "merge to main = ship."
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+
+    # Serialize concurrent pushes to main so two rapid merges don't race
+    # against the WP.org SVN at the same time (the second would fail with
+    # a noisy "tag already exists" mid-deploy). `cancel-in-progress: false`
+    # lets the second push WAIT for the first deploy to finish, then run
+    # its own deploy — which will short-circuit via the SVN-tag idempotency
+    # guard if the first push already published the same version.
+    concurrency:
+      group: deploy-wordpress-org
+      cancel-in-progress: false
 
     # `contents: write` is needed for the tag-push + GitHub-Release steps
     # below. Test runs (which don't have a deploy job) don't ask for it.
@@ -109,7 +130,12 @@ jobs:
       - name: WordPress Plugin Deploy
         id: deploy
         if: steps.svn_tag_check.outputs.exists == 'false'
-        uses: 10up/action-wordpress-plugin-deploy@stable
+        # SHA-pinned to 2.3.0 (Apr 2025) — a floating `@stable` would let any
+        # commit pushed to that branch by 10up (or by an attacker via a
+        # compromised account) run with SVN credentials + `contents: write`
+        # in scope. Bump deliberately by replacing the SHA + bumping the
+        # comment when reviewing a new 10up release.
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2
         with:
           generate-zip: true
         env:
@@ -161,18 +187,31 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           NOTES_FILE="${RUNNER_TEMP}/release-notes.md"
+          # Match any wp.org-style version heading for our version, tolerating
+          # the common variants the readme might drift into:
+          #   = 1.3.0 =
+          #   = 1.3.0 on May 22, 2026 =
+          #   = v1.3.0 on May 22, 2026 =
+          # Section ends at the next `= ` heading at column 1.
+          # Anchored to start-of-line so a sentence containing "= 1.3.0" inside
+          # a bullet can't false-match.
           awk -v v="${VERSION}" '
-            BEGIN { f = 0 }
+            BEGIN {
+              # Pattern: optional `v`, the version, optional whitespace + extras,
+              # closing `=`. Matches `= 1.3.0 =`, `= 1.3.0 on … =`, etc.
+              vpat = "^= v?" v "([ \t][^=]*)?=[ \t]*$"
+              f = 0
+            }
             /^= / {
               if (f) exit
-              if (index($0, "= " v " on") == 1) f = 1
+              if ($0 ~ vpat) f = 1
               next
             }
             f { print }
           ' readme.txt > "${NOTES_FILE}"
 
           if [ ! -s "${NOTES_FILE}" ]; then
-            echo "::warning::Could not extract changelog notes for ${VERSION}; release will use auto-generated notes."
+            echo "::warning::Could not extract changelog notes for ${VERSION} from readme.txt; release will fall back to GitHub auto-generated commit notes."
           fi
           echo "notes-file=${NOTES_FILE}" >> "$GITHUB_OUTPUT"
 
@@ -194,9 +233,16 @@ jobs:
             NOTES_FLAG=(--notes-file "${NOTES_FILE}")
           fi
 
+          # The deploy step is skipped when the SVN tag already exists
+          # (re-runs after an SVN-only release). In that case there is no
+          # local zip — surface a warning so the run output makes clear
+          # the release ships without an attached zip, rather than
+          # silently producing a thinner release than usual.
           ATTACH_ARGS=()
           if [ -n "${ZIP_PATH}" ] && [ -f "${ZIP_PATH}" ]; then
             ATTACH_ARGS=("${ZIP_PATH}")
+          else
+            echo "::warning::No deploy zip available (deploy step was skipped). Creating GitHub Release without an attached zip."
           fi
 
           gh release create "${VERSION}" \
