@@ -12,9 +12,13 @@ const ADMIN_USER = process.env.WP_ADMIN_USER || 'admin';
 const ADMIN_PASS = process.env.WP_ADMIN_PASS || 'password';
 
 // Subscriber fixture for screenshot-2 (restricted-user profile page).
-const SUB_USER = 'rda-screenshot-subscriber';
+// Picked a plain personal name so the "Howdy, …" in the admin bar reads
+// like a real customer account — not "Screenshot Subscriber" which clearly
+// announces "I am a test fixture" and weakens the marketing screenshot.
+const SUB_USER = 'sarah-mitchell';
 const SUB_PASS = 'password';
-const SUB_EMAIL = 'rda-screenshot-subscriber@example.com';
+const SUB_EMAIL = 'sarah-mitchell@example.com';
+const SUB_DISPLAY = 'Sarah Mitchell';
 
 // Idempotently create the subscriber fixture user via wp-env's cli container.
 // Subsequent runs hit "user exists" and continue silently.
@@ -23,7 +27,7 @@ function ensureSubscriberUser() {
 		execSync(
 			`npx wp-env run cli wp user create ${ SUB_USER } ${ SUB_EMAIL } ` +
 				`--role=subscriber --user_pass=${ SUB_PASS } ` +
-				`--display_name="Screenshot Subscriber"`,
+				`--display_name="${ SUB_DISPLAY }"`,
 			{ stdio: 'pipe' }
 		);
 	} catch ( error ) {
@@ -33,6 +37,19 @@ function ensureSubscriberUser() {
 		if ( ! stderr.includes( 'already' ) && ! stderr.includes( 'exists' ) ) {
 			throw error;
 		}
+	}
+
+	// One-time housekeeping: an earlier revision of this file created
+	// `rda-screenshot-subscriber`. If that user is still in the wp-env
+	// database, remove it so the only subscriber on the system matches the
+	// current fixture and the screenshots don't accidentally pick it up.
+	try {
+		execSync(
+			`npx wp-env run cli wp user delete rda-screenshot-subscriber --yes`,
+			{ stdio: 'pipe' }
+		);
+	} catch ( _ignored ) {
+		// User already gone, or never existed. No action needed.
 	}
 }
 

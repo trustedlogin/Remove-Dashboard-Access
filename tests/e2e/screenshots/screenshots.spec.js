@@ -48,14 +48,19 @@ test.describe.configure( { mode: 'serial' } );
 
 test.describe( 'WP.org screenshots', () => {
 	test( 'screenshot-1: Dashboard Access Controls section', async ( { page } ) => {
-		// Reset to clean defaults via the actual form, so the capture reflects
-		// the empty-state admin experience and not whatever the wp-env install
-		// happened to leave behind.
+		// Reset to clean defaults, with one deliberate exception: pre-fill the
+		// Login Message input with the same sample text screenshot-3 displays
+		// on wp-login.php. The two screenshots then tell one consecutive
+		// story — "this is where you set the message" (s1) and "this is how
+		// users see it" (s3) — instead of leaving the field empty in s1 and
+		// making readers infer the connection.
 		await page.goto( SETTINGS_URL );
 		await page
 			.locator( 'input[name="rda_access_switch"][value="manage_options"]' )
 			.check();
-		await page.locator( 'input[name="rda_login_message"]' ).fill( '' );
+		await page
+			.locator( 'input[name="rda_login_message"]' )
+			.fill( LOGIN_MESSAGE_SAMPLE );
 		await page.locator( '#submit' ).click();
 		await page.waitForLoadState( 'networkidle' );
 
