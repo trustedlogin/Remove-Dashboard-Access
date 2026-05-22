@@ -70,6 +70,27 @@ async function saveStorage( browser, baseURL, username, password, file ) {
 	await context.close();
 }
 
+// Set the wp-env site's `blogname` to a generic "My Website" so the
+// admin-bar shortcut in screenshot-2 and the "← Go to …" link on
+// wp-login.php in screenshot-3 read as something a reader would imagine
+// for their own site — not "Remove-Dashboard-Access" (the plugin's slug,
+// which leaks "I am a test fixture" into the screenshots).
+function ensureSiteName() {
+	try {
+		execSync(
+			`npx wp-env run cli wp option update blogname "My Website"`,
+			{ stdio: 'pipe' }
+		);
+	} catch ( error ) {
+		// Don't fail the whole test run if the option update hiccups —
+		// the screenshots just won't have the polished site name.
+		// Surface the stderr to the console for debugging.
+		process.stderr.write(
+			`global-setup: could not set blogname — ${ ( error.stderr || error.message ).toString() }\n`
+		);
+	}
+}
+
 module.exports = async ( config ) => {
 	const baseURL = config.projects[ 0 ].use.baseURL;
 	const authDir = path.join( __dirname, '..', '.auth' );
@@ -77,6 +98,7 @@ module.exports = async ( config ) => {
 	fs.mkdirSync( authDir, { recursive: true } );
 
 	ensureSubscriberUser();
+	ensureSiteName();
 
 	const browser = await chromium.launch();
 	try {

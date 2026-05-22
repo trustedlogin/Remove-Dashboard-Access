@@ -30,6 +30,10 @@ const ASSETS_DIR = path.join( __dirname, '..', '..', '..', '.wordpress-org', 'as
 // wordpress.org listing without a caption.
 const LOGIN_MESSAGE_SAMPLE =
 	'Dashboard access is restricted. Please sign in with an authorized account.';
+// Example redirect destination shown in screenshot-1's Redirect URL field.
+// Picked an example.com URL on purpose — readers shouldn't see a localhost
+// address and wonder whether the screenshot was meant for them.
+const REDIRECT_URL_SAMPLE = 'https://example.com/my-dashboard/';
 
 // Composition constants — one padding number per flow per
 // gk:screenshot/references/padding.md "consistency across siblings".
@@ -48,16 +52,23 @@ test.describe.configure( { mode: 'serial' } );
 
 test.describe( 'WP.org screenshots', () => {
 	test( 'screenshot-1: Dashboard Access Controls section', async ( { page } ) => {
-		// Reset to clean defaults, with one deliberate exception: pre-fill the
-		// Login Message input with the same sample text screenshot-3 displays
-		// on wp-login.php. The two screenshots then tell one consecutive
-		// story — "this is where you set the message" (s1) and "this is how
-		// users see it" (s3) — instead of leaving the field empty in s1 and
-		// making readers infer the connection.
+		// Reset to clean defaults, with two deliberate exceptions:
+		//   - Pre-fill the Login Message input with the same sample text
+		//     screenshot-3 displays on wp-login.php. The two screenshots
+		//     then tell one consecutive story — "this is where you set
+		//     the message" (s1) and "this is how users see it" (s3) —
+		//     instead of leaving the field empty in s1 and making readers
+		//     infer the connection.
+		//   - Set the Redirect URL to an example.com path rather than
+		//     leaving the wp-env localhost default. Readers shouldn't see
+		//     a localhost address in marketing screenshots.
 		await page.goto( SETTINGS_URL );
 		await page
 			.locator( 'input[name="rda_access_switch"][value="manage_options"]' )
 			.check();
+		await page
+			.locator( 'input[name="rda_redirect_url"]' )
+			.fill( REDIRECT_URL_SAMPLE );
 		await page
 			.locator( 'input[name="rda_login_message"]' )
 			.fill( LOGIN_MESSAGE_SAMPLE );
