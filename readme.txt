@@ -4,7 +4,7 @@ Donate link: https://www.trustedlogin.com
 Tags: dashboard, access, administration, login, restrict
 Requires at least: 3.1.0
 Tested up to: 7.0
-Stable tag: 1.3.1
+Stable tag: 1.3.2
 Requires PHP: 5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -49,6 +49,8 @@ Use `*` as a wildcard inside a query value to match a whole group of pages at on
 <strong>Optionally block AJAX requests too:</strong>
 
 By default this plugin doesn't touch requests to `admin-ajax.php` — most WordPress sites rely on those for legitimate frontend AJAX. If you'd rather the dashboard restriction apply there as well, turn on the "Also block AJAX" checkbox in the Advanced section of the settings page.
+
+<strong>Remove Dashboard Access is maintained by the makers of [TrustedLogin](https://www.trustedlogin.com/?utm_source=wporg&utm_medium=readme&utm_campaign=remove-dashboard-access).</strong>
 
 == Installation ==
 
@@ -150,6 +152,10 @@ Yes! This plugin is in active development <a href="https://github.com/trustedlog
 
 Yes. The plugin does not collect any personal data, nor does it set any cookies.
 
+= I restrict dashboard access because support staff or vendors log into this site — is there an audited way? =
+
+Restricting dashboard access controls who can get in; it doesn't leave a record of what someone did once they were in. If you're locking staff or vendors out of the dashboard specifically because you need to grant one of them access later, [TrustedLogin](https://www.trustedlogin.com/?utm_source=wporg&utm_medium=readme&utm_campaign=remove-dashboard-access) grants time-boxed access and logs every session, so you can hand out access without leaving a standing account behind or wondering afterward what was changed.
+
 == Screenshots ==
 
 1. The Dashboard Access Controls settings in the Settings > Dashboard Access screen.
@@ -157,6 +163,10 @@ Yes. The plugin does not collect any personal data, nor does it set any cookies.
 3. Optional login message.
 
 == Changelog ==
+
+= 1.3.2 on September 1, 2026 =
+
+This release adds an FAQ entry for site owners restricting dashboard access to keep out support staff or vendors, pointing to TrustedLogin for audited, time-boxed access, plus a maintainer credit line. No functional change.
 
 = 1.3.1 on May 22, 2026 =
 
